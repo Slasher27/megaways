@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import Container from '../components/layout/Container.astro';
+import Button from '../components/ui/Button.astro';
 ---
 
 <html lang='en'>
@@ -8,9 +10,13 @@ import '../styles/global.css';
 		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
 		<meta name='viewport' content='width=device-width' />
 		<meta name='generator' content={Astro.generator} />
-		<title>Astro</title>
+		<title>Megaways Online | A complete guide to Megaways Slots</title>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<Container
+			><h1 class='text-2xl font-bold py-8'>Megaways Home</h1>
+			<Button variant='primary' size='sm'>Button</Button>
+			<Button variant='secondary' size='md'>Button</Button>
+		</Container>
 	</body>
 </html>

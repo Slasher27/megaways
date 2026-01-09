@@ -1,0 +1,20 @@
+---
+interface Props {
+	size?: 'sm' | 'md' | 'lg' | 'full';
+	class?: string;
+}
+
+const { size = 'lg', class: className } = Astro.props;
+
+const sizes = {
+	sm: 'max-w-3xl',
+	md: 'max-w-5xl',
+	lg: 'max-w-7xl',
+	full: 'max-w-full',
+};
+---
+
+<!-- Example: layout/Container.astro -->
+<div class:list={['mx-auto px-4 sm:px-6 lg:px-8', sizes[size], className]}>
+	<slot />
+</div>
