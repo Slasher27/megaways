@@ -1,7 +1,12 @@
 ---
-import BaseLayout from './../layouts/BaseLayout.astro';
+import PageLayout from '../layouts/PageLayout.astro';
 import Container from '../components/layout/Container.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
 import Button from '../components/ui/Button.astro';
+import Badge from '../components/ui/Badge.astro';
+import Link from '../components/ui/Link.astro';
+import Image from '../components/ui/Image.astro';
 import H1 from '../components/typography/H1.astro';
 import H2 from '../components/typography/H2.astro';
 import H3 from '../components/typography/H3.astro';
@@ -9,28 +14,100 @@ import H4 from '../components/typography/H4.astro';
 import H5 from '../components/typography/H5.astro';
 import H6 from '../components/typography/H6.astro';
 import P from '../components/typography/P.astro';
+import Card from '../components/ui/Card.astro';
+import Icon from '../components/ui/Icon.astro';
+
 const metadata = {
 	title: 'Megaways Home',
 	description: 'The home of Megaways Slot Demos and Information',
 };
-interface Props {
-	title: string;
-}
 ---
 
-<BaseLayout title={metadata.title} description={metadata.description}
-	><Container
-		><H1>Megaways Home</H1>
-		<Button variant='primary' size='sm'>Button</Button>
-		<Button variant='secondary' size='md'>Button</Button>
-		<Button variant='ghost' size='lg'>Button</Button>
+<PageLayout title={metadata.title} description={metadata.description}>
+	<Header slot='header' />
+
+	<Container>
+		<H2>UI Component Showcase</H2>
+		<hr class='my-8' />
+		<H4>Button Components</H4>
+		<Button variant='primary' size='sm'>Small (Primary)</Button>
+		<Button variant='primary' size='md'>Medium (Primary)</Button>
+		<Button variant='secondary' size='md'>Medium (Secondary)</Button>
+		<Button variant='ghost' size='lg'>Ghost</Button>
+		<hr class='my-8' />
+		<H4>Badge Components</H4>
+		<Badge variant='primary'>Primary</Badge>
+		<Badge variant='secondary'>Secondary</Badge>
+		<Badge variant='success'>Success</Badge>
+		<Badge variant='warning'>Warning</Badge>
+		<Badge variant='danger'>Danger</Badge>
+		<hr class='my-8' />
+		<H4>Heading Components</H4>
+		<H1>Heading 1</H1>
 		<H2>Heading 2</H2>
 		<H3>Heading 3</H3>
 		<H4>Heading 4</H4>
 		<H5>Heading 5</H5>
 		<H6>Heading 6</H6>
-		<P size='sm' variant='small'> Small Body Text</P>
+		<hr class='my-8' />
+		<H4>Paragraph Components</H4>
+		<P size='sm' variant='small'>Small Body Text</P>
 		<P size='md' variant='body'>Medium Body Text</P>
 		<P size='lg' variant='lead'>Large Lead Text</P>
+		<P size='xl' variant='body'>Extra Large Body Text</P>
+		<hr class='my-8' />
+		<H4>Link Components</H4>
+		<Link href='/about/' variant='primary' underline={true} external={false}
+			>About Us</Link
+		>
+		<Link href='/about/' variant='muted' underline={true} external={false}
+			>About Us</Link
+		>
+		<Link href='/about/' variant='default' underline={true} external={false}
+			>About Us</Link
+		>
+		<hr class='my-8' />
+		<H4>Image Component </H4>
+		<Image
+			src='/images/megaways.png'
+			alt='Sample Image'
+			width={400}
+			height={200}
+		/>
+		<hr class='my-8' />
+		<H4>Card Component</H4>
+		<div class='grid grid-cols-1 gap-4'>
+			<Card>
+				<p>This is a card component with default styling.</p>
+			</Card>
+			<Card variant='outlined'>
+				<p>This is a card component with outlined styling.</p>
+			</Card>
+			<Card variant='elevated'>
+				<p>This is a card component with elevated styling.</p>
+			</Card>
+		</div>
+
+		<hr class='my-8' />
+		<H4>Icon Component</H4>
+		<div class='flex gap-4 items-center'>
+			<Icon name='lucide:heart' size={24} class='text-red-500' />
+			<Icon name='lucide:star' size={24} class='text-yellow-500' />
+			<Icon name='lucide:home' size={24} class='text-primary-600' />
+			<Icon name='mdi:casino' size={28} class='text-primary-600' />
+			<Icon name='ph:coin' size={32} class='text-gray-700 dark:text-gray-300' />
+			<Icon
+				name='lucide:arrow-right'
+				size={20}
+				class='text-gray-600 dark:text-gray-400'
+			/>
+		</div>
+		<P size='sm' variant='small'
+			>Various icon sets: Lucide, Material Design Icons, Phosphor</P
+		>
+
+		<hr class='my-8' />
 	</Container>
-</BaseLayout>
+
+	<Footer slot='footer' />
+</PageLayout>

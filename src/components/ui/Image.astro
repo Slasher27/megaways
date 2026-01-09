@@ -1,0 +1,117 @@
+---
+interface Props {
+	src: string;
+	alt: string;
+	width?: number;
+	height?: number;
+	loading?: 'lazy' | 'eager';
+	rounded?: 'none' | 'sm' | 'md' | 'lg' | 'full';
+	objectFit?: 'cover' | 'contain' | 'fill' | 'none';
+	class?: string;
+}
+
+const {
+	src,
+	alt,
+	width,
+	height,
+	loading = 'lazy',
+	rounded = 'lg',
+	objectFit = 'cover',
+	class: className = '',
+} = Astro.props;
+
+const roundedClasses = {
+	none: '',
+	sm: 'rounded-sm',
+	md: 'rounded-md',
+	lg: 'rounded-lg',
+	full: 'rounded-full',
+} as const;
+
+const objectFitClasses = {
+	cover: 'object-cover',
+	contain: 'object-contain',
+	fill: 'object-fill',
+	none: 'object-none',
+} as const;
+
+// Generate unique ID for this image instance
+const uniqueId = `img-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div
+	class:list={['relative max-w-full', roundedClasses[rounded]]}
+	style={width && height
+		? `max-width: ${width}px; aspect-ratio: ${width} / ${height};`
+		: ''}
+>
+	<img
+		id={uniqueId}
+		src={src}
+		alt={alt}
+		width={width}
+		height={height}
+		loading={loading}
+		decoding='async'
+		class:list={[
+			'w-full h-full',
+			roundedClasses[rounded],
+			objectFitClasses[objectFit],
+			className,
+		]}
+	/>
+
+	<!-- Fallback SVG (hidden by default, shown via script on error) -->
+	<svg
+		id={`${uniqueId}-fallback`}
+		class:list={[
+			'hidden absolute inset-0 w-full h-full bg-gray-200 dark:bg-gray-700',
+			roundedClasses[rounded],
+		]}
+		xmlns='http://www.w3.org/2000/svg'
+		viewBox='0 0 400 300'
+		width={width}
+		height={height}
+	>
+		<rect
+			width='100%'
+			height='100%'
+			fill='currentColor'
+			class='text-gray-200 dark:text-gray-700'></rect>
+		<text
+			x='50%'
+			y='50%'
+			text-anchor='middle'
+			dominant-baseline='middle'
+			font-family='system-ui, -apple-system, sans-serif'
+			font-size='16'
+			font-weight='500'
+			fill='currentColor'
+			class='text-gray-600 dark:text-gray-400'
+		>
+			{alt}
+		</text>
+	</svg>
+</div>
+
+<script define:vars={{ uniqueId }}>
+	// Handle image load error
+	document.addEventListener('DOMContentLoaded', () => {
+		const img = document.getElementById(uniqueId);
+		const fallback = document.getElementById(`${uniqueId}-fallback`);
+
+		if (img && fallback) {
+			img.addEventListener('error', () => {
+				img.classList.add('hidden');
+				fallback.classList.remove('hidden');
+			});
+
+			// Check if image already failed to load
+			if (img.complete && !img.naturalWidth) {
+				img.classList.add('hidden');
+				fallback.classList.remove('hidden');
+			}
+		}
+	});
+</script>

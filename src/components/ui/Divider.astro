@@ -1,0 +1,56 @@
+---
+interface Props {
+	text?: string;
+	variant?: 'solid' | 'dashed' | 'dotted';
+	spacing?: 'sm' | 'md' | 'lg';
+	class?: string;
+}
+
+const {
+	text,
+	variant = 'solid',
+	spacing = 'md',
+	class: className = '',
+} = Astro.props;
+
+const variants = {
+	solid: 'border-solid',
+	dashed: 'border-dashed',
+	dotted: 'border-dotted',
+} as const;
+
+const spacings = {
+	sm: 'my-4',
+	md: 'my-8',
+	lg: 'my-12',
+} as const;
+---
+
+{
+	text ? (
+		<div class:list={['flex items-center gap-4', spacings[spacing], className]}>
+			<hr
+				class:list={[
+					'flex-1 border-t border-gray-200 dark:border-gray-700',
+					variants[variant],
+				]}
+			/>
+			<span class="text-sm text-gray-500 dark:text-gray-400">{text}</span>
+			<hr
+				class:list={[
+					'flex-1 border-t border-gray-200 dark:border-gray-700',
+					variants[variant],
+				]}
+			/>
+		</div>
+	) : (
+		<hr
+			class:list={[
+				'border-t border-gray-200 dark:border-gray-700',
+				variants[variant],
+				spacings[spacing],
+				className,
+			]}
+		/>
+	)
+}

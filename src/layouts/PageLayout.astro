@@ -1,0 +1,44 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+	title: string;
+	description: string;
+	showHeader?: boolean;
+	showFooter?: boolean;
+	showSidebar?: boolean;
+}
+
+const {
+	title,
+	description,
+	showHeader = true,
+	showFooter = true,
+	showSidebar = false,
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+	<div class="flex min-h-screen flex-col">
+		<!-- Header Section -->
+		{showHeader && <slot name="header" />}
+
+		<!-- Main Content Area -->
+		<div class="flex flex-1 items-start">
+			<!-- Sidebar (optional) -->
+			{showSidebar && (
+				<aside class="w-64 border-r border-gray-200 dark:border-gray-800 hidden lg:block">
+					<slot name="sidebar" />
+				</aside>
+			)}
+
+			<!-- Main Content -->
+			<main class="flex-1">
+				<slot />
+			</main>
+		</div>
+
+		<!-- Footer Section -->
+		{showFooter && <slot name="footer" />}
+	</div>
+</BaseLayout>

@@ -1,0 +1,59 @@
+---
+import Container from "./Container.astro";
+
+// Placeholder - will be expanded later
+---
+
+<footer class="border-t border-gray-200 dark:border-gray-800 mt-auto">
+	<Container>
+		<div class="py-12">
+			<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+				<!-- Column 1: About -->
+				<div>
+					<h3 class="font-bold text-gray-900 dark:text-white mb-4">About</h3>
+					<ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+						<li><a href="/about/" class="hover:text-gray-900 dark:hover:text-white">About Us</a></li>
+						<li><a href="/about/team/" class="hover:text-gray-900 dark:hover:text-white">Our Team</a></li>
+						<li><a href="/about/methodology/" class="hover:text-gray-900 dark:hover:text-white">Methodology</a></li>
+					</ul>
+				</div>
+
+				<!-- Column 2: Slots -->
+				<div>
+					<h3 class="font-bold text-gray-900 dark:text-white mb-4">Slots</h3>
+					<ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+						<li><a href="/online-slots/" class="hover:text-gray-900 dark:hover:text-white">All Slots</a></li>
+						<li><a href="/megaways/" class="hover:text-gray-900 dark:hover:text-white">Megaways</a></li>
+						<li><a href="/megaclusters/" class="hover:text-gray-900 dark:hover:text-white">Megaclusters</a></li>
+					</ul>
+				</div>
+
+				<!-- Column 3: Casinos -->
+				<div>
+					<h3 class="font-bold text-gray-900 dark:text-white mb-4">Casinos</h3>
+					<ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+						<li><a href="/online-casinos/" class="hover:text-gray-900 dark:hover:text-white">All Casinos</a></li>
+						<li><a href="/online-casinos/uk-casinos/" class="hover:text-gray-900 dark:hover:text-white">UK Casinos</a></li>
+						<li><a href="/online-casinos/crypto-casinos/" class="hover:text-gray-900 dark:hover:text-white">Crypto Casinos</a></li>
+					</ul>
+				</div>
+
+				<!-- Column 4: Legal -->
+				<div>
+					<h3 class="font-bold text-gray-900 dark:text-white mb-4">Legal</h3>
+					<ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+						<li><a href="/responsible-gambling/" class="hover:text-gray-900 dark:hover:text-white">Responsible Gambling</a></li>
+						<li><a href="/privacy/" class="hover:text-gray-900 dark:hover:text-white">Privacy Policy</a></li>
+						<li><a href="/terms/" class="hover:text-gray-900 dark:hover:text-white">Terms of Use</a></li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- Bottom bar -->
+			<div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800 text-sm text-gray-600 dark:text-gray-400 text-center">
+				<p>&copy; {new Date().getFullYear()} MegawaysOnline.com. All rights reserved.</p>
+				<p class="mt-2">18+. Please gamble responsibly.</p>
+			</div>
+		</div>
+	</Container>
+</footer>

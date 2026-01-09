@@ -42,6 +42,10 @@
     "@astrojs/svelte": "^6.0.0",
     "@astrojs/tailwind": "^6.0.0",
     "@astrojs/sitemap": "^3.0.0",
+    "astro-icon": "^1.0.0",
+    "@iconify-json/lucide": "^1.0.0",
+    "@iconify-json/mdi": "^1.0.0",
+    "@iconify-json/ph": "^1.0.0",
     "svelte": "^5.0.0",
     "tailwindcss": "^4.0.0",
     "@tailwindcss/typography": "^0.5.0",
@@ -463,14 +467,27 @@ ui/
 │                         # Supports both <button> and <a> tags
 │                         # Includes focus states, dark mode, cursor pointer
 ├── Badge.astro           # Labels (NEW, HOT, etc.)
+│                         # Variants: primary, secondary, success, warning, danger, info
+│                         # Sizes: sm, md, lg
 ├── Card.astro            # Generic card wrapper
-├── Icon.astro            # SVG icon wrapper
+│                         # Variants: default, outlined, elevated
+│                         # Padding options, hover effects
+├── Icon.astro            # Icon wrapper using astro-icon
+│                         # Props: name (icon name), size (number or string)
+│                         # Supports any icon from iconify icon sets
 ├── Image.astro           # Optimized image with lazy loading
+│                         # SVG fallback with alt text when image fails
+│                         # Props: src, alt, width, height, loading, rounded, objectFit
 ├── Link.astro            # Styled anchor with external handling
-├── Logo.astro            # Site logo (light/dark variants)
-├── Skeleton.astro        # Loading placeholder
-├── Tooltip.astro         # Hover tooltip
-└── Divider.astro         # Horizontal rule with optional text
+│                         # Variants: default, primary, muted
+│                         # Auto-adds target="_blank" and rel for external links
+├── Divider.astro         # Horizontal rule with optional text
+│                         # Variants: solid, dashed, dotted
+│                         # Spacing options: sm, md, lg
+├── Skeleton.astro        # Loading placeholder with pulse animation
+│                         # Variants: text, circular, rectangular
+├── Logo.astro            # Site logo (light/dark variants) [TODO]
+└── Tooltip.astro         # Hover tooltip [TODO]
 ```
 
 #### `typography/` — Text Components
@@ -659,6 +676,7 @@ import P from '@components/typography/P.astro';
 // UI primitives
 import Button from '@components/ui/Button.astro';
 import Badge from '@components/ui/Badge.astro';
+import Icon from '@components/ui/Icon.astro';
 
 // Layout
 import Header from '@components/layout/Header.astro';
@@ -686,6 +704,10 @@ import SlotFilter from '@components/interactive/SlotFilter.svelte';
 <!-- Button variants -->
 <Button variant="primary">Primary CTA</Button>
 <Button href="/go/casino/" affiliate>Visit Casino</Button>
+
+<!-- Icon usage (uses iconify icon sets) -->
+<Icon name="lucide:heart" size={24} />
+<Icon name="mdi:home" size="32px" class="text-primary-600" />
 
 <!-- Svelte components need client directive -->
 <SlotFilter client:load providers={providers} slots={slots} />
@@ -826,6 +848,117 @@ Use `@tailwindcss/typography` for prose content:
   <Content />
 </article>
 ```
+
+---
+
+## Icon System
+
+### astro-icon Package
+
+We use **astro-icon** for consistent, tree-shakeable icon support across the site. This package provides access to the entire [Iconify](https://icon-sets.iconify.design/) library with 200,000+ icons from popular icon sets.
+
+### Installation
+
+```bash
+npm install astro-icon
+
+# Install icon sets you want to use
+npm install @iconify-json/lucide @iconify-json/mdi @iconify-json/ph
+```
+
+Add the integration to `astro.config.mjs`:
+
+```javascript
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import icon from 'astro-icon';
+
+export default defineConfig({
+  integrations: [icon()],
+  // ... other config
+});
+```
+
+### Icon Component
+
+We've created a wrapper component at `src/components/ui/Icon.astro` that simplifies icon usage:
+
+```astro
+---
+import Icon from '@components/ui/Icon.astro';
+---
+
+<!-- Basic usage -->
+<Icon name="lucide:heart" size={24} />
+
+<!-- With custom size and classes -->
+<Icon name="mdi:home" size="32px" class="text-primary-600" />
+
+<!-- Different icon sets -->
+<Icon name="lucide:star" size={20} />           <!-- Lucide icons -->
+<Icon name="mdi:casino" size={24} />            <!-- Material Design Icons -->
+<Icon name="ph:coin" size={28} />               <!-- Phosphor icons -->
+<Icon name="heroicons:arrow-right" size={20} /> <!-- Heroicons -->
+```
+
+### Available Icon Sets
+
+Popular icon sets available through Iconify:
+
+| Icon Set | Prefix | Count | Use Case |
+|----------|--------|-------|----------|
+| Lucide | `lucide:` | 1,500+ | Modern, consistent UI icons |
+| Material Design Icons | `mdi:` | 7,000+ | Comprehensive icon coverage |
+| Heroicons | `heroicons:` | 600+ | Tailwind-designed icons |
+| Phosphor | `ph:` | 9,000+ | Flexible, consistent style |
+| Font Awesome | `fa:` | 2,000+ | Popular icon library |
+
+**Browse all icons**: https://icon-sets.iconify.design/
+
+### Usage Guidelines
+
+1. **Stick to one icon set** for consistency (recommend Lucide for modern UI)
+2. **Use semantic names** - choose icons that clearly represent their function
+3. **Consistent sizing** - use standard sizes: 16px (small), 20px (default), 24px (medium), 32px (large)
+4. **Color via classes** - apply Tailwind color classes directly to Icon component
+5. **Accessibility** - provide `title` prop for important icons
+
+### Examples
+
+```astro
+---
+import Icon from '@components/ui/Icon.astro';
+---
+
+<!-- Navigation icons -->
+<a href="/">
+  <Icon name="lucide:home" size={20} class="text-gray-600 dark:text-gray-400" />
+  Home
+</a>
+
+<!-- Button with icon -->
+<Button>
+  <Icon name="lucide:arrow-right" size={16} class="inline-block" />
+  Continue
+</Button>
+
+<!-- Rating stars -->
+<div class="flex gap-1">
+  <Icon name="lucide:star" size={16} class="text-yellow-500" />
+  <Icon name="lucide:star" size={16} class="text-yellow-500" />
+  <Icon name="lucide:star" size={16} class="text-yellow-500" />
+</div>
+
+<!-- Casino/slot specific -->
+<Icon name="mdi:casino" size={24} class="text-primary-600" />
+<Icon name="ph:coin" size={28} class="text-yellow-600" />
+```
+
+### Performance Notes
+
+- **Tree-shaking**: Only icons you use are included in the final bundle
+- **Automatic optimization**: Icons are optimized SVGs
+- **No runtime overhead**: Icons are compiled at build time
 
 ---
 
