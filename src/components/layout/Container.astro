@@ -1,10 +1,11 @@
 ---
 interface Props {
 	size?: 'sm' | 'md' | 'lg' | 'full';
+	padding?: 'none' | 'sm' | 'md' | 'lg';
 	class?: string;
 }
 
-const { size = 'lg', class: className } = Astro.props;
+const { size = 'lg', padding = 'md', class: className } = Astro.props;
 
 const sizes = {
 	sm: 'max-w-3xl',
@@ -12,9 +13,22 @@ const sizes = {
 	lg: 'max-w-7xl',
 	full: 'max-w-full',
 };
+
+const paddings = {
+	none: '',
+	sm: 'py-4',
+	md: 'py-8',
+	lg: 'py-12',
+};
 ---
 
-<!-- Example: layout/Container.astro -->
-<div class:list={['mx-auto px-4 sm:px-6 lg:px-8', sizes[size], className]}>
+<div class:list={[
+	'mx-auto px-4 sm:px-6 lg:px-8',
+	'bg-white dark:bg-gray-900',
+	'text-gray-900 dark:text-gray-100',
+	sizes[size],
+	paddings[padding],
+	className
+]}>
 	<slot />
 </div>

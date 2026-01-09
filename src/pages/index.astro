@@ -1,22 +1,36 @@
 ---
-import '../styles/global.css';
+import BaseLayout from './../layouts/BaseLayout.astro';
 import Container from '../components/layout/Container.astro';
 import Button from '../components/ui/Button.astro';
+import H1 from '../components/typography/H1.astro';
+import H2 from '../components/typography/H2.astro';
+import H3 from '../components/typography/H3.astro';
+import H4 from '../components/typography/H4.astro';
+import H5 from '../components/typography/H5.astro';
+import H6 from '../components/typography/H6.astro';
+import P from '../components/typography/P.astro';
+const metadata = {
+	title: 'Megaways Home',
+	description: 'The home of Megaways Slot Demos and Information',
+};
+interface Props {
+	title: string;
+}
 ---
 
-<html lang='en'>
-	<head>
-		<meta charset='utf-8' />
-		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
-		<meta name='viewport' content='width=device-width' />
-		<meta name='generator' content={Astro.generator} />
-		<title>Megaways Online | A complete guide to Megaways Slots</title>
-	</head>
-	<body>
-		<Container
-			><h1 class='text-2xl font-bold py-8'>Megaways Home</h1>
-			<Button variant='primary' size='sm'>Button</Button>
-			<Button variant='secondary' size='md'>Button</Button>
-		</Container>
-	</body>
-</html>
+<BaseLayout title={metadata.title} description={metadata.description}
+	><Container
+		><H1>Megaways Home</H1>
+		<Button variant='primary' size='sm'>Button</Button>
+		<Button variant='secondary' size='md'>Button</Button>
+		<Button variant='ghost' size='lg'>Button</Button>
+		<H2>Heading 2</H2>
+		<H3>Heading 3</H3>
+		<H4>Heading 4</H4>
+		<H5>Heading 5</H5>
+		<H6>Heading 6</H6>
+		<P size='sm' variant='small'> Small Body Text</P>
+		<P size='md' variant='body'>Medium Body Text</P>
+		<P size='lg' variant='lead'>Large Lead Text</P>
+	</Container>
+</BaseLayout>

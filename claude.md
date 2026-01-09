@@ -66,12 +66,14 @@ megawaysonline/
 │
 ├── src/
 │   ├── components/
-│   │   ├── common/            # Reusable UI components
-│   │   ├── layout/            # Header, Footer, Navigation
-│   │   ├── casino/            # Casino-specific components
-│   │   ├── slots/             # Slot-specific components
-│   │   ├── reviews/           # Review components (pros/cons, ratings)
-│   │   └── seo/               # SEO components (Schema, meta)
+│   │   ├── ui/                # Low-level UI primitives (buttons, badges, etc.)
+│   │   ├── typography/        # Text components (H1-H6, P)
+│   │   ├── layout/            # Page structure (Header, Footer, Container, etc.)
+│   │   ├── casino/            # Casino-specific domain components
+│   │   ├── slots/             # Slot-specific domain components
+│   │   ├── reviews/           # Shared review components (ratings, pros/cons)
+│   │   ├── seo/               # SEO & schema components
+│   │   └── interactive/       # Client-side Svelte components
 │   │
 │   ├── content/               # Markdown content (Astro Content Collections)
 │   │   ├── slots/             # ALL slot reviews (flat structure)
@@ -125,7 +127,6 @@ megawaysonline/
 │   └── utils/                 # Helper functions
 │
 ├── astro.config.mjs
-├── tailwind.config.mjs
 ├── tsconfig.json
 └── claude.md                  # This file
 ```
@@ -431,6 +432,267 @@ export const collections = {
 
 ---
 
+## Component Architecture
+
+Components are organized by purpose and domain. This structure separates concerns and makes the codebase maintainable.
+
+### Folder Overview
+
+| Folder | Purpose | File Type |
+|--------|---------|-----------|
+| `ui/` | Low-level UI primitives (buttons, badges, cards) | `.astro` |
+| `typography/` | Text components (headings, paragraphs) | `.astro` |
+| `layout/` | Page structure components | `.astro` |
+| `casino/` | Casino-specific domain components | `.astro` |
+| `slots/` | Slot-specific domain components | `.astro` |
+| `reviews/` | Shared review/rating components | `.astro` |
+| `seo/` | SEO & schema markup | `.astro` |
+| `interactive/` | Client-side components with state | `.svelte` |
+
+### Component Inventory
+
+#### `ui/` — Design System Primitives
+
+Generic, reusable building blocks with no domain knowledge.
+
+```
+ui/
+├── Button.astro          # Variants: primary, secondary, ghost, danger
+│                         # Props: variant, size (sm/md/lg), href, external,
+│                         #        affiliate (auto-adds nofollow), disabled
+│                         # Supports both <button> and <a> tags
+│                         # Includes focus states, dark mode, cursor pointer
+├── Badge.astro           # Labels (NEW, HOT, etc.)
+├── Card.astro            # Generic card wrapper
+├── Icon.astro            # SVG icon wrapper
+├── Image.astro           # Optimized image with lazy loading
+├── Link.astro            # Styled anchor with external handling
+├── Logo.astro            # Site logo (light/dark variants)
+├── Skeleton.astro        # Loading placeholder
+├── Tooltip.astro         # Hover tooltip
+└── Divider.astro         # Horizontal rule with optional text
+```
+
+#### `typography/` — Text Components
+
+Typography components for consistent text styling across the site.
+
+```
+typography/
+├── H1.astro              # Main page headings
+├── H2.astro              # Section headings
+├── H3.astro              # Subsection headings
+├── H4.astro              # Minor headings
+├── H5.astro              # Small headings
+├── H6.astro              # Smallest headings
+└── P.astro               # Paragraph with variants (body, lead, small)
+```
+
+**All heading components (H1-H6) include:**
+- Size variants: `sm`, `md` (default), `lg`, `xl`
+- Responsive scaling (e.g., `text-3xl md:text-4xl` for H1 md size)
+- Dark mode support (`text-gray-900 dark:text-white`)
+- Consistent bottom margins (H1: mb-8, H2: mb-6, H3: mb-4, etc.)
+- Custom class support via `class` prop
+- Font weight: H1-H3 use `font-bold`, H4-H6 use `font-semibold`
+
+**Paragraph component (P) includes:**
+- Size variants: `sm`, `md`, `lg`, `xl`
+- Style variants:
+  - `body` (default): Regular paragraph with mb-4
+  - `lead`: Larger intro text with font-medium
+  - `small`: Smaller descriptive text
+- Dark mode: `text-gray-700 dark:text-gray-300`
+- Custom class support
+
+**Usage:**
+```astro
+<H1 size="lg">Page Title</H1>
+<P variant="lead">Introduction paragraph</P>
+<H2>Section Heading</H2>
+<P>Regular body text</P>
+```
+
+#### `layout/` — Page Structure
+
+Components that define page structure. Used in layouts and pages.
+
+```
+layout/
+├── Header.astro          # Site header with nav
+├── Footer.astro          # Site footer
+├── Navigation.astro      # Main nav menu
+├── Sidebar.astro         # Sidebar wrapper
+├── Container.astro       # Max-width content wrapper with dark mode
+│                         # Props: size (sm/md/lg/full), padding (none/sm/md/lg)
+│                         # Includes bg-white/dark:bg-gray-900
+├── Section.astro         # Page section with spacing
+├── Breadcrumbs.astro     # Breadcrumb navigation
+└── TableOfContents.astro # Review TOC sidebar
+```
+
+#### `casino/` — Casino Domain Components
+
+Components specific to casino content. Know about casino data structure.
+
+```
+casino/
+├── CasinoCard.astro        # Casino listing card
+├── CasinoCardCompact.astro # Smaller card for sidebars
+├── CasinoTable.astro       # Comparison table
+├── CasinoHero.astro        # Casino review header
+├── BonusDisplay.astro      # Welcome bonus callout
+├── LicenseBadges.astro     # UKGC, MGA, Curacao badges
+├── PaymentMethods.astro    # Payment icons grid
+├── CasinoCtaBox.astro      # CTA box with affiliate link
+└── MarketBadge.astro       # UK, AU, CA market indicator
+```
+
+#### `slots/` — Slot Domain Components
+
+Components specific to slot content. Know about slot data structure.
+
+```
+slots/
+├── SlotCard.astro          # Slot listing card
+├── SlotCardCompact.astro   # Smaller card for sidebars
+├── SlotHero.astro          # Slot review header
+├── SlotStats.astro         # RTP, volatility, max win grid
+├── SlotGrid.astro          # Reels × rows display
+├── MechanicsBadges.astro   # Megaways, Cascading, etc.
+├── ProviderLogo.astro      # Provider attribution
+├── FeaturesList.astro      # Slot features list
+├── VolatilityMeter.astro   # Visual volatility indicator
+├── MaxWinDisplay.astro     # Prominent max win callout
+└── WhereToPlay.astro       # Casinos with this slot
+```
+
+#### `reviews/` — Shared Review Components
+
+Used by both casino and slot reviews. Domain-agnostic rating/review UI.
+
+```
+reviews/
+├── Rating.astro          # Star rating display
+├── ProsCons.astro        # Pros/cons list
+├── AuthorCard.astro      # Author byline with photo
+├── AuthorBox.astro       # Full author bio box
+├── ReviewScore.astro     # Large score display
+├── ReviewMeta.astro      # Published/updated dates
+├── Verdict.astro         # Final verdict callout
+└── Disclaimer.astro      # Affiliate/gambling disclaimer
+```
+
+#### `seo/` — SEO & Schema Components
+
+Astro-only components for meta tags and structured data.
+
+```
+seo/
+├── SEOHead.astro           # Meta tags, OG, Twitter
+├── SchemaOrg.astro         # JSON-LD wrapper
+├── SlotSchema.astro        # Slot review schema
+├── CasinoSchema.astro      # Casino review schema
+├── AuthorSchema.astro      # Person schema
+├── BreadcrumbSchema.astro  # Breadcrumb schema
+└── FAQSchema.astro         # FAQ schema
+```
+
+#### `interactive/` — Svelte Components
+
+Client-side components that need JavaScript. All `.svelte` files.
+
+```
+interactive/
+├── MobileMenu.svelte     # Mobile navigation drawer
+├── SearchModal.svelte    # Site search overlay
+├── SlotFilter.svelte     # Filter slots by provider, mechanic
+├── CasinoFilter.svelte   # Filter casinos by market, payment
+├── SortDropdown.svelte   # Sort results dropdown
+├── CompareDrawer.svelte  # Compare casinos side-by-side
+├── CopyButton.svelte     # Copy bonus code
+├── ThemeToggle.svelte    # Dark/light mode switch
+├── ScrollToTop.svelte    # Scroll to top button
+├── Accordion.svelte      # Expandable FAQ sections
+├── Tabs.svelte           # Tabbed content
+└── Carousel.svelte       # Image/card carousel
+```
+
+### Component Decision Guide
+
+| Question | Folder |
+|----------|--------|
+| Is it a text/heading component? | `typography/` |
+| Is it a basic UI element (button, badge, card)? | `ui/` |
+| Does it define page structure? | `layout/` |
+| Is it casino-specific? | `casino/` |
+| Is it slot-specific? | `slots/` |
+| Is it used by both casino AND slot reviews? | `reviews/` |
+| Is it for meta tags or schema markup? | `seo/` |
+| Does it need client-side JavaScript/state? | `interactive/` |
+
+### Import Path Aliases
+
+Configure in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"]
+    }
+  }
+}
+```
+
+### Import Examples
+
+```astro
+---
+// Typography
+import H1 from '@components/typography/H1.astro';
+import H2 from '@components/typography/H2.astro';
+import P from '@components/typography/P.astro';
+
+// UI primitives
+import Button from '@components/ui/Button.astro';
+import Badge from '@components/ui/Badge.astro';
+
+// Layout
+import Header from '@components/layout/Header.astro';
+import Container from '@components/layout/Container.astro';
+
+// Domain components
+import CasinoCard from '@components/casino/CasinoCard.astro';
+import SlotStats from '@components/slots/SlotStats.astro';
+
+// Reviews
+import Rating from '@components/reviews/Rating.astro';
+import ProsCons from '@components/reviews/ProsCons.astro';
+
+// SEO
+import SEOHead from '@components/seo/SEOHead.astro';
+
+// Interactive (need client directive)
+import SlotFilter from '@components/interactive/SlotFilter.svelte';
+---
+
+<!-- Typography usage -->
+<H1 size="lg">Page Title</H1>
+<P variant="lead">Introduction paragraph</P>
+
+<!-- Button variants -->
+<Button variant="primary">Primary CTA</Button>
+<Button href="/go/casino/" affiliate>Visit Casino</Button>
+
+<!-- Svelte components need client directive -->
+<SlotFilter client:load providers={providers} slots={slots} />
+```
+
+---
+
 ## Component Conventions
 
 ### File Naming
@@ -445,7 +707,7 @@ export const collections = {
 ```astro
 ---
 // 1. Imports
-import Rating from '../common/Rating.astro';
+import Rating from '@components/reviews/Rating.astro';
 
 // 2. Props interface
 interface Props {
@@ -499,19 +761,44 @@ Use Tailwind utility classes directly. Avoid creating custom CSS unless necessar
 <div class="casino-card-wrapper">
 ```
 
-### Color Palette
+### Color Palette & Tailwind CSS 4.x Configuration
 
-```javascript
-// tailwind.config.mjs
-colors: {
-  primary: {
-    50: '#f0f9ff',
-    500: '#0ea5e9',
-    600: '#0284c7',
-    700: '#0369a1',
-  },
-  // Use primary for CTAs and links
+**Tailwind CSS 4.x uses CSS-based configuration** instead of JavaScript config files.
+
+Define custom colors using the `@theme` directive in `src/styles/global.css`:
+
+```css
+@import "tailwindcss";
+
+@theme {
+  /* Primary Brand Colors (Sky Blue) */
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;   /* Main brand color */
+  --color-primary-600: #0284c7;   /* Buttons, CTAs */
+  --color-primary-700: #0369a1;   /* Hover states */
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+  --color-primary-950: #082f49;
 }
+```
+
+**Usage in components:**
+```astro
+<!-- Buttons and CTAs use primary-600 -->
+<Button variant="primary">Uses primary-600</Button>
+
+<!-- Text -->
+<p class="text-primary-600">Brand colored text</p>
+
+<!-- Backgrounds -->
+<div class="bg-primary-50 dark:bg-primary-950">Light background</div>
+
+<!-- Borders -->
+<div class="border-2 border-primary-600">Brand border</div>
 ```
 
 ### Dark Mode

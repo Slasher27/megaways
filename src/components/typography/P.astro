@@ -1,0 +1,33 @@
+---
+interface Props {
+	class?: string;
+	size?: 'sm' | 'md' | 'lg' | 'xl';
+	variant?: 'body' | 'lead' | 'small';
+}
+
+const { class: className = '', size = 'md', variant = 'body' } = Astro.props;
+
+const sizeClasses = {
+	sm: 'text-sm',
+	md: 'text-base',
+	lg: 'text-lg',
+	xl: 'text-xl',
+};
+
+const variantClasses = {
+	body: 'leading-relaxed mb-4',
+	lead: 'leading-relaxed mb-6 font-medium',
+	small: 'leading-normal mb-2',
+};
+---
+
+<p
+	class:list={[
+		'text-gray-700 dark:text-gray-300',
+		sizeClasses[size],
+		variantClasses[variant],
+		className,
+	]}
+>
+	<slot />
+</p>
