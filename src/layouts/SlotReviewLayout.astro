@@ -15,25 +15,25 @@ import Breadcrumb from '../components/layout/Breadcrumb.astro';
 import BreadcrumbSchema from '../components/seo/BreadcrumbSchema.astro';
 
 interface Props {
-	slot: CollectionEntry<'slots'>;
+	slotEntry: CollectionEntry<'slots'>;
 	title?: string;
 	description?: string;
 }
 
-const { slot, title, description } = Astro.props;
+const { slotEntry, title, description } = Astro.props;
 
 // Build page title and description
-const pageTitle = title || slot.data.title || `${slot.data.name} Review | Megaways Online`;
+const pageTitle = title || slotEntry.data.title || `${slotEntry.data.name} Review | Megaways Online`;
 const pageDescription =
 	description ||
-	slot.data.description ||
-	`Read our ${slot.data.name} review. RTP ${slot.data.rtp}%, max win ${slot.data.maxWin}, ${slot.data.maxWays} ways to win.`;
+	slotEntry.data.description ||
+	`Read our ${slotEntry.data.name} review. RTP ${slotEntry.data.rtp}%, max win ${slotEntry.data.maxWin}, ${slotEntry.data.maxWays} ways to win.`;
 
 // Build breadcrumb items
 const breadcrumbItems = [
 	{ label: 'Home', href: '/' },
 	{ label: 'Online Slots', href: '/online-slots/' },
-	{ label: slot.data.name, href: `/online-slots/${slot.data.slug}/` },
+	{ label: slotEntry.data.name, href: `/online-slots/${slotEntry.data.slug}/` },
 ];
 ---
 
