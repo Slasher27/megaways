@@ -1,20 +1,23 @@
 ---
 import Container from './Container.astro';
-
-// Placeholder - will be expanded later
+import Flyout from '../interactive/alpinejs/Flyout.astro';
+import { Icon } from 'astro-icon/components';
 ---
 
 <header class='border-b border-gray-200 dark:border-gray-800'>
-	<Container>
-		<div class='flex items-center justify-between py-4'>
+	<Container padding='sm'>
+		<div
+			class='flex items-center justify-between py-3'
+			x-data='{ open: false }'
+		>
 			<div class='flex items-center gap-8'>
-				<!-- Logo placeholder -->
+				<!-- Logo -->
 				<a href='/' class='text-xl font-bold text-gray-900 dark:text-white'>
 					MegawaysOnline
 				</a>
 
-				<!-- Navigation placeholder -->
-				<nav class='hidden md:flex gap-6'>
+				<!-- Desktop Navigation -->
+				<nav class='hidden lg:flex gap-6'>
 					<a
 						href='/online-slots/'
 						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
@@ -45,11 +48,103 @@ import Container from './Container.astro';
 					>
 						Megaquads
 					</a>
+					<a
+						href='/megapays/'
+						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+					>
+						Megapays
+					</a>
+					<a
+						href='/megadrop/'
+						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+					>
+						Megadrop
+					</a>
+					<a
+						href='/xtraways/'
+						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+					>
+						Xtraways
+					</a>
 				</nav>
 			</div>
 
-			<!-- Mobile menu button placeholder -->
-			<button class='md:hidden text-gray-600 dark:text-gray-400'> Menu </button>
+			<!-- Mobile Menu Button -->
+			<button
+				@click='open = true'
+				class='lg:hidden p-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+				aria-label='Open menu'
+			>
+				<Icon name='lucide:menu' class='size-7' />
+			</button>
+
+			<!-- Mobile Menu Flyout -->
+			<Flyout direction='right' maxWidth='xs' showCloseButton={false}>
+				<!-- Header Slot -->
+				<div slot='header' class='flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800'>
+					<span class='text-lg font-bold text-gray-900 dark:text-white'>Menu</span>
+					<button
+						type='button'
+						@click='$dialog.close()'
+						class='p-3 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800'
+						aria-label='Close menu'
+					>
+						<Icon name='lucide:x' class='size-7' />
+					</button>
+				</div>
+
+				<!-- Mobile Navigation -->
+				<nav class='flex flex-col p-4 space-y-1'>
+					<a
+						href='/online-slots/'
+						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+					>
+						Slots
+					</a>
+					<a
+						href='/online-casinos/'
+						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+					>
+						Casinos
+					</a>
+					<a
+						href='/megaways/'
+						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+					>
+						Megaways
+					</a>
+					<a
+						href='/megaclusters/'
+						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+					>
+						Megaclusters
+					</a>
+					<a
+						href='/megaquads/'
+						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+					>
+						Megaquads
+					</a>
+					<a
+						href='/megapays/'
+						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+					>
+						Megapays
+					</a>
+					<a
+						href='/megadrop/'
+						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+					>
+						Megadrop
+					</a>
+					<a
+						href='/xtraways/'
+						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+					>
+						Xtraways
+					</a>
+				</nav>
+			</Flyout>
 		</div>
 	</Container>
 </header>

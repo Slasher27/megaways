@@ -57,6 +57,10 @@ All detailed documentation is in the `docs/` folder:
 
 **Red Tiger slots are NOT nested** - they follow the same flat pattern as all other slots.
 
+**Mechanics have root-level pages:**
+- Pattern: `/[mechanic]/`
+- Examples: `/megaways/`, `/megaclusters/`, `/megaquads/`
+
 See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md#url-structure-critical) for complete URL patterns.
 
 ### 2. 301 Redirects
@@ -88,6 +92,7 @@ Content is managed via Astro Content Collections with TypeScript schemas:
 - `casinos/` - Casino reviews
 - `authors/` - Author profiles (for E-E-A-T)
 - `providers/` - Provider profiles
+- `mechanics/` - Mechanic explanations (Megaways, Megaclusters, etc.)
 
 See [docs/CONTENT-SCHEMAS.md](./docs/CONTENT-SCHEMAS.md) for schemas and examples.
 
@@ -168,17 +173,21 @@ import CasinoCard from '@components/casino/CasinoCard.astro';
 
 ### ✅ Complete
 - Tailwind CSS 4.x with custom colors and dark mode
-- Layout system (BaseLayout, PageLayout)
+- Layout system (BaseLayout, PageLayout, SlotReviewLayout)
 - UI components (Button, Badge, Card, Icon, Image, Link, Divider, Skeleton)
 - Typography components (H1-H6, P)
 - Icon system (astro-icon with Lucide, MDI, Phosphor)
-- Header, Footer, Container
+- Header, Footer, Container, Breadcrumb
+- BreadcrumbSchema (SEO)
+- Content Collections (slots, casinos, authors, providers, mechanics)
+- 6 Mechanics pages (Megaways, Megaclusters, Megaquads, Megapays, Megadrop, Xtraways)
+- Dynamic slot review pages
 
 ### 🔄 TODO
-- Casino domain components
-- Slot domain components
+- Casino domain components (CasinoCard, BonusDisplay, etc.)
+- Slot domain components (SlotCard, SlotStats, etc.)
 - Review components (Rating, ProsCons, AuthorCard, etc.)
-- SEO components (Schema markup, meta tags)
+- SEO components (SEOHead, SlotSchema, CasinoSchema)
 - Interactive Svelte components (filters, search, etc.)
 
 ---

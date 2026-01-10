@@ -4,7 +4,8 @@
       "Bash(git checkout:*)",
       "Bash(npm run build:*)",
       "WebFetch(domain:docs.astro.build)",
-      "Bash(dir /s CLAUDE.md)"
+      "Bash(dir /s CLAUDE.md)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []
