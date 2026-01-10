@@ -1,0 +1,82 @@
+---
+/**
+ * Breadcrumb Component
+ *
+ * Displays navigation breadcrumbs with structured data support
+ *
+ * @example
+ * <Breadcrumb items={[
+ *   { label: 'Home', href: '/' },
+ *   { label: 'Online Slots', href: '/online-slots/' },
+ *   { label: 'Bonanza Megaways', href: '/online-slots/bonanza-megaways/' }
+ * ]} />
+ */
+
+import Icon from '../ui/Icon.astro';
+
+export interface BreadcrumbItem {
+	label: string;
+	href: string;
+}
+
+interface Props {
+	items: BreadcrumbItem[];
+	class?: string;
+}
+
+const { items, class: className = '' } = Astro.props;
+
+// Ensure we always have at least Home
+const breadcrumbItems = items.length === 0 || items[0].href !== '/'
+	? [{ label: 'Home', href: '/' }, ...items]
+	: items;
+---
+
+<nav aria-label="Breadcrumb" class={`flex items-center space-x-2 text-sm ${className}`}>
+	<ol class="flex items-center space-x-2" itemscope itemtype="https://schema.org/BreadcrumbList">
+		{breadcrumbItems.map((item, index) => {
+			const isLast = index === breadcrumbItems.length - 1;
+			const position = index + 1;
+
+			return (
+				<li
+					class="flex items-center"
+					itemprop="itemListElement"
+					itemscope
+					itemtype="https://schema.org/ListItem"
+				>
+					{!isLast ? (
+						<>
+							<a
+								href={item.href}
+								itemprop="item"
+								class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+							>
+								<span itemprop="name">{item.label}</span>
+							</a>
+							<meta itemprop="position" content={position.toString()} />
+							<Icon
+								name="lucide:chevron-right"
+								size={16}
+								class="mx-2 text-gray-400 dark:text-gray-600"
+								aria-hidden="true"
+							/>
+						</>
+					) : (
+						<>
+							<span
+								itemprop="name"
+								class="text-gray-900 dark:text-white font-medium"
+								aria-current="page"
+							>
+								{item.label}
+							</span>
+							<meta itemprop="position" content={position.toString()} />
+							<link itemprop="item" href={item.href} />
+						</>
+					)}
+				</li>
+			);
+		})}
+	</ol>
+</nav>

@@ -1,0 +1,82 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import Container from '../../components/layout/Container.astro';
+import Breadcrumb from '../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
+import H1 from '../../components/typography/H1.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Icon from '../../components/ui/Icon.astro';
+
+const mechanic = await getEntry('mechanics', 'megaways');
+
+if (!mechanic) {
+	throw new Error('Megaways mechanic content not found');
+}
+
+const { Content } = await render(mechanic);
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Megaways', href: '/megaways/' },
+];
+
+const pageTitle = `${mechanic.data.name} Slots ${new Date().getFullYear()} | How It Works & Best Games`;
+const pageDescription = mechanic.data.description || `Learn about ${mechanic.data.name} slot mechanic, how it works, and the best games to play.`;
+---
+
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+	<div class="flex min-h-screen flex-col">
+		<Header />
+
+		<main class="flex-1">
+			<Container>
+				<Breadcrumb items={breadcrumbItems} class="mb-6" />
+
+				<header class="mb-8">
+					<H1>{mechanic.data.name} Slots</H1>
+
+					<div class="flex flex-wrap gap-4 items-center text-sm text-gray-600 dark:text-gray-400 mb-6">
+						{mechanic.data.developer && (
+							<div>
+								<strong>Developer:</strong> {mechanic.data.developer}
+							</div>
+						)}
+						{mechanic.data.yearIntroduced && (
+							<div>
+								<strong>Released:</strong> {mechanic.data.yearIntroduced}
+							</div>
+						)}
+					</div>
+
+				</header>
+
+				<article class="prose prose-lg dark:prose-invert max-w-none mb-8">
+					<Content />
+				</article>
+
+				<div class="bg-linear-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 rounded-xl p-8 text-center">
+					<h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+						Browse All {mechanic.data.name} Slots
+					</h2>
+					<p class="text-gray-700 dark:text-gray-300 mb-6">
+						Discover our complete collection of {mechanic.data.name} slot reviews with detailed
+						information on RTP, features, and where to play.
+					</p>
+					<a
+						href="/online-slots/"
+						class="inline-flex items-center justify-center font-semibold rounded-lg transition-colors cursor-pointer px-6 py-3 bg-primary-600 text-white hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600"
+					>
+						View All Slots
+					</a>
+				</div>
+			</Container>
+		</main>
+
+		<Footer />
+	</div>
+</BaseLayout>

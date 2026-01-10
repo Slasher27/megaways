@@ -3,9 +3,9 @@
 // URL pattern: /online-slots/[slug]/
 // Example: /online-slots/celestial-sisters-megaways/
 
-import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry, getEntry } from 'astro:content';
 import { Image } from 'astro:assets';
-import PageLayout from '../../layouts/PageLayout.astro';
+import SlotReviewLayout from '../../layouts/SlotReviewLayout.astro';
 import H1 from '../../components/typography/H1.astro';
 import H2 from '../../components/typography/H2.astro';
 import P from '../../components/typography/P.astro';
@@ -28,21 +28,64 @@ const { slot } = Astro.props;
 // Render content for the slot
 const { Content } = await render(slot);
 
-// Build page title and description
-const pageTitle = slot.data.title || `${slot.data.name} Review | Megaways Online`;
-const pageDescription =
-	slot.data.description ||
-	`Read our ${slot.data.name} review. RTP ${slot.data.rtp}%, max win ${slot.data.maxWin}, ${slot.data.maxWays} ways to win.`;
+// Get author details if available (author is already a reference)
+const author = slot.data.author ? await getEntry(slot.data.author) : null;
+
+// Format dates
+const formatDate = (date: Date | undefined) => {
+	if (!date) return null;
+	return date.toLocaleDateString('en-US', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	});
+};
+
+const publishedDateFormatted = formatDate(slot.data.publishedDate);
+const updatedDateFormatted = formatDate(slot.data.updatedDate);
 ---
 
-<PageLayout title={pageTitle} description={pageDescription}>
-	<article class="max-w-4xl mx-auto">
-		<!-- Slot Header -->
-		<header class="mb-8">
-			<H1>{slot.data.name}</H1>
+<SlotReviewLayout slot={slot}>
+	<!-- Slot Header -->
+	<header class="mb-8">
+		<H1>{slot.data.name}</H1>
 
-			<!-- Slot Meta Info -->
-			<div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
+		<!-- Author & Date Byline -->
+		{(author || publishedDateFormatted || updatedDateFormatted) && (
+			<div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+				{author && (
+					<div class="flex items-center gap-2">
+						<span class="font-medium text-gray-900 dark:text-white">
+							By {author.data.name}
+						</span>
+						{author.data.role && (
+							<span class="text-gray-500 dark:text-gray-500">
+								• {author.data.role}
+							</span>
+						)}
+					</div>
+				)}
+				{publishedDateFormatted && (
+					<div>
+						<span class="text-gray-500 dark:text-gray-500">Published:</span>
+						<time datetime={slot.data.publishedDate?.toISOString()}>
+							{publishedDateFormatted}
+						</time>
+					</div>
+				)}
+				{updatedDateFormatted && (
+					<div>
+						<span class="text-gray-500 dark:text-gray-500">Updated:</span>
+						<time datetime={slot.data.updatedDate?.toISOString()}>
+							{updatedDateFormatted}
+						</time>
+					</div>
+				)}
+			</div>
+		)}
+
+		<!-- Slot Meta Info -->
+		<div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
 				<div>
 					<strong>Provider:</strong>
 					{slot.data.provider}
@@ -244,5 +287,4 @@ const pageDescription =
 				</section>
 			)
 		}
-	</article>
-</PageLayout>
+</SlotReviewLayout>

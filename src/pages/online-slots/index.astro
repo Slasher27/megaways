@@ -11,6 +11,8 @@ import P from '../../components/typography/P.astro';
 import Link from '../../components/ui/Link.astro';
 import Badge from '../../components/ui/Badge.astro';
 import Card from '../../components/ui/Card.astro';
+import Breadcrumb from '../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
 
 // Get all slots from content collection
 const allSlots = await getCollection('slots');
@@ -22,12 +24,24 @@ const metadata = {
 	title: 'Online Slots Reviews | Megaways & More',
 	description: 'Comprehensive reviews of online slots including Megaways, features, RTP, volatility, and where to play. Expert analysis and ratings.',
 };
+
+// Build breadcrumb items
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Online Slots', href: '/online-slots/' },
+];
 ---
+
+<!-- Breadcrumb Schema for SEO -->
+<BreadcrumbSchema items={breadcrumbItems} />
 
 <PageLayout title={metadata.title} description={metadata.description}>
 	<Header slot='header' />
 
 	<Container>
+		<!-- Breadcrumb Navigation -->
+		<Breadcrumb items={breadcrumbItems} class="mb-6" />
+
 		<div class="mb-12">
 			<H1 size="lg">Online Slots</H1>
 			<P variant="lead" size="lg" class="mt-4">

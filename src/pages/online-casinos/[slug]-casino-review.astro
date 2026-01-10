@@ -1,0 +1,271 @@
+---
+// Dynamic route for casino reviews
+// URL pattern: /online-casinos/[slug]-casino-review/
+// Example: /online-casinos/fastpay-casino-review/
+
+import { getCollection, render, type CollectionEntry, getEntry } from 'astro:content';
+import CasinoReviewLayout from '../../layouts/CasinoReviewLayout.astro';
+import H1 from '../../components/typography/H1.astro';
+import H2 from '../../components/typography/H2.astro';
+import P from '../../components/typography/P.astro';
+import Button from '../../components/ui/Button.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Icon from '../../components/ui/Icon.astro';
+
+export async function getStaticPaths() {
+	const casinos = await getCollection('casinos');
+
+	return casinos.map((casino) => ({
+		params: { slug: casino.data.slug },
+		props: { casino },
+	}));
+}
+
+interface Props {
+	casino: CollectionEntry<'casinos'>;
+}
+
+const { casino } = Astro.props;
+
+// Render content for the casino
+const { Content } = await render(casino);
+
+// Get author details if available
+const author = casino.data.author ? await getEntry(casino.data.author) : null;
+
+// Format dates
+const formatDate = (date: Date | undefined) => {
+	if (!date) return null;
+	return date.toLocaleDateString('en-US', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+	});
+};
+
+const publishedDateFormatted = formatDate(casino.data.publishedDate);
+const updatedDateFormatted = formatDate(casino.data.updatedDate);
+---
+
+<CasinoReviewLayout casino={casino}>
+	<!-- Casino Header -->
+	<header class="mb-8">
+		<H1>{casino.data.name} Review</H1>
+
+							<!-- Author & Date Byline -->
+							{
+								(author || publishedDateFormatted || updatedDateFormatted) && (
+									<div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+										{author && (
+											<div class="flex items-center gap-2">
+												<span class="font-medium text-gray-900 dark:text-white">
+													By {author.data.name}
+												</span>
+												{author.data.role && (
+													<span class="text-gray-500 dark:text-gray-500">
+														• {author.data.role}
+													</span>
+												)}
+											</div>
+										)}
+										{publishedDateFormatted && (
+											<div>
+												<span class="text-gray-500 dark:text-gray-500">Published:</span>
+												<time datetime={casino.data.publishedDate?.toISOString()}>
+													{publishedDateFormatted}
+												</time>
+											</div>
+										)}
+										{updatedDateFormatted && (
+											<div>
+												<span class="text-gray-500 dark:text-gray-500">Updated:</span>
+												<time datetime={casino.data.updatedDate?.toISOString()}>
+													{updatedDateFormatted}
+												</time>
+											</div>
+										)}
+									</div>
+								)
+							}
+
+							<!-- Casino Key Info Box -->
+							<div class="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 rounded-xl p-6 mb-8">
+								<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+									<div class="flex-1">
+										<!-- Rating -->
+										{
+											casino.data.rating && (
+												<div class="flex items-center gap-3 mb-4">
+													<div class="flex items-center">
+														{Array.from({ length: 5 }).map((_, i) => (
+															<Icon
+																name="lucide:star"
+																size={24}
+																class={
+																	i < Math.floor(casino.data.rating!)
+																		? 'text-yellow-500'
+																		: 'text-gray-300 dark:text-gray-600'
+																}
+															/>
+														))}
+													</div>
+													<span class="text-2xl font-bold text-gray-900 dark:text-white">
+														{casino.data.rating.toFixed(1)}/5
+													</span>
+												</div>
+											)
+										}
+
+										<!-- Badges -->
+										<div class="flex flex-wrap gap-2">
+											{casino.data.featured && <Badge variant="primary">Featured</Badge>}
+											{casino.data.isNew && <Badge variant="success">New</Badge>}
+											{casino.data.hasMegaways && <Badge variant="info">Megaways</Badge>}
+											{casino.data.cryptoAccepted && <Badge variant="secondary">Crypto</Badge>}
+										</div>
+									</div>
+
+									<!-- CTA Button -->
+									<div class="flex-shrink-0">
+										<Button
+											href={casino.data.affiliateLink || '#'}
+											variant="primary"
+											class="text-lg px-8 py-4"
+											external
+											affiliate
+										>
+											Visit Casino
+										</Button>
+										<P class="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
+											18+. T&Cs apply
+										</P>
+									</div>
+								</div>
+							</div>
+
+							<!-- Welcome Bonus -->
+							{
+								casino.data.welcomeBonus && (
+									<div class="bg-white dark:bg-gray-800 rounded-xl border-2 border-primary-200 dark:border-primary-800 p-6 mb-8">
+										<H2 size="sm" class="mb-4">
+											Welcome Bonus
+										</H2>
+										<P class="text-2xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+											{casino.data.welcomeBonus.amount}
+										</P>
+										<div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
+											{casino.data.welcomeBonus.wageringRequirement && (
+												<div>
+													<strong>Wagering:</strong>{' '}
+													{casino.data.welcomeBonus.wageringRequirement}x
+												</div>
+											)}
+											{casino.data.welcomeBonus.minDeposit && (
+												<div>
+													<strong>Min Deposit:</strong> €
+													{casino.data.welcomeBonus.minDeposit}
+												</div>
+											)}
+										</div>
+									</div>
+								)
+							}
+
+							<!-- Quick Stats Grid -->
+							<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+								{
+									casino.data.licenses && casino.data.licenses.length > 0 && (
+										<div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+											<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">
+												License
+											</P>
+											<P class="text-sm font-semibold">{casino.data.licenses[0]}</P>
+										</div>
+									)
+								}
+								{
+									casino.data.markets && casino.data.markets.length > 0 && (
+										<div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+											<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">Markets</P>
+											<P class="text-sm font-semibold capitalize">
+												{casino.data.markets.slice(0, 2).join(', ')}
+											</P>
+										</div>
+									)
+								}
+								{
+									casino.data.providers && casino.data.providers.length > 0 && (
+										<div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+											<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">
+												Providers
+											</P>
+											<P class="text-sm font-semibold">
+												{casino.data.providers.length}+
+											</P>
+										</div>
+									)
+								}
+								{
+									casino.data.cryptoAccepted && (
+										<div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+											<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">
+												Crypto
+											</P>
+											<P class="text-sm font-semibold">Accepted</P>
+										</div>
+									)
+								}
+							</div>
+						</header>
+
+						<!-- Review Content -->
+						<section class="prose prose-lg dark:prose-invert max-w-none mb-8">
+							<Content />
+						</section>
+
+						<!-- Pros & Cons -->
+						{
+							(casino.data.pros?.length > 0 || casino.data.cons?.length > 0) && (
+								<section class="mb-8 grid md:grid-cols-2 gap-6">
+									{casino.data.pros?.length > 0 && (
+										<div class="p-6 bg-green-50 dark:bg-green-900/20 rounded-lg">
+											<H2 size="sm" class="text-green-700 dark:text-green-400">
+												Pros
+											</H2>
+											<ul class="space-y-2">
+												{casino.data.pros.map((pro) => (
+													<li class="flex items-start">
+														<Icon
+															name="lucide:check"
+															size={20}
+															class="text-green-600 dark:text-green-400 mr-2 mt-0.5"
+														/>
+														<span>{pro}</span>
+													</li>
+												))}
+											</ul>
+										</div>
+									)}
+									{casino.data.cons?.length > 0 && (
+										<div class="p-6 bg-red-50 dark:bg-red-900/20 rounded-lg">
+											<H2 size="sm" class="text-red-700 dark:text-red-400">
+												Cons
+											</H2>
+											<ul class="space-y-2">
+												{casino.data.cons.map((con) => (
+													<li class="flex items-start">
+														<Icon
+															name="lucide:x"
+															size={20}
+															class="text-red-600 dark:text-red-400 mr-2 mt-0.5"
+														/>
+														<span>{con}</span>
+													</li>
+												))}
+											</ul>
+										</div>
+									)}
+								</section>
+							)
+						}
+</CasinoReviewLayout>

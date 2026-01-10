@@ -1,0 +1,49 @@
+---
+/**
+ * BreadcrumbSchema Component
+ *
+ * Generates JSON-LD structured data for breadcrumb navigation
+ * This helps search engines understand the site structure and can enable
+ * breadcrumb rich snippets in search results
+ *
+ * @example
+ * <BreadcrumbSchema items={[
+ *   { label: 'Home', href: '/' },
+ *   { label: 'Online Slots', href: '/online-slots/' },
+ *   { label: 'Bonanza Megaways', href: '/online-slots/bonanza-megaways/' }
+ * ]} />
+ */
+
+export interface BreadcrumbItem {
+	label: string;
+	href: string;
+}
+
+interface Props {
+	items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+// Get the site URL from Astro config
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://megawaysonline.com';
+
+// Ensure we always have at least Home
+const breadcrumbItems = items.length === 0 || items[0].href !== '/'
+	? [{ label: 'Home', href: '/' }, ...items]
+	: items;
+
+// Build the JSON-LD schema
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'BreadcrumbList',
+	itemListElement: breadcrumbItems.map((item, index) => ({
+		'@type': 'ListItem',
+		position: index + 1,
+		name: item.label,
+		item: `${siteUrl}${item.href}`,
+	})),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

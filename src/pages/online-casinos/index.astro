@@ -1,0 +1,234 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import Container from '../../components/layout/Container.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import H1 from '../../components/typography/H1.astro';
+import H2 from '../../components/typography/H2.astro';
+import P from '../../components/typography/P.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Card from '../../components/ui/Card.astro';
+import Button from '../../components/ui/Button.astro';
+import Icon from '../../components/ui/Icon.astro';
+import Breadcrumb from '../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
+
+// Get all casinos from content collection
+const allCasinos = await getCollection('casinos');
+
+// Sort casinos by rating (highest first), then by name
+const sortedCasinos = allCasinos.sort((a, b) => {
+	if (b.data.rating && a.data.rating) {
+		return b.data.rating - a.data.rating;
+	}
+	return a.data.name.localeCompare(b.data.name);
+});
+
+const metadata = {
+	title: 'Online Casino Reviews | Best Casinos for Megaways Slots',
+	description:
+		'Expert reviews of online casinos featuring Megaways slots. Compare bonuses, payment methods, and game selection. Find the best casino for you.',
+};
+
+// Build breadcrumb items
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Online Casinos', href: '/online-casinos/' },
+];
+---
+
+<!-- Breadcrumb Schema for SEO -->
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<PageLayout title={metadata.title} description={metadata.description}>
+	<Header slot="header" />
+
+	<Container>
+		<!-- Breadcrumb Navigation -->
+		<Breadcrumb items={breadcrumbItems} class="mb-6" />
+
+		<div class="mb-12">
+			<H1 size="lg">Online Casinos</H1>
+			<P variant="lead" size="lg" class="mt-4">
+				Find the best online casinos for Megaways slots. Expert reviews with detailed information on bonuses, payment methods, and game selection.
+			</P>
+		</div>
+
+		<!-- Casino Count -->
+		<div class="mb-8">
+			<P class="text-gray-600 dark:text-gray-400">
+				Showing {sortedCasinos.length} {sortedCasinos.length === 1 ? 'casino' : 'casinos'}
+			</P>
+		</div>
+
+		<!-- Casinos Grid -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			{
+				sortedCasinos.map((casino) => (
+					<Card
+						variant="outlined"
+						padding="sm"
+						class="overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-primary-300 dark:hover:border-primary-700"
+					>
+						<div class="p-6">
+							<!-- Casino Header -->
+							<div class="flex items-start justify-between mb-4">
+								<div class="flex-1">
+									<H2 size="sm" class="mb-2">
+										{casino.data.name}
+									</H2>
+
+									<!-- Rating -->
+									{casino.data.rating && (
+										<div class="flex items-center gap-2 mb-3">
+											<div class="flex items-center">
+												{Array.from({ length: 5 }).map((_, i) => (
+													<Icon
+														name={
+															i < Math.floor(casino.data.rating!)
+																? 'lucide:star'
+																: 'lucide:star'
+														}
+														size={16}
+														class={
+															i < Math.floor(casino.data.rating!)
+																? 'text-yellow-500'
+																: 'text-gray-300 dark:text-gray-600'
+														}
+													/>
+												))}
+											</div>
+											<span class="text-sm font-semibold text-gray-900 dark:text-white">
+												{casino.data.rating.toFixed(1)}
+											</span>
+										</div>
+									)}
+
+									<!-- Badges -->
+									<div class="flex flex-wrap gap-2 mb-4">
+										{casino.data.featured && (
+											<Badge variant="primary" size="sm">
+												Featured
+											</Badge>
+										)}
+										{casino.data.isNew && (
+											<Badge variant="success" size="sm">
+												New
+											</Badge>
+										)}
+										{casino.data.hasMegaways && (
+											<Badge variant="info" size="sm">
+												Megaways
+											</Badge>
+										)}
+										{casino.data.cryptoAccepted && (
+											<Badge variant="secondary" size="sm">
+												Crypto
+											</Badge>
+										)}
+									</div>
+								</div>
+							</div>
+
+							<!-- Welcome Bonus -->
+							{casino.data.welcomeBonus && (
+								<div class="mb-4 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+									<P class="text-xs text-primary-700 dark:text-primary-300 mb-1 font-semibold uppercase">
+										Welcome Bonus
+									</P>
+									<P class="text-sm font-bold text-primary-900 dark:text-primary-100">
+										{casino.data.welcomeBonus.amount}
+									</P>
+									{casino.data.welcomeBonus.wageringRequirement && (
+										<P class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+											{casino.data.welcomeBonus.wageringRequirement}x wagering
+										</P>
+									)}
+								</div>
+							)}
+
+							<!-- Key Info Grid -->
+							<div class="grid grid-cols-2 gap-3 mb-4">
+								{casino.data.markets && casino.data.markets.length > 0 && (
+									<div>
+										<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">Markets</P>
+										<P class="text-sm font-semibold capitalize">
+											{casino.data.markets.slice(0, 2).join(', ')}
+											{casino.data.markets.length > 2 && ` +${casino.data.markets.length - 2}`}
+										</P>
+									</div>
+								)}
+								{casino.data.licenses && casino.data.licenses.length > 0 && (
+									<div>
+										<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">License</P>
+										<P class="text-sm font-semibold">
+											{casino.data.licenses[0]}
+										</P>
+									</div>
+								)}
+							</div>
+
+							<!-- Pros -->
+							{casino.data.pros && casino.data.pros.length > 0 && (
+								<div class="mb-4">
+									<P class="text-xs text-gray-500 dark:text-gray-500 mb-2 font-semibold">
+										Key Features:
+									</P>
+									<ul class="space-y-1">
+										{casino.data.pros.slice(0, 3).map((pro) => (
+											<li class="flex items-start text-sm">
+												<Icon
+													name="lucide:check"
+													size={14}
+													class="text-green-600 dark:text-green-400 mr-2 mt-0.5 shrink-0"
+												/>
+												<span>{pro}</span>
+											</li>
+										))}
+									</ul>
+								</div>
+							)}
+
+							<!-- CTA Buttons -->
+							<div class="flex gap-3">
+								<Button
+									href={casino.data.affiliateLink || '#'}
+									variant="primary"
+									class="flex-1"
+									external
+									affiliate
+								>
+									Visit Casino
+								</Button>
+								<Button
+									href={`/online-casinos/${casino.data.slug}-casino-review/`}
+									variant="secondary"
+									class="flex-1"
+								>
+									Read Review
+								</Button>
+							</div>
+
+							<!-- T&Cs Note -->
+							<P class="text-xs text-gray-500 dark:text-gray-500 mt-3 text-center">
+								18+. T&Cs apply. Please gamble responsibly.
+							</P>
+						</div>
+					</Card>
+				))
+			}
+		</div>
+
+		<!-- Empty State -->
+		{
+			sortedCasinos.length === 0 && (
+				<div class="text-center py-12">
+					<P class="text-gray-500 dark:text-gray-400">No casinos found. Check back soon!</P>
+				</div>
+			)
+		}
+	</Container>
+
+	<Footer slot="footer" />
+</PageLayout>
