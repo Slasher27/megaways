@@ -1,0 +1,2 @@
+# Exclude docs folder from Vercel deployment
+docs/

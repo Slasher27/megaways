@@ -1,0 +1,248 @@
+---
+// Dynamic route for slot reviews
+// URL pattern: /online-slots/[slug]/
+// Example: /online-slots/celestial-sisters-megaways/
+
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import PageLayout from '../../layouts/PageLayout.astro';
+import H1 from '../../components/typography/H1.astro';
+import H2 from '../../components/typography/H2.astro';
+import P from '../../components/typography/P.astro';
+
+export async function getStaticPaths() {
+	const slots = await getCollection('slots');
+
+	return slots.map((slot) => ({
+		params: { slug: slot.data.slug },
+		props: { slot },
+	}));
+}
+
+interface Props {
+	slot: CollectionEntry<'slots'>;
+}
+
+const { slot } = Astro.props;
+
+// Render content for the slot
+const { Content } = await render(slot);
+
+// Build page title and description
+const pageTitle = slot.data.title || `${slot.data.name} Review | Megaways Online`;
+const pageDescription =
+	slot.data.description ||
+	`Read our ${slot.data.name} review. RTP ${slot.data.rtp}%, max win ${slot.data.maxWin}, ${slot.data.maxWays} ways to win.`;
+---
+
+<PageLayout title={pageTitle} description={pageDescription}>
+	<article class="max-w-4xl mx-auto">
+		<!-- Slot Header -->
+		<header class="mb-8">
+			<H1>{slot.data.name}</H1>
+
+			<!-- Slot Meta Info -->
+			<div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
+				<div>
+					<strong>Provider:</strong>
+					{slot.data.provider}
+				</div>
+				{
+					slot.data.rtp && (
+						<div>
+							<strong>RTP:</strong> {slot.data.rtp}%
+						</div>
+					)
+				}
+				{
+					slot.data.volatility && (
+						<div>
+							<strong>Volatility:</strong> {slot.data.volatility}
+						</div>
+					)
+				}
+				{
+					slot.data.maxWin && (
+						<div>
+							<strong>Max Win:</strong> {slot.data.maxWin}
+						</div>
+					)
+				}
+			</div>
+
+			<!-- Thumbnail -->
+			<div class="mb-8">
+				<Image
+					src={slot.data.thumbnail}
+					alt={slot.data.name}
+					width={800}
+					height={600}
+					class="rounded-lg shadow-lg w-full max-w-2xl"
+					loading="eager"
+					format="webp"
+				/>
+			</div>
+		</header>
+
+		<!-- Slot Stats Grid -->
+		{
+			(slot.data.reels ||
+				slot.data.minBet ||
+				slot.data.maxBet ||
+				slot.data.maxWays) && (
+				<section class="mb-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+					<H2 size="md">Game Stats</H2>
+					<dl class="grid grid-cols-2 md:grid-cols-4 gap-4">
+						{slot.data.reels && (
+							<div>
+								<dt class="text-sm text-gray-600 dark:text-gray-400">
+									Reels
+								</dt>
+								<dd class="text-lg font-semibold">{slot.data.reels}</dd>
+							</div>
+						)}
+						{slot.data.rows && (
+							<div>
+								<dt class="text-sm text-gray-600 dark:text-gray-400">
+									Rows
+								</dt>
+								<dd class="text-lg font-semibold">{slot.data.rows}</dd>
+							</div>
+						)}
+						{slot.data.maxWays && (
+							<div>
+								<dt class="text-sm text-gray-600 dark:text-gray-400">
+									Max Ways
+								</dt>
+								<dd class="text-lg font-semibold">
+									{slot.data.maxWays.toLocaleString()}
+								</dd>
+							</div>
+						)}
+						{slot.data.minBet && (
+							<div>
+								<dt class="text-sm text-gray-600 dark:text-gray-400">
+									Min Bet
+								</dt>
+								<dd class="text-lg font-semibold">${slot.data.minBet}</dd>
+							</div>
+						)}
+						{slot.data.maxBet && (
+							<div>
+								<dt class="text-sm text-gray-600 dark:text-gray-400">
+									Max Bet
+								</dt>
+								<dd class="text-lg font-semibold">${slot.data.maxBet}</dd>
+							</div>
+						)}
+						{slot.data.bonusBuy !== undefined && (
+							<div>
+								<dt class="text-sm text-gray-600 dark:text-gray-400">
+									Bonus Buy
+								</dt>
+								<dd class="text-lg font-semibold">
+									{slot.data.bonusBuy ? 'Yes' : 'No'}
+								</dd>
+							</div>
+						)}
+					</dl>
+				</section>
+			)
+		}
+
+		<!-- Mechanics & Features -->
+		{
+			(slot.data.mechanics?.length > 0 || slot.data.features?.length > 0) && (
+				<section class="mb-8">
+					<H2 size="md">Features & Mechanics</H2>
+					<div class="flex flex-wrap gap-4">
+						{slot.data.mechanics?.length > 0 && (
+							<div>
+								<h3 class="font-semibold mb-2">Mechanics:</h3>
+								<div class="flex flex-wrap gap-2">
+									{slot.data.mechanics.map((mechanic) => (
+										<span class="px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-sm">
+											{mechanic}
+										</span>
+									))}
+								</div>
+							</div>
+						)}
+						{slot.data.features?.length > 0 && (
+							<div>
+								<h3 class="font-semibold mb-2">Features:</h3>
+								<div class="flex flex-wrap gap-2">
+									{slot.data.features.map((feature) => (
+										<span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm">
+											{feature}
+										</span>
+									))}
+								</div>
+							</div>
+						)}
+					</div>
+				</section>
+			)
+		}
+
+		<!-- Review Content -->
+		<section class="prose prose-lg dark:prose-invert max-w-none mb-8">
+			<Content />
+		</section>
+
+		<!-- Pros & Cons -->
+		{
+			(slot.data.pros?.length > 0 || slot.data.cons?.length > 0) && (
+				<section class="mb-8 grid md:grid-cols-2 gap-6">
+					{slot.data.pros?.length > 0 && (
+						<div class="p-6 bg-green-50 dark:bg-green-900/20 rounded-lg">
+							<H2 size="sm" class="text-green-700 dark:text-green-400">
+								Pros
+							</H2>
+							<ul class="space-y-2">
+								{slot.data.pros.map((pro) => (
+									<li class="flex items-start">
+										<span class="text-green-600 dark:text-green-400 mr-2">
+											✓
+										</span>
+										<span>{pro}</span>
+									</li>
+								))}
+							</ul>
+						</div>
+					)}
+					{slot.data.cons?.length > 0 && (
+						<div class="p-6 bg-red-50 dark:bg-red-900/20 rounded-lg">
+							<H2 size="sm" class="text-red-700 dark:text-red-400">
+								Cons
+							</H2>
+							<ul class="space-y-2">
+								{slot.data.cons.map((con) => (
+									<li class="flex items-start">
+										<span class="text-red-600 dark:text-red-400 mr-2">
+											✗
+										</span>
+										<span>{con}</span>
+									</li>
+								))}
+							</ul>
+						</div>
+					)}
+				</section>
+			)
+		}
+
+		<!-- Rating -->
+		{
+			slot.data.rating && (
+				<section class="mb-8 p-6 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-center">
+					<H2 size="sm">Overall Rating</H2>
+					<div class="text-6xl font-bold text-primary-600 dark:text-primary-400">
+						{slot.data.rating}
+						<span class="text-3xl">/5</span>
+					</div>
+				</section>
+			)
+		}
+	</article>
+</PageLayout>

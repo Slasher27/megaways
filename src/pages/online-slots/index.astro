@@ -1,0 +1,139 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import PageLayout from '../../layouts/PageLayout.astro';
+import Container from '../../components/layout/Container.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import H1 from '../../components/typography/H1.astro';
+import H2 from '../../components/typography/H2.astro';
+import P from '../../components/typography/P.astro';
+import Link from '../../components/ui/Link.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Card from '../../components/ui/Card.astro';
+
+// Get all slots from content collection
+const allSlots = await getCollection('slots');
+
+// Sort slots by name alphabetically
+const sortedSlots = allSlots.sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+const metadata = {
+	title: 'Online Slots Reviews | Megaways & More',
+	description: 'Comprehensive reviews of online slots including Megaways, features, RTP, volatility, and where to play. Expert analysis and ratings.',
+};
+---
+
+<PageLayout title={metadata.title} description={metadata.description}>
+	<Header slot='header' />
+
+	<Container>
+		<div class="mb-12">
+			<H1 size="lg">Online Slots</H1>
+			<P variant="lead" size="lg" class="mt-4">
+				Browse our comprehensive collection of slot reviews. Find detailed information on RTP, volatility, features, and the best casinos to play.
+			</P>
+		</div>
+
+		<!-- Slot Count -->
+		<div class="mb-8">
+			<P class="text-gray-600 dark:text-gray-400">
+				Showing {sortedSlots.length} {sortedSlots.length === 1 ? ' slot' : ' slots'}
+			</P>
+		</div>
+
+		<!-- Slots Grid -->
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			{sortedSlots.map((slot) => (
+				<Card variant="outlined" padding="sm" class="overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-primary-300 dark:hover:border-primary-700">
+					<a href={`/online-slots/${slot.data.slug}/`} class="block group">
+						<!-- Thumbnail -->
+						{slot.data.thumbnail && (
+							<div class="relative aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-md">
+								<Image
+									src={slot.data.thumbnail}
+									alt={slot.data.name}
+									width={400}
+									height={225}
+									class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+									loading="lazy"
+									format="webp"
+								/>
+							</div>
+						)}
+
+						<!-- Content -->
+						<div class="p-4">
+							<!-- Slot Name -->
+							<H2 size="sm" class="mb-3 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+								{slot.data.name}
+							</H2>
+
+							<!-- Provider -->
+							{slot.data.provider && (
+								<P class="text-sm text-gray-600 dark:text-gray-400 mb-4 capitalize">
+									{slot.data.provider.replace('-', ' ')}
+								</P>
+							)}
+
+							<!-- Stats Grid -->
+							<div class="grid grid-cols-2 gap-3 mb-4">
+								{slot.data.rtp && (
+									<div>
+										<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">RTP</P>
+										<P class="text-sm font-semibold">{slot.data.rtp}%</P>
+									</div>
+								)}
+								{slot.data.volatility && (
+									<div>
+										<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">Volatility</P>
+										<P class="text-sm font-semibold capitalize">{slot.data.volatility}</P>
+									</div>
+								)}
+								{slot.data.maxWin && (
+									<div>
+										<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">Max Win</P>
+										<P class="text-sm font-semibold">{slot.data.maxWin}</P>
+									</div>
+								)}
+								{slot.data.maxWays && (
+									<div>
+										<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">Max Ways</P>
+										<P class="text-sm font-semibold">{slot.data.maxWays.toLocaleString()}</P>
+									</div>
+								)}
+							</div>
+
+							<!-- Mechanics Badges -->
+							{slot.data.mechanics && slot.data.mechanics.length > 0 && (
+								<div class="flex flex-wrap gap-2">
+									{slot.data.mechanics.slice(0, 3).map((mechanic) => (
+										<Badge variant="primary" size="sm">
+											{mechanic}
+										</Badge>
+									))}
+									{slot.data.mechanics.length > 3 && (
+										<Badge variant="secondary" size="sm">
+											+{slot.data.mechanics.length - 3}
+										</Badge>
+									)}
+								</div>
+							)}
+						</div>
+					</a>
+				</Card>
+			))}
+		</div>
+
+		<!-- Empty State -->
+		{sortedSlots.length === 0 && (
+			<div class="text-center py-12">
+				<P class="text-gray-500 dark:text-gray-400">
+					No slots found. Check back soon!
+				</P>
+			</div>
+		)}
+	</Container>
+
+	<Footer slot='footer' />
+</PageLayout>
