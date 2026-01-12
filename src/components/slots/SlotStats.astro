@@ -1,0 +1,106 @@
+---
+/**
+ * SlotStats Component
+ *
+ * Displays key slot statistics in a visually appealing grid
+ */
+
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	rtp?: number;
+	volatility?: 'low' | 'medium' | 'medium-high' | 'high' | 'very-high';
+	maxWin?: string;
+	paylines?: number;
+	reels?: number;
+	rows?: string;
+	minBet?: number;
+	maxBet?: number;
+	bonusBuy?: boolean;
+	class?: string;
+}
+
+const {
+	rtp,
+	volatility,
+	maxWin,
+	paylines,
+	reels,
+	rows,
+	minBet,
+	maxBet,
+	class: className = '',
+} = Astro.props;
+
+// Volatility color mapping
+const volatilityColors = {
+	low: 'text-green-600 dark:text-green-400',
+	medium: 'text-yellow-600 dark:text-yellow-400',
+	'medium-high': 'text-orange-600 dark:text-orange-400',
+	high: 'text-red-600 dark:text-red-400',
+	'very-high': 'text-red-700 dark:text-red-500',
+};
+
+const volatilityColor = volatility ? volatilityColors[volatility] : '';
+
+// Stats array
+const stats = [
+	{ label: 'RTP', value: rtp ? `${rtp}%` : null, icon: 'lucide:percent' },
+	{
+		label: 'Volatility',
+		value: volatility ? volatility.replace('-', ' ') : null,
+		icon: 'lucide:activity',
+		colorClass: volatilityColor,
+	},
+	{ label: 'Max Win', value: maxWin, icon: 'lucide:trophy' },
+	{
+		label: 'Paylines',
+		value: paylines ? paylines.toLocaleString() : null,
+		icon: 'lucide:zap',
+	},
+	{ label: 'Reels', value: reels, icon: 'lucide:columns-3' },
+	{ label: 'Rows', value: rows, icon: 'lucide:rows-3' },
+	{
+		label: 'Min Bet',
+		value: minBet ? `$${minBet}` : null,
+		icon: 'lucide:coins',
+	},
+	{
+		label: 'Max Bet',
+		value: maxBet ? `$${maxBet}` : null,
+		icon: 'lucide:banknote',
+	},
+].filter((stat) => stat.value !== null && stat.value !== undefined);
+---
+
+{
+	stats.length > 0 && (
+		<div
+			class={`bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-700 ${className}`}
+		>
+			<div class='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+				{stats.map((stat) => (
+					<div class='flex items-start gap-3'>
+						<div class='p-2 bg-primary-100 dark:bg-primary-900/50 rounded-lg shrink-0'>
+							<Icon
+								name={stat.icon}
+								size={20}
+								class='text-primary-600 dark:text-primary-400'
+							/>
+						</div>
+						<div class='min-w-0'>
+							<dt class='text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1'>
+								{stat.label}
+							</dt>
+							<dd
+								class={`text-md font-semibold text-gray-900 dark:text-white capitalize ${stat.colorClass || ''}`}
+							>
+								{stat.value}
+							</dd>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	)
+}

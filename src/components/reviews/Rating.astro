@@ -1,0 +1,88 @@
+---
+/**
+ * Rating Component
+ *
+ * Displays a star rating with visual stars
+ * Supports half stars and customizable size
+ */
+
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	rating: number; // 0-5 rating
+	maxRating?: number; // Maximum rating (default 5)
+	size?: 'sm' | 'md' | 'lg' | 'xl';
+	showNumber?: boolean; // Show numerical rating
+	class?: string;
+}
+
+const {
+	rating,
+	maxRating = 5,
+	size = 'md',
+	showNumber = true,
+	class: className = '',
+} = Astro.props;
+
+// Size mappings
+const sizeMap = {
+	sm: 16,
+	md: 20,
+	lg: 24,
+	xl: 32,
+};
+
+const iconSize = sizeMap[size];
+
+// Calculate full, half, and empty stars
+const fullStars = Math.floor(rating);
+const hasHalfStar = rating % 1 >= 0.5;
+const emptyStars = maxRating - fullStars - (hasHalfStar ? 1 : 0);
+
+// Text size classes
+const textSizeMap = {
+	sm: 'text-sm',
+	md: 'text-base',
+	lg: 'text-lg',
+	xl: 'text-xl',
+};
+---
+
+<div class={`flex items-center gap-2 ${className}`}>
+	<!-- Stars -->
+	<div class="flex items-center gap-0.5">
+		<!-- Full Stars -->
+		{Array.from({ length: fullStars }).map(() => (
+			<Icon
+				name="lucide:star"
+				size={iconSize}
+				class="text-yellow-500 fill-yellow-500"
+			/>
+		))}
+
+		<!-- Half Star -->
+		{hasHalfStar && (
+			<Icon
+				name="lucide:star-half"
+				size={iconSize}
+				class="text-yellow-500 fill-yellow-500"
+			/>
+		)}
+
+		<!-- Empty Stars -->
+		{Array.from({ length: emptyStars }).map(() => (
+			<Icon
+				name="lucide:star"
+				size={iconSize}
+				class="text-gray-300 dark:text-gray-600"
+			/>
+		))}
+	</div>
+
+	<!-- Numerical Rating -->
+	{showNumber && (
+		<span class={`font-semibold text-gray-900 dark:text-white ${textSizeMap[size]}`}>
+			{rating.toFixed(1)}<span class="text-gray-500 dark:text-gray-400">/{maxRating}</span>
+		</span>
+	)}
+</div>

@@ -3,12 +3,26 @@
 // URL pattern: /online-slots/[slug]/
 // Example: /online-slots/celestial-sisters-megaways/
 
-import { getCollection, render, type CollectionEntry, getEntry } from 'astro:content';
+import {
+	getCollection,
+	render,
+	type CollectionEntry,
+	getEntry,
+} from 'astro:content';
 import { Image } from 'astro:assets';
 import SlotReviewLayout from '../../layouts/SlotReviewLayout.astro';
 import H1 from '../../components/typography/H1.astro';
 import H2 from '../../components/typography/H2.astro';
 import P from '../../components/typography/P.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Button from '../../components/ui/Button.astro';
+
+// New review components
+import Rating from '../../components/reviews/Rating.astro';
+import ProsCons from '../../components/reviews/ProsCons.astro';
+import AuthorCard from '../../components/reviews/AuthorCard.astro';
+import SlotStats from '../../components/slots/SlotStats.astro';
+import WhereToPlay from '../../components/slots/WhereToPlay.astro';
 
 export async function getStaticPaths() {
 	const slots = await getCollection('slots');
@@ -30,261 +44,148 @@ const { Content } = await render(slot);
 
 // Get author details if available (author is already a reference)
 const author = slot.data.author ? await getEntry(slot.data.author) : null;
-
-// Format dates
-const formatDate = (date: Date | undefined) => {
-	if (!date) return null;
-	return date.toLocaleDateString('en-US', {
-		year: 'numeric',
-		month: 'long',
-		day: 'numeric'
-	});
-};
-
-const publishedDateFormatted = formatDate(slot.data.publishedDate);
-const updatedDateFormatted = formatDate(slot.data.updatedDate);
 ---
 
 <SlotReviewLayout slotEntry={slot}>
-	<!-- Slot Header -->
-	<header class="mb-8">
-		<H1>{slot.data.name}</H1>
-
-		<!-- Author & Date Byline -->
-		{(author || publishedDateFormatted || updatedDateFormatted) && (
-			<div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-				{author && (
-					<div class="flex items-center gap-2">
-						<span class="font-medium text-gray-900 dark:text-white">
-							By {author.data.name}
+	<!-- Hero Section -->
+	<header class='mb-10'>
+		<!-- Provider Badge -->
+		<div class='flex flex-wrap items-center gap-3 mb-4'>
+			{
+				slot.data.provider && (
+					<Badge variant='secondary' size='md'>
+						<span class='capitalize'>
+							{slot.data.provider.replace('-', ' ')}
 						</span>
-						{author.data.role && (
-							<span class="text-gray-500 dark:text-gray-500">
-								• {author.data.role}
-							</span>
-						)}
-					</div>
-				)}
-				{publishedDateFormatted && (
-					<div>
-						<span class="text-gray-500 dark:text-gray-500">Published:</span>
-						<time datetime={slot.data.publishedDate?.toISOString()}>
-							{publishedDateFormatted}
-						</time>
-					</div>
-				)}
-				{updatedDateFormatted && (
-					<div>
-						<span class="text-gray-500 dark:text-gray-500">Updated:</span>
-						<time datetime={slot.data.updatedDate?.toISOString()}>
-							{updatedDateFormatted}
-						</time>
-					</div>
-				)}
-			</div>
-		)}
+					</Badge>
+				)
+			}
+		</div>
 
-		<!-- Slot Meta Info -->
-		<div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
-				<div>
-					<strong>Provider:</strong>
-					{slot.data.provider}
-				</div>
-				{
-					slot.data.rtp && (
-						<div>
-							<strong>RTP:</strong> {slot.data.rtp}%
-						</div>
-					)
-				}
-				{
-					slot.data.volatility && (
-						<div>
-							<strong>Volatility:</strong> {slot.data.volatility}
-						</div>
-					)
-				}
-				{
-					slot.data.maxWin && (
-						<div>
-							<strong>Max Win:</strong> {slot.data.maxWin}
-						</div>
-					)
-				}
-			</div>
+		<!-- Heading -->
+		<H1 size='md' class='mb-6'>{slot.data.h1Tag || slot.data.name}</H1>
 
+		<!-- Description -->
+		{
+			slot.data.description && (
+				<P
+					variant='lead'
+					size='lg'
+					class='text-gray-700 dark:text-gray-300 mb-8'
+				>
+					{slot.data.description}
+				</P>
+			)
+		}
+
+		<!-- Hero Content: Image + Stats/Features (Row on Desktop, Column on Mobile) -->
+		<div class='flex flex-col lg:flex-row lg:items-start gap-6 mb-8'>
 			<!-- Thumbnail -->
-			<div class="mb-8">
-				<Image
-					src={slot.data.thumbnail}
-					alt={slot.data.name}
-					width={800}
-					height={600}
-					class="rounded-lg shadow-lg w-full max-w-2xl"
-					loading="eager"
-					format="webp"
-				/>
+			<div class='flex flex-col gap-4 lg:gap-6'>
+				<div class='lg:w-100 shrink-0 rounded-xl overflow-hidden'>
+					<Image
+						src={slot.data.thumbnail}
+						alt={slot.data.name}
+						width={400}
+						height={225}
+						class='w-full h-auto block'
+						loading='eager'
+						format='webp'
+					/>
+				</div>
+				<div class='flex flex-row items-center justify-center gap-4'>
+					<Button variant='secondary'>Play Demo</Button>
+					<Button variant='primary'>Where to play</Button>
+				</div>
 			</div>
-		</header>
+			<!-- Stats & Features -->
+			<div
+				class='flex-1 bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-700'
+			>
+				<SlotStats
+					rtp={slot.data.rtp}
+					volatility={slot.data.volatility}
+					maxWin={slot.data.maxWin}
+					paylines={slot.data.paylines}
+					reels={slot.data.reels}
+					rows={slot.data.rows}
+					minBet={slot.data.minBet}
+					maxBet={slot.data.maxBet}
+					bonusBuy={slot.data.bonusBuy}
+					class='bg-transparent! border-0! p-0! mb-6'
+				/>
 
-		<!-- Slot Stats Grid -->
-		{
-			(slot.data.reels ||
-				slot.data.minBet ||
-				slot.data.maxBet ||
-				slot.data.maxWays) && (
-				<section class="mb-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
-					<H2 size="md">Game Stats</H2>
-					<dl class="grid grid-cols-2 md:grid-cols-4 gap-4">
-						{slot.data.reels && (
-							<div>
-								<dt class="text-sm text-gray-600 dark:text-gray-400">
-									Reels
-								</dt>
-								<dd class="text-lg font-semibold">{slot.data.reels}</dd>
-							</div>
-						)}
-						{slot.data.rows && (
-							<div>
-								<dt class="text-sm text-gray-600 dark:text-gray-400">
-									Rows
-								</dt>
-								<dd class="text-lg font-semibold">{slot.data.rows}</dd>
-							</div>
-						)}
-						{slot.data.maxWays && (
-							<div>
-								<dt class="text-sm text-gray-600 dark:text-gray-400">
-									Max Ways
-								</dt>
-								<dd class="text-lg font-semibold">
-									{slot.data.maxWays.toLocaleString()}
-								</dd>
-							</div>
-						)}
-						{slot.data.minBet && (
-							<div>
-								<dt class="text-sm text-gray-600 dark:text-gray-400">
-									Min Bet
-								</dt>
-								<dd class="text-lg font-semibold">${slot.data.minBet}</dd>
-							</div>
-						)}
-						{slot.data.maxBet && (
-							<div>
-								<dt class="text-sm text-gray-600 dark:text-gray-400">
-									Max Bet
-								</dt>
-								<dd class="text-lg font-semibold">${slot.data.maxBet}</dd>
-							</div>
-						)}
-						{slot.data.bonusBuy !== undefined && (
-							<div>
-								<dt class="text-sm text-gray-600 dark:text-gray-400">
-									Bonus Buy
-								</dt>
-								<dd class="text-lg font-semibold">
-									{slot.data.bonusBuy ? 'Yes' : 'No'}
-								</dd>
-							</div>
-						)}
-					</dl>
-				</section>
-			)
-		}
-
-		<!-- Mechanics & Features -->
-		{
-			(slot.data.mechanics?.length > 0 || slot.data.features?.length > 0) && (
-				<section class="mb-8">
-					<H2 size="md">Features & Mechanics</H2>
-					<div class="flex flex-wrap gap-4">
-						{slot.data.mechanics?.length > 0 && (
-							<div>
-								<h3 class="font-semibold mb-2">Mechanics:</h3>
-								<div class="flex flex-wrap gap-2">
-									{slot.data.mechanics.map((mechanic) => (
-										<span class="px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-sm">
-											{mechanic}
-										</span>
-									))}
-								</div>
-							</div>
-						)}
-						{slot.data.features?.length > 0 && (
-							<div>
-								<h3 class="font-semibold mb-2">Features:</h3>
-								<div class="flex flex-wrap gap-2">
-									{slot.data.features.map((feature) => (
-										<span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm">
-											{feature}
-										</span>
-									))}
-								</div>
-							</div>
-						)}
-					</div>
-				</section>
-			)
-		}
-
-		<!-- Review Content -->
-		<section class="prose prose-lg dark:prose-invert max-w-none mb-8">
-			<Content />
-		</section>
-
-		<!-- Pros & Cons -->
-		{
-			(slot.data.pros?.length > 0 || slot.data.cons?.length > 0) && (
-				<section class="mb-8 grid md:grid-cols-2 gap-6">
-					{slot.data.pros?.length > 0 && (
-						<div class="p-6 bg-green-50 dark:bg-green-900/20 rounded-lg">
-							<H2 size="sm" class="text-green-700 dark:text-green-400">
-								Pros
-							</H2>
-							<ul class="space-y-2">
-								{slot.data.pros.map((pro) => (
-									<li class="flex items-start">
-										<span class="text-green-600 dark:text-green-400 mr-2">
-											✓
-										</span>
-										<span>{pro}</span>
-									</li>
+				<!-- Features -->
+				{
+					slot.data.features?.length > 0 && (
+						<div class='pt-4 border-t border-gray-300 dark:border-gray-700'>
+							<h4 class='text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2'>
+								Features
+							</h4>
+							<div class='flex flex-wrap gap-1.5'>
+								{slot.data.features.map((feature) => (
+									<span class='px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs capitalize'>
+										{feature}
+									</span>
 								))}
-							</ul>
+							</div>
 						</div>
-					)}
-					{slot.data.cons?.length > 0 && (
-						<div class="p-6 bg-red-50 dark:bg-red-900/20 rounded-lg">
-							<H2 size="sm" class="text-red-700 dark:text-red-400">
-								Cons
-							</H2>
-							<ul class="space-y-2">
-								{slot.data.cons.map((con) => (
-									<li class="flex items-start">
-										<span class="text-red-600 dark:text-red-400 mr-2">
-											✗
-										</span>
-										<span>{con}</span>
-									</li>
-								))}
-							</ul>
-						</div>
-					)}
-				</section>
-			)
-		}
+					)
+				}
+			</div>
+		</div>
+	</header>
 
-		<!-- Rating -->
-		{
-			slot.data.rating && (
-				<section class="mb-8 p-6 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-center">
-					<H2 size="sm">Overall Rating</H2>
-					<div class="text-6xl font-bold text-primary-600 dark:text-primary-400">
-						{slot.data.rating}
-						<span class="text-3xl">/5</span>
-					</div>
-				</section>
-			)
-		}
+	<!-- Review Content -->
+	<section class='prose prose-lg dark:prose-invert max-w-none mb-10'>
+		<Content />
+	</section>
+
+	<!-- Pros & Cons -->
+	<ProsCons pros={slot.data.pros} cons={slot.data.cons} class='mb-10' />
+
+	<!-- Where to Play -->
+	<div id='where-to-play'>
+		<WhereToPlay slotName={slot.data.name} class='mb-10' />
+	</div>
+
+	<!-- Author Card -->
+	{
+		author && (
+			<AuthorCard
+				author={author}
+				publishedDate={slot.data.publishedDate}
+				updatedDate={slot.data.updatedDate}
+				variant='full'
+				class='mb-10'
+			/>
+		)
+	}
+
+	<!-- Final Rating Summary -->
+	{
+		slot.data.rating && (
+			<section class='bg-linear-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 rounded-xl p-8 text-center border border-primary-200 dark:border-primary-800'>
+				<H2 size='md' class='mb-4!'>
+					Our Verdict
+				</H2>
+				<div class='flex items-center justify-center gap-4 mb-4'>
+					<Rating rating={slot.data.rating} size='xl' />
+				</div>
+				<P class='text-gray-700 dark:text-gray-300 max-w-2xl mx-auto'>
+					{slot.data.name} scores {slot.data.rating} out of 5 stars in our
+					review.
+					{slot.data.rating >= 4.5 && ' Highly recommended for all players.'}
+					{slot.data.rating >= 4 &&
+						slot.data.rating < 4.5 &&
+						' A solid choice worth trying.'}
+					{slot.data.rating >= 3 &&
+						slot.data.rating < 4 &&
+						' Decent slot with some good features.'}
+					{slot.data.rating < 3 &&
+						' May appeal to specific player preferences.'}
+				</P>
+			</section>
+		)
+	}
 </SlotReviewLayout>

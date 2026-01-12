@@ -20,46 +20,48 @@ const slots = defineCollection({
 			logo: image().optional(), // Optional slot logo
 			provider: z.string(), // Provider slug for filtering (btg, red-tiger, etc.)
 
-		// Stats
-		rtp: z.number().min(0).max(100).optional(), // e.g., 96.5
-		volatility: z
-			.enum(['low', 'medium', 'medium-high', 'high', 'very-high'])
-			.optional(),
-		maxWin: z.string().optional(), // e.g., "50,000x"
-		maxWays: z.number().positive().optional(), // e.g., 117649
+			// Stats
+			rtp: z.number().min(0).max(100).optional(), // e.g., 96.5
+			volatility: z
+				.enum(['low', 'medium', 'medium-high', 'high', 'very-high'])
+				.optional(),
+			maxWin: z.string().optional(), // e.g., "50,000x"
+			paylines: z.number().positive().optional(), // e.g., 117649
 
-		// Mechanics
-		mechanics: z.array(z.string()).default([]), // ['megaways', 'cascading', 'bonus-buy']
+			// Mechanics
+			mechanics: z.array(z.string()).default([]), // ['megaways', 'cascading', 'bonus-buy']
 
-		// Grid Configuration
-		reels: z.number().positive().optional(), // Number of reels (typically 5-6)
-		rows: z.string().optional(), // e.g., "2-7" for variable rows
+			// Grid Configuration
+			reels: z.number().positive().optional(), // Number of reels (typically 5-6)
+			rows: z.string().optional(), // e.g., "2-7" for variable rows
 
-		// Betting
-		minBet: z.number().positive().optional(), // e.g., 0.10
-		maxBet: z.number().positive().optional(), // e.g., 100
+			// Betting
+			minBet: z.number().positive().optional(), // e.g., 0.10
+			maxBet: z.number().positive().optional(), // e.g., 100
 
-		// Features
-		features: z.array(z.string()).default([]), // List of game features
-		bonusBuy: z.boolean().default(false), // Whether bonus buy is available
+			// Features
+			features: z.array(z.string()).default([]), // List of game features
+			bonusBuy: z.boolean().default(false), // Whether bonus buy is available
 
-		// Theme
-		theme: z.array(z.string()).default([]), // Thematic tags
+			// Theme
+			theme: z.array(z.string()).default([]), // Thematic tags
 
-		// Rating & Review
-		rating: z.number().min(0).max(5).optional(), // 0-5 star rating
-		pros: z.array(z.string()).default([]),
-		cons: z.array(z.string()).default([]),
+			// Rating & Review
+			rating: z.number().min(0).max(5).optional(), // 0-5 star rating
+			pros: z.array(z.string()).default([]),
+			cons: z.array(z.string()).default([]),
 
-		// SEO
-		title: z.string().optional(), // Custom page title (overrides default)
-		description: z.string().optional(), // Meta description
+			// SEO
+			title: z.string().optional(), // Custom page title (overrides default)
+			description: z.string().optional(), // Meta description
+			h1Tag: z.string().default('Megaways Slots'), // Custom H1 component
 
-		// E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness)
-		author: reference('authors').optional(), // Reference to authors collection
-		publishedDate: z.coerce.date().optional(), // Initial publication date
-		updatedDate: z.coerce.date().optional(), // Last update date
-	}),
+			// E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness)
+			author: reference('authors').optional(), // Reference to authors collection
+			realeasedDate: z.coerce.date().optional(), // Last update date
+			publishedDate: z.coerce.date().optional(), // Initial publication date
+			updatedDate: z.coerce.date().optional(), // Last update date
+		}),
 });
 
 // ============================================

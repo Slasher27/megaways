@@ -1,0 +1,157 @@
+---
+/**
+ * WhereToPlay Component
+ *
+ * Displays recommended casinos where users can play the slot
+ * Includes CTA buttons with affiliate links
+ */
+
+import { Icon } from 'astro-icon/components';
+import Button from '../ui/Button.astro';
+import Badge from '../ui/Badge.astro';
+import H2 from '../typography/H2.astro';
+import P from '../typography/P.astro';
+
+interface Casino {
+	name: string;
+	logo?: string;
+	bonus?: string;
+	rating?: number;
+	affiliateLink: string;
+	featured?: boolean;
+}
+
+interface Props {
+	slotName: string;
+	casinos?: Casino[];
+	class?: string;
+}
+
+const {
+	slotName,
+	casinos = [],
+	class: className = '',
+} = Astro.props;
+
+// Default casinos if none provided (you can customize this)
+const defaultCasinos: Casino[] = [
+	{
+		name: 'BitStarz Casino',
+		bonus: '5 BTC + 200 Free Spins',
+		rating: 4.5,
+		affiliateLink: '/go/bitstarz/',
+		featured: true,
+	},
+	{
+		name: 'Casino Joy',
+		bonus: '100% up to $2000',
+		rating: 4.3,
+		affiliateLink: '/go/casinojoy/',
+	},
+];
+
+const displayCasinos = casinos.length > 0 ? casinos : defaultCasinos;
+---
+
+<section class={`bg-linear-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 rounded-xl p-8 border border-primary-200 dark:border-primary-800 ${className}`}>
+	<div class="text-center mb-8">
+		<H2 size="md" class="mb-3!">Where to Play {slotName}</H2>
+		<P class="text-gray-600 dark:text-gray-400">
+			Play {slotName} at these top-rated online casinos
+		</P>
+	</div>
+
+	<div class="grid md:grid-cols-2 gap-6">
+		{displayCasinos.map((casino) => (
+			<div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
+				{/* Featured Badge */}
+				{casino.featured && (
+					<div class="mb-3">
+						<Badge variant="warning" size="sm">
+							<Icon name="lucide:star" size={14} class="inline mr-1" />
+							Featured
+						</Badge>
+					</div>
+				)}
+
+				{/* Casino Logo/Name */}
+				<div class="mb-4">
+					{casino.logo ? (
+						<img
+							src={casino.logo}
+							alt={casino.name}
+							class="h-12 object-contain"
+						/>
+					) : (
+						<h3 class="text-xl font-bold text-gray-900 dark:text-white">
+							{casino.name}
+						</h3>
+					)}
+				</div>
+
+				{/* Rating */}
+				{casino.rating && (
+					<div class="flex items-center gap-2 mb-3">
+						<div class="flex items-center">
+							{Array.from({ length: 5 }).map((_, i) => (
+								<Icon
+									name="lucide:star"
+									size={16}
+									class={i < Math.floor(casino.rating!) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300 dark:text-gray-600'}
+								/>
+							))}
+						</div>
+						<span class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+							{casino.rating}/5
+						</span>
+					</div>
+				)}
+
+				{/* Bonus */}
+				{casino.bonus && (
+					<div class="mb-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+						<div class="flex items-start gap-2">
+							<Icon name="lucide:gift" size={18} class="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+							<div>
+								<p class="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
+									Welcome Bonus
+								</p>
+								<p class="text-sm font-bold text-green-900 dark:text-green-200">
+									{casino.bonus}
+								</p>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{/* CTA Button */}
+				<Button
+					href={casino.affiliateLink}
+					variant="primary"
+					size="lg"
+					affiliate={true}
+					class="w-full justify-center"
+				>
+					Play Now
+					<Icon name="lucide:arrow-right" size={18} class="ml-2" />
+				</Button>
+
+				{/* Disclaimer */}
+				<p class="text-xs text-gray-500 dark:text-gray-500 text-center mt-3">
+					18+. T&Cs apply. Gamble responsibly.
+				</p>
+			</div>
+		))}
+	</div>
+
+	{/* Responsible Gambling Notice */}
+	<div class="mt-6 pt-6 border-t border-primary-200 dark:border-primary-800">
+		<div class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
+			<Icon name="lucide:shield-alert" size={20} class="flex-shrink-0 mt-0.5 text-primary-600 dark:text-primary-400" />
+			<p>
+				This review contains affiliate links. We may receive a commission if you sign up through our links, at no extra cost to you.
+				All casinos are licensed and regulated. Please gamble responsibly.
+			</p>
+		</div>
+	</div>
+</section>
