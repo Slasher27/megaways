@@ -1,7 +1,11 @@
 ---
 import Container from './Container.astro';
 import Flyout from '../interactive/alpinejs/Flyout.astro';
+import Link from '../ui/Link.astro';
+import NavDropdown from './NavDropdown.astro';
+import NavDropdownMobile from './NavDropdownMobile.astro';
 import { Icon } from 'astro-icon/components';
+import { mainNavigation, isDropdown } from '../../data/navigation';
 ---
 
 <header class='border-b border-gray-200 dark:border-gray-800'>
@@ -12,60 +16,23 @@ import { Icon } from 'astro-icon/components';
 		>
 			<div class='flex items-center gap-8'>
 				<!-- Logo -->
-				<a href='/' class='text-xl font-bold text-gray-900 dark:text-white'>
+				<Link href='/' underline={false} class='text-xl font-bold'>
 					MegawaysOnline
-				</a>
+				</Link>
 
 				<!-- Desktop Navigation -->
-				<nav class='hidden lg:flex gap-6'>
-					<a
-						href='/online-slots/'
-						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-					>
-						Slots
-					</a>
-					<a
-						href='/online-casinos/'
-						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-					>
-						Casinos
-					</a>
-					<a
-						href='/megaways/'
-						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-					>
-						Megaways
-					</a>
-					<a
-						href='/megaclusters/'
-						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-					>
-						Megaclusters
-					</a>
-					<a
-						href='/megaquads/'
-						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-					>
-						Megaquads
-					</a>
-					<a
-						href='/megapays/'
-						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-					>
-						Megapays
-					</a>
-					<a
-						href='/megadrop/'
-						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-					>
-						Megadrop
-					</a>
-					<a
-						href='/xtraways/'
-						class='text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-					>
-						Xtraways
-					</a>
+				<nav class='hidden lg:flex gap-6 items-center'>
+					{
+						mainNavigation.map((item) =>
+							isDropdown(item) ? (
+								<NavDropdown label={item.label} items={item.items} />
+							) : (
+								<Link href={item.href} variant='muted' underline={false}>
+									{item.label}
+								</Link>
+							)
+						)
+					}
 				</nav>
 			</div>
 
@@ -95,54 +62,21 @@ import { Icon } from 'astro-icon/components';
 
 				<!-- Mobile Navigation -->
 				<nav class='flex flex-col p-4 space-y-1'>
-					<a
-						href='/online-slots/'
-						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
-					>
-						Slots
-					</a>
-					<a
-						href='/online-casinos/'
-						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
-					>
-						Casinos
-					</a>
-					<a
-						href='/megaways/'
-						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
-					>
-						Megaways
-					</a>
-					<a
-						href='/megaclusters/'
-						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
-					>
-						Megaclusters
-					</a>
-					<a
-						href='/megaquads/'
-						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
-					>
-						Megaquads
-					</a>
-					<a
-						href='/megapays/'
-						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
-					>
-						Megapays
-					</a>
-					<a
-						href='/megadrop/'
-						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
-					>
-						Megadrop
-					</a>
-					<a
-						href='/xtraways/'
-						class='px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
-					>
-						Xtraways
-					</a>
+					{
+						mainNavigation.map((item) =>
+							isDropdown(item) ? (
+								<NavDropdownMobile label={item.label} items={item.items} />
+							) : (
+								<Link
+									href={item.href}
+									underline={false}
+									class='px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg'
+								>
+									{item.label}
+								</Link>
+							)
+						)
+					}
 				</nav>
 			</Flyout>
 		</div>

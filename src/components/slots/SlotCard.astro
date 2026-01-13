@@ -1,0 +1,133 @@
+---
+/**
+ * SlotCard Component
+ * Displays a slot game card for listings and grids
+ */
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Card from '../ui/Card.astro';
+import Badge from '../ui/Badge.astro';
+import Button from '../ui/Button.astro';
+import Link from '../ui/Link.astro';
+import H3 from '../typography/H3.astro';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	slotEntry: CollectionEntry<'slots'>;
+	class?: string;
+}
+
+const { slotEntry, class: className } = Astro.props;
+const slot = slotEntry.data;
+
+// Generate slot URL from slug
+const slotUrl = `/online-slots/${slot.slug}/`;
+---
+
+<Card variant='slot' padding='none' hover={true} class:list={['group overflow-hidden', className]}>
+	<!-- Thumbnail -->
+	<a href={slotUrl} class='block relative overflow-hidden aspect-video'>
+		<Image
+			src={slot.thumbnail}
+			alt={slot.name}
+			width={400}
+			height={225}
+			class='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+			loading='lazy'
+		/>
+		{
+			slot.rating && (
+				<div class='absolute top-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1'>
+					<Icon name='lucide:star' class='size-4 text-yellow-400' />
+					{slot.rating}
+				</div>
+			)
+		}
+	</a>
+
+	<!-- Content -->
+	<div class='p-5'>
+		<!-- Title -->
+		<a href={slotUrl} class='block mb-2 no-underline hover:no-underline group/title'>
+			<H3 size='sm' class='group-hover/title:text-primary-600 dark:group-hover/title:text-primary-400 transition-colors'>
+				{slot.name}
+			</H3>
+		</a>
+
+		<!-- Provider -->
+		{
+			slot.provider && (
+				<a
+					href={`/online-slots/${slot.provider.toLowerCase().replace(/\s+/g, '-')}/`}
+					class='inline-block text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 mb-4 capitalize no-underline transition-colors'
+				>
+					{slot.provider.replace(/-/g, ' ')}
+				</a>
+			)
+		}
+
+		<!-- Stats Grid -->
+		<div class='grid grid-cols-2 gap-3 mb-4 text-sm'>
+			{
+				slot.rtp && (
+					<div>
+						<span class='text-gray-500 dark:text-gray-400 block'>RTP</span>
+						<span class='font-semibold text-gray-900 dark:text-white'>
+							{slot.rtp}%
+						</span>
+					</div>
+				)
+			}
+			{
+				slot.volatility && (
+					<div>
+						<span class='text-gray-500 dark:text-gray-400 block'>
+							Volatility
+						</span>
+						<span class='font-semibold text-gray-900 dark:text-white capitalize'>
+							{slot.volatility}
+						</span>
+					</div>
+				)
+			}
+			{
+				slot.maxWin && (
+					<div>
+						<span class='text-gray-500 dark:text-gray-400 block'>Max Win</span>
+						<span class='font-semibold text-gray-900 dark:text-white'>
+							{slot.maxWin}
+						</span>
+					</div>
+				)
+			}
+			{
+				slot.paylines && (
+					<div>
+						<span class='text-gray-500 dark:text-gray-400 block'>Ways</span>
+						<span class='font-semibold text-gray-900 dark:text-white'>
+							{slot.paylines.toLocaleString()}
+						</span>
+					</div>
+				)
+			}
+		</div>
+
+		<!-- Mechanics Badges -->
+		{
+			slot.mechanics && slot.mechanics.length > 0 && (
+				<div class='flex flex-wrap gap-2 mb-4'>
+					{slot.mechanics.slice(0, 3).map((mechanic) => (
+						<Badge variant='primary' size='sm'>
+							{mechanic}
+						</Badge>
+					))}
+				</div>
+			)
+		}
+
+		<!-- CTA -->
+		<Button href={slotUrl} variant='primary' size='md' class='w-full'>
+			Read Review
+		</Button>
+	</div>
+</Card>

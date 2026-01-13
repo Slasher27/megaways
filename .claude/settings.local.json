@@ -5,7 +5,9 @@
       "Bash(npm run build:*)",
       "WebFetch(domain:docs.astro.build)",
       "Bash(dir /s CLAUDE.md)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(dir:*)",
+      "Bash(srccomponentslayoutNavDropdown.astro)"
     ],
     "deny": [],
     "ask": []

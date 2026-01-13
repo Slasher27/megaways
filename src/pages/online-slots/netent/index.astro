@@ -1,0 +1,117 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import PageLayout from '../../../layouts/PageLayout.astro';
+import Container from '../../../components/layout/Container.astro';
+import Breadcrumb from '../../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../../components/seo/BreadcrumbSchema.astro';
+import H1 from '../../../components/typography/H1.astro';
+import P from '../../../components/typography/P.astro';
+import SlotCard from '../../../components/slots/SlotCard.astro';
+
+// Get provider info
+const providerSlug = 'netent';
+const provider = await getEntry('providers', providerSlug);
+
+if (!provider) {
+	throw new Error(`Provider '${providerSlug}' not found`);
+}
+
+// Get all slots from this provider
+const allSlots = await getCollection('slots');
+const providerSlots = allSlots.filter((slot) => {
+	const slotProvider = slot.data.provider
+		.toLowerCase()
+		.replace(/\s+/g, '-')
+		.replace(/[^\w-]/g, '');
+	return slotProvider === 'netent' || slotProvider.includes('netent');
+});
+
+// Sort by rating (highest first), then by name
+providerSlots.sort((a, b) => {
+	if (a.data.rating && b.data.rating) {
+		if (b.data.rating !== a.data.rating) {
+			return b.data.rating - a.data.rating;
+		}
+	}
+	return a.data.name.localeCompare(b.data.name);
+});
+
+const { Content } = await render(provider);
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Slots', href: '/online-slots/' },
+	{ label: provider.data.name, href: `/online-slots/${providerSlug}/` },
+];
+
+const pageTitle = `${provider.data.name} Megaways Slots ${new Date().getFullYear()} | Best ${provider.data.name} Games`;
+const pageDescription =
+	provider.data.description ||
+	`Explore all ${provider.data.name} Megaways slots. Read detailed reviews with RTP, features, and where to play.`;
+---
+
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<PageLayout title={pageTitle} description={pageDescription}>
+	<Container>
+		<Breadcrumb items={breadcrumbItems} class='mb-6' />
+
+		<!-- Provider Header -->
+		<header class='mb-12'>
+			<H1 size='lg'>{provider.data.name} Megaways Slots</H1>
+			<P variant='lead' class='mb-6'>
+				{provider.data.description}
+			</P>
+
+			{
+				providerSlots.length > 0 && (
+					<div class='text-gray-600 dark:text-gray-400'>
+						<strong>{providerSlots.length}</strong>{' '}
+						{providerSlots.length === 1 ? 'slot' : 'slots'} available
+					</div>
+				)
+			}
+		</header>
+
+		<!-- Slots Grid -->
+		{
+			providerSlots.length > 0 ? (
+				<div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
+					{providerSlots.map((slotEntry) => (
+						<SlotCard slotEntry={slotEntry} />
+					))}
+				</div>
+			) : (
+				<div class='text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl'>
+					<P class='text-gray-600 dark:text-gray-400'>
+						No slots available yet. Check back soon!
+					</P>
+				</div>
+			)
+		}
+
+		<!-- Provider Description -->
+		<article
+			class='prose prose-lg dark:prose-invert max-w-none mb-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-8'
+		>
+			<Content />
+		</article>
+
+		<!-- CTA -->
+		<div class='bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 rounded-xl p-8 text-center'>
+			<h2 class='text-2xl font-bold mb-4 text-gray-900 dark:text-white'>
+				Explore More Megaways Slots
+			</h2>
+			<P class='mb-6'>
+				Discover our complete collection of Megaways slot reviews from all
+				providers.
+			</P>
+			<a
+				href='/online-slots/'
+				class='inline-flex items-center justify-center font-semibold rounded-lg transition-colors cursor-pointer px-6 py-3 bg-primary-600 text-white hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600'
+			>
+				View All Slots
+			</a>
+		</div>
+	</Container>
+</PageLayout>

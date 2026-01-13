@@ -1,0 +1,58 @@
+---
+/**
+ * NavDropdownMobile Component
+ * Accordion-style dropdown for mobile navigation
+ * Supports light/dark mode
+ */
+import type { NavLink } from '../../data/navigation';
+import Link from '../ui/Link.astro';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	label: string;
+	items: NavLink[];
+	class?: string;
+}
+
+const { label, items, class: className } = Astro.props;
+---
+
+<div
+	x-data='{ open: false }'
+	class:list={['border-b border-gray-100 dark:border-gray-700', className]}
+>
+	<!-- Accordion Button -->
+	<button
+		x-on:click='open = !open'
+		:aria-expanded='open'
+		type='button'
+		class='w-full flex items-center justify-between px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors cursor-pointer'
+	>
+		<span>{label}</span>
+		<Icon
+			name='lucide:chevron-down'
+			class='size-4 transition-transform'
+			x-bind:class="open ? 'rotate-180' : ''"
+		/>
+	</button>
+
+	<!-- Accordion Panel -->
+	<div
+		x-show='open'
+		x-collapse
+		x-cloak
+		class='pb-2'
+	>
+		{
+			items.map((item) => (
+				<Link
+					href={item.href}
+					underline={false}
+					class='block pl-8 pr-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+				>
+					{item.label}
+				</Link>
+			))
+		}
+	</div>
+</div>
