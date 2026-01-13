@@ -1,0 +1,45 @@
+---
+/**
+ * ThemeToggle Component
+ * Toggle between light and dark mode
+ * Uses localStorage to persist theme preference
+ * Supports system preference detection
+ */
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<button
+	type='button'
+	aria-label='Toggle theme'
+	class:list={[
+		'p-2 rounded-lg transition-colors cursor-pointer text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800',
+		className
+	]}
+	onclick="
+		const html = document.documentElement;
+		const isDark = html.classList.contains('dark');
+
+		if (isDark) {
+			html.classList.remove('dark');
+			localStorage.theme = 'light';
+		} else {
+			html.classList.add('dark');
+			localStorage.theme = 'dark';
+		}
+	"
+>
+	<Icon
+		name='lucide:sun'
+		class='size-5 dark:block hidden'
+	/>
+	<Icon
+		name='lucide:moon'
+		class='size-5 dark:hidden block'
+	/>
+</button>

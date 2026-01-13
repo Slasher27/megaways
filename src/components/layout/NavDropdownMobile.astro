@@ -54,9 +54,9 @@ function isLinkActive(href: string): boolean {
 	>
 		{
 			items.map((item) => (
-				<Link
+				<a
 					href={item.href}
-					underline={false}
+					@click='$dialog.close()'
 					class={`block pl-8 pr-4 py-2 text-sm rounded-lg transition-colors ${
 						isLinkActive(item.href)
 							? 'font-semibold bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
@@ -64,7 +64,7 @@ function isLinkActive(href: string): boolean {
 					}`}
 				>
 					{item.label}
-				</Link>
+				</a>
 			))
 		}
 	</div>
