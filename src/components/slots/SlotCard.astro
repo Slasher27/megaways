@@ -22,6 +22,29 @@ const slot = slotEntry.data;
 
 // Generate slot URL from slug
 const slotUrl = `/online-slots/${slot.slug}/`;
+
+// Map provider names to their page slugs
+const providerSlugMap: Record<string, string> = {
+	'big time gaming': 'btg',
+	'btg': 'btg',
+	'blueprint gaming': 'blueprint',
+	'blueprint': 'blueprint',
+	'iron dog studio': 'iron-dog',
+	'iron dog': 'iron-dog',
+	'irondog': 'iron-dog',
+	'microgaming': 'microgaming',
+	'netent': 'netent',
+	'pragmatic play': 'pragmatic-play',
+	'pragmatic': 'pragmatic-play',
+	'red tiger': 'red-tiger',
+	'redtiger': 'red-tiger',
+	'scientific games': 'scientific-games',
+};
+
+// Get provider slug from mapping
+const providerSlug = slot.provider
+	? providerSlugMap[slot.provider.toLowerCase()] || slot.provider.toLowerCase().replace(/\s+/g, '-')
+	: null;
 ---
 
 <Card variant='slot' padding='none' hover={true} class:list={['group overflow-hidden', className]}>
@@ -56,9 +79,9 @@ const slotUrl = `/online-slots/${slot.slug}/`;
 
 		<!-- Provider -->
 		{
-			slot.provider && (
+			slot.provider && providerSlug && (
 				<a
-					href={`/online-slots/${slot.provider.toLowerCase().replace(/\s+/g, '-')}/`}
+					href={`/online-slots/${providerSlug}/`}
 					class='inline-block text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 mb-4 capitalize no-underline transition-colors'
 				>
 					{slot.provider.replace(/-/g, ' ')}

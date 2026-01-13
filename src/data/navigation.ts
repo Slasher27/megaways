@@ -24,6 +24,19 @@ export const mainNavigation: NavItem[] = [
 	{ label: 'Slots', href: '/online-slots/' },
 	{ label: 'Casinos', href: '/online-casinos/' },
 	{
+		label: 'Providers',
+		items: [
+			{ label: 'Big Time Gaming', href: '/online-slots/btg/' },
+			{ label: 'Blueprint Gaming', href: '/online-slots/blueprint/' },
+			{ label: 'Iron Dog Studio', href: '/online-slots/iron-dog/' },
+			{ label: 'Microgaming', href: '/online-slots/microgaming/' },
+			{ label: 'NetEnt', href: '/online-slots/netent/' },
+			{ label: 'Pragmatic Play', href: '/online-slots/pragmatic-play/' },
+			{ label: 'Red Tiger', href: '/online-slots/red-tiger/' },
+			{ label: 'Scientific Games', href: '/online-slots/scientific-games/' },
+		],
+	},
+	{
 		label: 'Mechanics',
 		items: [
 			{ label: 'Megaways', href: '/megaways/' },

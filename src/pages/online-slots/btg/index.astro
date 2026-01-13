@@ -2,6 +2,8 @@
 import { getCollection, getEntry, render } from 'astro:content';
 import PageLayout from '../../../layouts/PageLayout.astro';
 import Container from '../../../components/layout/Container.astro';
+import Header from '../../../components/layout/Header.astro';
+import Footer from '../../../components/layout/Footer.astro';
 import Breadcrumb from '../../../components/layout/Breadcrumb.astro';
 import BreadcrumbSchema from '../../../components/seo/BreadcrumbSchema.astro';
 import H1 from '../../../components/typography/H1.astro';
@@ -52,6 +54,8 @@ const pageDescription =
 <BreadcrumbSchema items={breadcrumbItems} />
 
 <PageLayout title={pageTitle} description={pageDescription}>
+	<Header slot='header' />
+
 	<Container>
 		<Breadcrumb items={breadcrumbItems} class='mb-6' />
 
@@ -113,4 +117,6 @@ const pageDescription =
 			</a>
 		</div>
 	</Container>
+
+	<Footer slot='footer' />
 </PageLayout>

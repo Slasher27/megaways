@@ -15,6 +15,15 @@ interface Props {
 }
 
 const { label, items, class: className } = Astro.props;
+
+// Get current pathname for active state on dropdown items
+const currentPath = Astro.url.pathname;
+
+function isLinkActive(href: string): boolean {
+	if (href === '/' && currentPath === '/') return true;
+	if (href !== '/' && currentPath.startsWith(href)) return true;
+	return false;
+}
 ---
 
 <div
@@ -26,7 +35,7 @@ const { label, items, class: className } = Astro.props;
 		x-on:click='open = !open'
 		:aria-expanded='open'
 		type='button'
-		class='w-full flex items-center justify-between px-4 py-3 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors cursor-pointer'
+		class='w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors cursor-pointer text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
 	>
 		<span>{label}</span>
 		<Icon
@@ -48,7 +57,11 @@ const { label, items, class: className } = Astro.props;
 				<Link
 					href={item.href}
 					underline={false}
-					class='block pl-8 pr-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+					class={`block pl-8 pr-4 py-2 text-sm rounded-lg transition-colors ${
+						isLinkActive(item.href)
+							? 'font-semibold bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+							: 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+					}`}
 				>
 					{item.label}
 				</Link>

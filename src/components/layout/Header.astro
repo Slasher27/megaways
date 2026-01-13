@@ -6,6 +6,18 @@ import NavDropdown from './NavDropdown.astro';
 import NavDropdownMobile from './NavDropdownMobile.astro';
 import { Icon } from 'astro-icon/components';
 import { mainNavigation, isDropdown } from '../../data/navigation';
+
+// Get current pathname for active state
+const currentPath = Astro.url.pathname;
+
+// Helper to check if a link is active
+function isActive(href: string): boolean {
+	// Exact match for home page
+	if (href === '/' && currentPath === '/') return true;
+	// For other pages, check if current path starts with href
+	if (href !== '/' && currentPath.startsWith(href)) return true;
+	return false;
+}
 ---
 
 <header class='border-b border-gray-200 dark:border-gray-800'>
@@ -27,7 +39,15 @@ import { mainNavigation, isDropdown } from '../../data/navigation';
 							isDropdown(item) ? (
 								<NavDropdown label={item.label} items={item.items} />
 							) : (
-								<Link href={item.href} variant='muted' underline={false}>
+								<Link
+									href={item.href}
+									variant='muted'
+									underline={false}
+									class={isActive(item.href)
+										? 'font-semibold text-primary-600 dark:text-primary-400'
+										: ''
+									}
+								>
 									{item.label}
 								</Link>
 							)
@@ -70,7 +90,11 @@ import { mainNavigation, isDropdown } from '../../data/navigation';
 								<Link
 									href={item.href}
 									underline={false}
-									class='px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg'
+									class={`px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg ${
+										isActive(item.href)
+											? 'font-semibold bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+											: ''
+									}`}
 								>
 									{item.label}
 								</Link>
