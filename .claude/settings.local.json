@@ -7,7 +7,8 @@
       "Bash(dir /s CLAUDE.md)",
       "mcp__ide__getDiagnostics",
       "Bash(dir:*)",
-      "Bash(srccomponentslayoutNavDropdown.astro)"
+      "Bash(srccomponentslayoutNavDropdown.astro)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,4 +1,5 @@
 ---
+/// <reference path="../alpine.d.ts" />
 import '../styles/global.css';
 
 interface Props {
@@ -29,11 +30,15 @@ const { title, description } = Astro.props;
 			}
 		</script>
 
-		<!-- Alpine.js -->
+		<!-- Alpine.js with plugins -->
 		<script>
+			// @ts-expect-error - Alpine.js types are declared in src/alpine.d.ts
 			import Alpine from 'alpinejs';
+			// @ts-expect-error - Alpine.js UI plugin types are declared in src/alpine.d.ts
 			import ui from '@alpinejs/ui';
+			// @ts-expect-error - Alpine.js Focus plugin types are declared in src/alpine.d.ts
 			import focus from '@alpinejs/focus';
+			// @ts-expect-error - Alpine.js Collapse plugin types are declared in src/alpine.d.ts
 			import collapse from '@alpinejs/collapse';
 
 			// Register plugins
@@ -41,7 +46,10 @@ const { title, description } = Astro.props;
 			Alpine.plugin(focus);
 			Alpine.plugin(collapse);
 
+			// Make Alpine available globally
 			window.Alpine = Alpine;
+
+			// Start Alpine
 			Alpine.start();
 		</script>
 
@@ -53,10 +61,11 @@ const { title, description } = Astro.props;
 				const isCmdK = e.key === 'k' && (e.metaKey || e.ctrlKey);
 
 				// Don't trigger if user is typing in an input, textarea, or contenteditable
+				const activeEl = document.activeElement as HTMLElement;
 				const isTyping =
-					document.activeElement?.tagName === 'INPUT' ||
-					document.activeElement?.tagName === 'TEXTAREA' ||
-					document.activeElement?.isContentEditable;
+					activeEl?.tagName === 'INPUT' ||
+					activeEl?.tagName === 'TEXTAREA' ||
+					activeEl?.isContentEditable === true;
 
 				if ((isSlash || isCmdK) && !isTyping) {
 					e.preventDefault();
