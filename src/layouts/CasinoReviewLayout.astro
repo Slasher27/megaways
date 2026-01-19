@@ -13,6 +13,8 @@ import Footer from '../components/layout/Footer.astro';
 import Container from '../components/layout/Container.astro';
 import Breadcrumb from '../components/layout/Breadcrumb.astro';
 import BreadcrumbSchema from '../components/seo/BreadcrumbSchema.astro';
+import CasinoSchema from '../components/seo/CasinoSchema.astro';
+import { getEntry } from 'astro:content';
 
 interface Props {
 	casino: CollectionEntry<'casinos'>;
@@ -24,12 +26,25 @@ const { casino, title, description } = Astro.props;
 
 // Build page title and description
 const pageTitle =
-	title || `${casino.data.name} Review ${new Date().getFullYear()} | Bonuses & Games`;
+	title ||
+	casino.data.title ||
+	`${casino.data.name} Review ${new Date().getFullYear()} | Bonuses & Games`;
 const pageDescription =
 	description ||
+	casino.data.description ||
 	(casino.data.welcomeBonus
 		? `${casino.data.name} review. Get ${casino.data.welcomeBonus.amount}. Read our expert review of bonuses, games, and payment methods.`
 		: `Read our expert ${casino.data.name} review covering bonuses, games, payment methods, and more.`);
+
+// Get OG image (use thumbnail or logo)
+const ogImage = casino.data.thumbnail?.src || casino.data.logo?.src;
+
+// Format dates for schema
+const publishedTime = casino.data.publishedDate?.toISOString();
+const modifiedTime = casino.data.updatedDate?.toISOString();
+
+// Get author details if available
+const author = casino.data.author ? await getEntry(casino.data.author) : null;
 
 // Build breadcrumb items
 const breadcrumbItems = [
@@ -39,10 +54,18 @@ const breadcrumbItems = [
 ];
 ---
 
-<!-- Breadcrumb Schema for SEO -->
+<!-- Schema Markup for SEO -->
 <BreadcrumbSchema items={breadcrumbItems} />
+<CasinoSchema casino={casino.data} author={author?.data} url={Astro.url.href} />
 
-<BaseLayout title={pageTitle} description={pageDescription}>
+<BaseLayout
+	title={pageTitle}
+	description={pageDescription}
+	type='article'
+	image={ogImage}
+	publishedTime={publishedTime}
+	modifiedTime={modifiedTime}
+>
 	<div class="flex min-h-screen flex-col">
 		<!-- Header -->
 		<Header />

@@ -1,0 +1,115 @@
+---
+/**
+ * SEOHead Component
+ *
+ * Comprehensive SEO meta tags component including:
+ * - Title and description
+ * - Canonical URL
+ * - Open Graph tags
+ * - Twitter Card tags
+ * - Robots meta
+ *
+ * Usage:
+ * <SEOHead
+ *   title="Page Title | Brand"
+ *   description="Page description for search results"
+ *   canonical={Astro.url.href}
+ *   type="website"
+ *   image="/images/og-image.jpg"
+ *   noindex={false}
+ * />
+ */
+
+interface Props {
+	/** Page title (should include brand name) */
+	title: string;
+	/** Meta description (150-160 chars recommended) */
+	description: string;
+	/** Canonical URL (typically Astro.url.href) */
+	canonical?: string;
+	/** Open Graph type (website, article, etc.) */
+	type?: 'website' | 'article';
+	/** Open Graph image path (relative or absolute) */
+	image?: string;
+	/** Whether to noindex this page */
+	noindex?: boolean;
+	/** Additional keywords for meta keywords tag (optional, mostly unused by search engines) */
+	keywords?: string;
+	/** Author name for article type */
+	author?: string;
+	/** Published date for article type (ISO format) */
+	publishedTime?: string;
+	/** Modified date for article type (ISO format) */
+	modifiedTime?: string;
+}
+
+const {
+	title,
+	description,
+	canonical,
+	type = 'website',
+	image,
+	noindex = false,
+	keywords,
+	author,
+	publishedTime,
+	modifiedTime,
+} = Astro.props;
+
+// Get site URL from Astro config
+const siteUrl = Astro.site?.href || 'https://megawaysonline.com';
+
+// Build absolute canonical URL
+const canonicalURL = canonical || Astro.url.href;
+
+// Build absolute OG image URL
+const ogImage = image
+	? image.startsWith('http')
+		? image
+		: new URL(image, siteUrl).href
+	: new URL('/images/og-default.jpg', siteUrl).href;
+
+// Robots directive
+const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow';
+---
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+{keywords && <meta name="keywords" content={keywords} />}
+<meta name="robots" content={robotsContent} />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:site_name" content="Megaways Online" />
+<meta property="og:locale" content="en_US" />
+
+<!-- Article specific OG tags -->
+{
+	type === 'article' && (
+		<>
+			{author && <meta property="article:author" content={author} />}
+			{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+			{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+		</>
+	)
+}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<!-- Additional Meta Tags -->
+<meta name="format-detection" content="telephone=no" />
+<meta name="theme-color" content="#0f172a" />

@@ -69,14 +69,16 @@ const slots = defineCollection({
 // ============================================
 const casinos = defineCollection({
 	loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/casinos' }),
-	schema: z.object({
-		// Basic Info
-		name: z.string(),
-		slug: z.string(), // URL slug → /online-casinos/[slug]-casino-review/
-		logo: z.string().optional(), // Path to casino logo
+	schema: ({ image }) =>
+		z.object({
+			// Basic Info
+			name: z.string(),
+			slug: z.string(), // URL slug → /online-casinos/[slug]-casino-review/
+			logo: image().optional(), // Casino logo - optimized at build time
+			thumbnail: image().optional(), // Casino thumbnail/banner - optimized at build time
 
-		// Rating
-		rating: z.number().min(0).max(5).optional(), // 0-5 star rating
+			// Rating
+			rating: z.number().min(0).max(5).optional(), // 0-5 star rating
 
 		// Welcome Bonus
 		welcomeBonus: z

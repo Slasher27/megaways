@@ -1,13 +1,35 @@
 ---
 /// <reference path="../alpine.d.ts" />
 import '../styles/global.css';
+import SEOHead from '../components/seo/SEOHead.astro';
 
 interface Props {
 	title: string;
 	description: string;
+	/** Open Graph image path */
+	image?: string;
+	/** Open Graph type (website or article) */
+	type?: 'website' | 'article';
+	/** Whether to noindex this page */
+	noindex?: boolean;
+	/** Author name for article type */
+	author?: string;
+	/** Published date for article type */
+	publishedTime?: string;
+	/** Modified date for article type */
+	modifiedTime?: string;
 }
 
-const { title, description } = Astro.props;
+const {
+	title,
+	description,
+	image,
+	type = 'website',
+	noindex = false,
+	author,
+	publishedTime,
+	modifiedTime,
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -17,8 +39,19 @@ const { title, description } = Astro.props;
 		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
 		<meta name='viewport' content='width=device-width, initial-scale=1' />
 		<meta name='generator' content={Astro.generator} />
-		<meta name='description' content={description} />
-		<title>{title}</title>
+
+		<!-- SEO Meta Tags -->
+		<SEOHead
+			title={title}
+			description={description}
+			canonical={Astro.url.href}
+			type={type}
+			image={image}
+			noindex={noindex}
+			author={author}
+			publishedTime={publishedTime}
+			modifiedTime={modifiedTime}
+		/>
 
 		<!-- Theme initialization (prevent flash) -->
 		<script is:inline>

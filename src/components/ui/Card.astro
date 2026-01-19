@@ -1,6 +1,6 @@
 ---
 interface Props {
-	variant?: 'default' | 'outlined' | 'elevated' | 'slot';
+	variant?: 'default' | 'outlined' | 'elevated' | 'slot' | 'casino' | 'bonus';
 	padding?: 'none' | 'sm' | 'md' | 'lg';
 	hover?: boolean;
 	class?: string;
@@ -18,6 +18,8 @@ const variants = {
 	outlined: 'bg-transparent border-2 border-gray-200 dark:border-gray-700',
 	elevated: 'bg-white dark:bg-gray-800 shadow-lg',
 	slot: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
+	casino: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
+	bonus: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
 } as const;
 
 const paddings = {
@@ -28,7 +30,7 @@ const paddings = {
 } as const;
 
 const hoverClasses = hover
-	? variant === 'slot'
+	? variant === 'slot' || variant === 'casino'
 		? 'transition-all duration-200 hover:shadow-lg'
 		: 'transition-all duration-200 hover:shadow-xl hover:scale-[1.02] cursor-pointer'
 	: '';

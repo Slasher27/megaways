@@ -1,0 +1,385 @@
+---
+/**
+ * Methodology Page
+ * Explains how we review slots and casinos (E-E-A-T)
+ */
+
+import PageLayout from '../../layouts/PageLayout.astro';
+import Container from '../../components/layout/Container.astro';
+import H1 from '../../components/typography/H1.astro';
+import H2 from '../../components/typography/H2.astro';
+import H3 from '../../components/typography/H3.astro';
+import P from '../../components/typography/P.astro';
+import Card from '../../components/ui/Card.astro';
+import Divider from '../../components/ui/Divider.astro';
+import { Icon } from 'astro-icon/components';
+
+const pageTitle = 'Our Review Methodology | How We Test Slots & Casinos';
+const pageDescription =
+	'Learn about our rigorous review process for Megaways slots and online casinos. We explain our testing criteria, rating system, and quality standards.';
+---
+
+<PageLayout title={pageTitle} description={pageDescription}>
+	<Container>
+		<!-- Hero Section -->
+		<header class='mb-12'>
+			<H1 size='xl' class='mb-4'>Our Review Methodology</H1>
+			<P class='text-xl text-gray-600 dark:text-gray-400 max-w-3xl'>
+				Transparency is important to us. Here's exactly how we test, evaluate, and rate Megaways slots
+				and online casinos.
+			</P>
+		</header>
+
+		<!-- Slot Review Methodology -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-8'>How We Review Slots</H2>
+
+			<div class='space-y-8'>
+				<!-- Step 1 -->
+				<Card variant='elevated'>
+					<div class='flex gap-6'>
+						<div class='flex-shrink-0'>
+							<div class='w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-800/50 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-xl'>
+								1
+							</div>
+						</div>
+						<div class='flex-1'>
+							<H3 size='md' class='mb-3'>Initial Research & Data Collection</H3>
+							<P class='mb-4 text-gray-600 dark:text-gray-400'>
+								We start by gathering official data from the game provider and casino partners:
+							</P>
+							<ul class='list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400'>
+								<li>Official RTP (Return to Player) percentage</li>
+								<li>Volatility rating from the provider</li>
+								<li>Maximum win potential</li>
+								<li>Minimum and maximum bet limits</li>
+								<li>Number of paylines or ways to win</li>
+								<li>Release date and provider information</li>
+							</ul>
+						</div>
+					</div>
+				</Card>
+
+				<!-- Step 2 -->
+				<Card variant='elevated'>
+					<div class='flex gap-6'>
+						<div class='flex-shrink-0'>
+							<div class='w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-800/50 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-xl'>
+								2
+							</div>
+						</div>
+						<div class='flex-1'>
+							<H3 size='md' class='mb-3'>Hands-On Gameplay Testing</H3>
+							<P class='mb-4 text-gray-600 dark:text-gray-400'>
+								We play each slot extensively to understand the actual player experience:
+							</P>
+							<ul class='list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400'>
+								<li>Minimum 100-200 spins at various bet levels</li>
+								<li>Trigger bonus features multiple times</li>
+								<li>Test bonus buy feature (if available)</li>
+								<li>Evaluate graphics, animations, and sound quality</li>
+								<li>Assess mobile compatibility and performance</li>
+								<li>Monitor base game hit frequency and win sizes</li>
+							</ul>
+						</div>
+					</div>
+				</Card>
+
+				<!-- Step 3 -->
+				<Card variant='elevated'>
+					<div class='flex gap-6'>
+						<div class='flex-shrink-0'>
+							<div class='w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-800/50 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-xl'>
+								3
+							</div>
+						</div>
+						<div class='flex-1'>
+							<H3 size='md' class='mb-3'>Feature Analysis</H3>
+							<P class='mb-4 text-gray-600 dark:text-gray-400'>
+								We analyze all game mechanics and special features:
+							</P>
+							<ul class='list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400'>
+								<li>Megaways mechanic implementation and variance</li>
+								<li>Bonus round frequency and potential</li>
+								<li>Wild symbols, multipliers, and modifiers</li>
+								<li>Cascading wins and reaction mechanics</li>
+								<li>Free spins features and retriggers</li>
+								<li>Unique mechanics specific to the slot</li>
+							</ul>
+						</div>
+					</div>
+				</Card>
+
+				<!-- Step 4 -->
+				<Card variant='elevated'>
+					<div class='flex gap-6'>
+						<div class='flex-shrink-0'>
+							<div class='w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-800/50 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-xl'>
+								4
+							</div>
+						</div>
+						<div class='flex-1'>
+							<H3 size='md' class='mb-3'>Rating & Review Writing</H3>
+							<P class='mb-4 text-gray-600 dark:text-gray-400'>
+								We compile our findings into a comprehensive review:
+							</P>
+							<ul class='list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400'>
+								<li>Overall rating (0-5 stars) based on all criteria</li>
+								<li>Detailed breakdown of pros and cons</li>
+								<li>Volatility and RTP analysis</li>
+								<li>Feature descriptions with examples</li>
+								<li>Where to play recommendations</li>
+								<li>Final verdict for different player types</li>
+							</ul>
+						</div>
+					</div>
+				</Card>
+			</div>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- Slot Rating Criteria -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-8'>Slot Rating Criteria</H2>
+
+			<Card class='mb-6'>
+				<P class='text-gray-600 dark:text-gray-400 mb-4'>
+					Our star ratings (0-5) are based on the following weighted criteria:
+				</P>
+
+				<div class='grid grid-cols-1 md:grid-cols-2 gap-6'>
+					<div>
+						<H3 size='sm' class='mb-2'>RTP & Volatility (30%)</H3>
+						<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+							Fair RTP (96%+) and appropriate volatility balance for the game type.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2'>Features & Entertainment (25%)</H3>
+						<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+							Innovative features, exciting bonus rounds, and engaging gameplay.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2'>Max Win Potential (20%)</H3>
+						<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+							Realistic chance of big wins relative to volatility.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2'>Design & Usability (15%)</H3>
+						<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+							Graphics quality, mobile optimization, and user interface.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2'>Hit Frequency (10%)</H3>
+						<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+							Balance between base game wins and bonus triggers.
+						</P>
+					</div>
+				</div>
+			</Card>
+
+			<Card variant='outlined' class='bg-blue-50 dark:bg-blue-900/20'>
+				<div class='flex gap-3'>
+					<Icon name='lucide:info' size={24} class='text-blue-600 dark:text-blue-400 flex-shrink-0' />
+					<P class='text-sm text-gray-700 dark:text-gray-300 mb-0'>
+						<strong>Note:</strong> Ratings are subjective and reflect our team's assessment. Different
+						players value different aspects, so we always provide detailed pros/cons to help you decide.
+					</P>
+				</div>
+			</Card>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- Casino Review Methodology -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-8'>How We Review Casinos</H2>
+
+			<div class='space-y-8'>
+				<!-- Licensing & Security -->
+				<Card variant='elevated'>
+					<H3 size='md' class='mb-3 flex items-center gap-2'>
+						<Icon name='lucide:shield-check' size={24} class='text-primary-600 dark:text-primary-400' />
+						Licensing & Security
+					</H3>
+					<P class='mb-2 text-gray-600 dark:text-gray-400'>We verify:</P>
+					<ul class='list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400'>
+						<li>Valid gambling licenses (UKGC, MGA, Curacao, etc.)</li>
+						<li>SSL encryption and data protection measures</li>
+						<li>Fair gaming certifications (eCOGRA, iTech Labs)</li>
+						<li>Responsible gambling tools and policies</li>
+					</ul>
+				</Card>
+
+				<!-- Game Selection -->
+				<Card variant='elevated'>
+					<H3 size='md' class='mb-3 flex items-center gap-2'>
+						<Icon name='lucide:gamepad-2' size={24} class='text-primary-600 dark:text-primary-400' />
+						Game Selection
+					</H3>
+					<P class='mb-2 text-gray-600 dark:text-gray-400'>We evaluate:</P>
+					<ul class='list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400'>
+						<li>Number and quality of Megaways slots</li>
+						<li>Software provider partnerships (BTG, Blueprint, etc.)</li>
+						<li>Overall slot library size and variety</li>
+						<li>Live dealer and table game offerings</li>
+					</ul>
+				</Card>
+
+				<!-- Banking & Payments -->
+				<Card variant='elevated'>
+					<H3 size='md' class='mb-3 flex items-center gap-2'>
+						<Icon name='lucide:credit-card' size={24} class='text-primary-600 dark:text-primary-400' />
+						Banking & Payments
+					</H3>
+					<P class='mb-2 text-gray-600 dark:text-gray-400'>We test:</P>
+					<ul class='list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400'>
+						<li>Deposit and withdrawal methods available</li>
+						<li>Processing times (we test real withdrawals)</li>
+						<li>Withdrawal limits and fees</li>
+						<li>Cryptocurrency support</li>
+					</ul>
+				</Card>
+
+				<!-- Bonuses & Promotions -->
+				<Card variant='elevated'>
+					<H3 size='md' class='mb-3 flex items-center gap-2'>
+						<Icon name='lucide:gift' size={24} class='text-primary-600 dark:text-primary-400' />
+						Bonuses & Promotions
+					</H3>
+					<P class='mb-2 text-gray-600 dark:text-gray-400'>We analyze:</P>
+					<ul class='list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400'>
+						<li>Welcome bonus value and terms</li>
+						<li>Wagering requirements (fair vs. unrealistic)</li>
+						<li>Ongoing promotions and loyalty programs</li>
+						<li>Game contribution percentages</li>
+					</ul>
+				</Card>
+
+				<!-- Customer Support -->
+				<Card variant='elevated'>
+					<H3 size='md' class='mb-3 flex items-center gap-2'>
+						<Icon name='lucide:headphones' size={24} class='text-primary-600 dark:text-primary-400' />
+						Customer Support
+					</H3>
+					<P class='mb-2 text-gray-600 dark:text-gray-400'>We test:</P>
+					<ul class='list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400'>
+						<li>Live chat availability and response times</li>
+						<li>Email support quality and turnaround</li>
+						<li>Phone support (if available)</li>
+						<li>FAQ and help center comprehensiveness</li>
+					</ul>
+				</Card>
+			</div>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- Casino Rating Criteria -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-8'>Casino Rating Criteria</H2>
+
+			<Card>
+				<P class='text-gray-600 dark:text-gray-400 mb-4'>
+					Our casino ratings (0-5 stars) consider:
+				</P>
+
+				<div class='grid grid-cols-1 md:grid-cols-2 gap-6'>
+					<div>
+						<H3 size='sm' class='mb-2'>Trust & Security (30%)</H3>
+						<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+							Valid licenses, player protections, and fair play certifications.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2'>Game Selection (25%)</H3>
+						<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+							Quality and quantity of Megaways slots and overall game library.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2'>Banking & Payouts (20%)</H3>
+						<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+							Fast withdrawals, multiple payment options, and fair limits.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2'>Bonuses & Value (15%)</H3>
+						<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+							Fair bonus terms, wagering requirements, and ongoing promotions.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2'>Customer Support (10%)</H3>
+						<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+							Responsive, helpful support across multiple channels.
+						</P>
+					</div>
+				</div>
+			</Card>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- Regular Updates -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-6'>Keeping Reviews Current</H2>
+
+			<Card variant='elevated'>
+				<P class='mb-4'>
+					The online gambling industry changes rapidly. To ensure our reviews stay accurate and
+					helpful, we:
+				</P>
+
+				<ul class='list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400'>
+					<li>
+						<strong>Monitor RTP changes:</strong> Providers occasionally adjust RTP settings, and we update
+						our reviews accordingly
+					</li>
+					<li>
+						<strong>Track casino updates:</strong> We watch for changes in payment methods, licenses,
+						and terms
+					</li>
+					<li>
+						<strong>Review player feedback:</strong> We consider user reviews and complaints when updating
+						ratings
+					</li>
+					<li>
+						<strong>Re-test periodically:</strong> Major reviews are re-tested every 6-12 months
+					</li>
+					<li>
+						<strong>Display update dates:</strong> Every review shows when it was last updated
+					</li>
+				</ul>
+			</Card>
+		</section>
+
+		<!-- Editorial Independence -->
+		<section class='mb-16'>
+			<Card variant='outlined' class='bg-primary-50 dark:bg-primary-900/20'>
+				<H3 size='md' class='mb-4'>Editorial Independence</H3>
+				<P class='mb-4 text-gray-700 dark:text-gray-300'>
+					While we participate in affiliate programs, our reviews are never influenced by commercial
+					relationships. We rate casinos and slots based solely on their merits.
+				</P>
+				<P class='mb-0 text-gray-700 dark:text-gray-300'>
+					If a casino offers a poor player experience, unfair terms, or slow payouts, we'll say
+					so—regardless of commission rates. Your trust is more valuable to us than any affiliate
+					payment.
+				</P>
+			</Card>
+		</section>
+	</Container>
+</PageLayout>

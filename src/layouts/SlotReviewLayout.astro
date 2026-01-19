@@ -13,6 +13,8 @@ import Footer from '../components/layout/Footer.astro';
 import Container from '../components/layout/Container.astro';
 import Breadcrumb from '../components/layout/Breadcrumb.astro';
 import BreadcrumbSchema from '../components/seo/BreadcrumbSchema.astro';
+import SlotSchema from '../components/seo/SlotSchema.astro';
+import { getEntry } from 'astro:content';
 
 interface Props {
 	slotEntry: CollectionEntry<'slots'>;
@@ -27,7 +29,17 @@ const pageTitle = title || slotEntry.data.title || `${slotEntry.data.name} Revie
 const pageDescription =
 	description ||
 	slotEntry.data.description ||
-	`Read our ${slotEntry.data.name} review. RTP ${slotEntry.data.rtp}%, max win ${slotEntry.data.maxWin}, ${slotEntry.data.maxWays} ways to win.`;
+	`Read our ${slotEntry.data.name} review. RTP ${slotEntry.data.rtp}%, max win ${slotEntry.data.maxWin}, ${slotEntry.data.paylines} ways to win.`;
+
+// Get OG image (use thumbnail or logo)
+const ogImage = slotEntry.data.thumbnail?.src || slotEntry.data.logo?.src;
+
+// Format dates for schema
+const publishedTime = slotEntry.data.publishedDate?.toISOString();
+const modifiedTime = slotEntry.data.updatedDate?.toISOString();
+
+// Get author details if available
+const author = slotEntry.data.author ? await getEntry(slotEntry.data.author) : null;
 
 // Build breadcrumb items
 const breadcrumbItems = [
@@ -37,10 +49,18 @@ const breadcrumbItems = [
 ];
 ---
 
-<!-- Breadcrumb Schema for SEO -->
+<!-- Schema Markup for SEO -->
 <BreadcrumbSchema items={breadcrumbItems} />
+<SlotSchema slot={slotEntry.data} author={author?.data} url={Astro.url.href} />
 
-<BaseLayout title={pageTitle} description={pageDescription}>
+<BaseLayout
+	title={pageTitle}
+	description={pageDescription}
+	type='article'
+	image={ogImage}
+	publishedTime={publishedTime}
+	modifiedTime={modifiedTime}
+>
 	<div class="flex min-h-screen flex-col">
 		<!-- Header -->
 		<Header />

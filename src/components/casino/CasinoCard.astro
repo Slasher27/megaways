@@ -1,0 +1,186 @@
+---
+/**
+ * CasinoCard Component
+ * Compact casino card for listings and grids
+ * Optimized for 3-4 cards per row on large screens
+ */
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Card from '../ui/Card.astro';
+import Badge from '../ui/Badge.astro';
+import Button from '../ui/Button.astro';
+import H3 from '../typography/H3.astro';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	casinoEntry: CollectionEntry<'casinos'>;
+	class?: string;
+}
+
+const { casinoEntry, class: className } = Astro.props;
+const casino = casinoEntry.data;
+
+// Generate casino URL
+const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
+---
+
+<Card variant='casino' padding='none' hover={true} class:list={['group overflow-hidden', className]}>
+	<!-- Thumbnail / Logo Banner -->
+	<a href={casinoUrl} class='block relative overflow-hidden aspect-[16/9] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900'>
+		{
+			casino.thumbnail ? (
+				<Image
+					src={casino.thumbnail}
+					alt={casino.name}
+					width={400}
+					height={225}
+					class='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+					loading='lazy'
+				/>
+			) : casino.logo ? (
+				<div class='absolute inset-0 flex items-center justify-center p-6'>
+					<Image
+						src={casino.logo}
+						alt={casino.name}
+						width={200}
+						height={80}
+						class='max-h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-300'
+						loading='lazy'
+					/>
+				</div>
+			) : (
+				<div class='absolute inset-0 flex items-center justify-center p-6'>
+					<H3 size='sm' class='text-center mb-0'>{casino.name}</H3>
+				</div>
+			)
+		}
+
+		<!-- Rating Badge (Top Right) -->
+		{
+			casino.rating && (
+				<div class='absolute top-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1'>
+					<Icon name='lucide:star' class='size-4 text-yellow-400' />
+					{casino.rating.toFixed(1)}
+				</div>
+			)
+		}
+
+		<!-- Featured Badge (Top Left) -->
+		{
+			casino.featured && (
+				<div class='absolute top-3 left-3'>
+					<Badge variant='warning' size='sm'>
+						<Icon name='lucide:star' size={12} class='inline mr-1' />
+						Featured
+					</Badge>
+				</div>
+			)
+		}
+
+		<!-- New Badge -->
+		{
+			casino.isNew && (
+				<div class='absolute top-3 left-3'>
+					<Badge variant='success' size='sm'>New</Badge>
+				</div>
+			)
+		}
+	</a>
+
+	<!-- Content -->
+	<div class='p-5'>
+		<!-- Title -->
+		<a href={casinoUrl} class='block mb-3 no-underline hover:no-underline group/title'>
+			<H3 size='sm' class='group-hover/title:text-primary-600 dark:group-hover/title:text-primary-400 transition-colors line-clamp-1'>
+				{casino.name}
+			</H3>
+		</a>
+
+		<!-- Welcome Bonus (Compact) -->
+		{
+			casino.welcomeBonus && (
+				<div class='mb-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800'>
+					<p class='text-xs font-semibold text-green-700 dark:text-green-400 mb-1'>
+						{casino.welcomeBonus.title}
+					</p>
+					<p class='text-sm font-bold text-green-900 dark:text-green-200'>
+						{casino.welcomeBonus.amount}
+					</p>
+				</div>
+			)
+		}
+
+		<!-- Quick Stats (2x2 Grid) -->
+		<div class='grid grid-cols-2 gap-2 mb-4 text-xs'>
+			{
+				casino.hasMegaways && (
+					<div class='flex items-center gap-1.5'>
+						<Icon name='lucide:zap' size={14} class='text-primary-600 dark:text-primary-400' />
+						<span class='text-gray-700 dark:text-gray-300'>Megaways</span>
+					</div>
+				)
+			}
+			{
+				casino.cryptoAccepted && (
+					<div class='flex items-center gap-1.5'>
+						<Icon name='lucide:coins' size={14} class='text-orange-600 dark:text-orange-400' />
+						<span class='text-gray-700 dark:text-gray-300'>Crypto</span>
+					</div>
+				)
+			}
+			{
+				casino.paymentMethods && casino.paymentMethods.length > 0 && (
+					<div class='flex items-center gap-1.5'>
+						<Icon name='lucide:credit-card' size={14} class='text-blue-600 dark:text-blue-400' />
+						<span class='text-gray-700 dark:text-gray-300'>{casino.paymentMethods.length} Methods</span>
+					</div>
+				)
+			}
+			{
+				casino.providers && casino.providers.length > 0 && (
+					<div class='flex items-center gap-1.5'>
+						<Icon name='lucide:building-2' size={14} class='text-purple-600 dark:text-purple-400' />
+						<span class='text-gray-700 dark:text-gray-300'>{casino.providers.length} Providers</span>
+					</div>
+				)
+			}
+		</div>
+
+		<!-- Market Badges (Max 2) -->
+		{
+			casino.markets && casino.markets.length > 0 && (
+				<div class='flex flex-wrap gap-1.5 mb-4'>
+					{casino.markets.slice(0, 2).map((market) => (
+						<Badge variant='secondary' size='sm'>
+							{market}
+						</Badge>
+					))}
+					{casino.markets.length > 2 && (
+						<Badge variant='secondary' size='sm'>
+							+{casino.markets.length - 2}
+						</Badge>
+					)}
+				</div>
+			)
+		}
+
+		<!-- CTA Button -->
+		<Button
+			href={casino.affiliateLink}
+			variant='primary'
+			size='md'
+			affiliate={true}
+			class='w-full mb-2'
+		>
+			Visit Casino
+		</Button>
+
+		<!-- Review Link -->
+		<a
+			href={casinoUrl}
+			class='block text-center text-xs text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors'
+		>
+			Read Review →
+		</a>
+	</div>
+</Card>

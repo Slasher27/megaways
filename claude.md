@@ -173,22 +173,33 @@ import CasinoCard from '@components/casino/CasinoCard.astro';
 
 ### ✅ Complete
 - Tailwind CSS 4.x with custom colors and dark mode
-- Layout system (BaseLayout, PageLayout, SlotReviewLayout)
+- Layout system (BaseLayout, PageLayout, SlotReviewLayout, CasinoReviewLayout)
 - UI components (Button, Badge, Card, Icon, Image, Link, Divider, Skeleton)
 - Typography components (H1-H6, P)
 - Icon system (astro-icon with Lucide, MDI, Phosphor)
-- Header, Footer, Container, Breadcrumb
-- BreadcrumbSchema (SEO)
+- Header, Footer, Container, Breadcrumb, Search, ThemeToggle, NavDropdown
 - Content Collections (slots, casinos, authors, providers, mechanics)
 - 6 Mechanics pages (Megaways, Megaclusters, Megaquads, Megapays, Megadrop, Xtraways)
-- Dynamic slot review pages
+- Dynamic slot review pages with full layout
+- Dynamic casino review pages with full layout
+- Casino components (CasinoCard, CasinoCardCompact)
+- Slot components (SlotCard, SlotStats, WhereToPlay)
+- Review components (Rating, ProsCons, AuthorCard)
+- SEO components (SEOHead, SlotSchema, CasinoSchema, BreadcrumbSchema, OrganizationSchema)
+- Interactive Alpine.js components (Modal, Dropdown, Tabs, Accordion, etc.)
 
 ### 🔄 TODO
-- Casino domain components (CasinoCard, BonusDisplay, etc.)
-- Slot domain components (SlotCard, SlotStats, etc.)
-- Review components (Rating, ProsCons, AuthorCard, etc.)
-- SEO components (SEOHead, SlotSchema, CasinoSchema)
-- Interactive Svelte components (filters, search, etc.)
+- Additional casino components (BonusDisplay standalone, CasinoComparison)
+- Additional slot components (FeatureExplainer, PaytableDisplay)
+- SEO components (AuthorSchema for author pages)
+- Interactive Svelte components (live search with autocomplete, comparison tools)
+- E-E-A-T page (/about/team/ - author profiles page)
+
+### ✅ Recently Added
+- CasinoList component with filtering (markets, providers, crypto, Megaways, sorting)
+- SlotList component with filtering (providers, volatility, mechanics, bonus buy, RTP sorting)
+- FAQSchema component for FAQ rich snippets
+- E-E-A-T pages: /about/, /about/methodology/, /responsible-gambling/
 
 ---
 

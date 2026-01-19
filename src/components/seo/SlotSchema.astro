@@ -1,0 +1,91 @@
+---
+/**
+ * SlotSchema Component
+ *
+ * Generates JSON-LD structured data for slot reviews
+ * Implements schema.org Review and VideoGame types
+ *
+ * Usage:
+ * <SlotSchema slot={slot.data} author={author} />
+ */
+
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	slot: CollectionEntry<'slots'>['data'];
+	author?: CollectionEntry<'authors'>['data'];
+	url?: string;
+}
+
+const { slot, author, url } = Astro.props;
+
+// Get absolute URL
+const siteUrl = Astro.site?.href || 'https://megawaysonline.com';
+const reviewUrl = url || Astro.url.href;
+
+// Build absolute image URL
+const imageUrl = slot.thumbnail?.src || slot.logo?.src;
+const absoluteImageUrl = imageUrl
+	? imageUrl.startsWith('http')
+		? imageUrl
+		: new URL(imageUrl, siteUrl).href
+	: new URL('/images/og-default.jpg', siteUrl).href;
+
+// Format dates
+const publishedDate = slot.publishedDate?.toISOString().split('T')[0];
+const modifiedDate = slot.updatedDate?.toISOString().split('T')[0];
+const releasedDate = slot.realeasedDate?.toISOString().split('T')[0];
+
+// Build the schema
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'Review',
+	itemReviewed: {
+		'@type': 'VideoGame',
+		name: slot.name,
+		image: absoluteImageUrl,
+		...(releasedDate && { datePublished: releasedDate }),
+		...(slot.provider && { publisher: slot.provider }),
+		genre: 'Slot Machine',
+		gamePlatform: 'Web Browser',
+		...(slot.rating && {
+			aggregateRating: {
+				'@type': 'AggregateRating',
+				ratingValue: slot.rating,
+				bestRating: 5,
+				worstRating: 0,
+				ratingCount: 1,
+			},
+		}),
+	},
+	...(slot.rating && {
+		reviewRating: {
+			'@type': 'Rating',
+			ratingValue: slot.rating,
+			bestRating: 5,
+			worstRating: 0,
+		},
+	}),
+	...(author && {
+		author: {
+			'@type': 'Person',
+			name: author.name,
+			...(author.role && { jobTitle: author.role }),
+		},
+	}),
+	...(publishedDate && { datePublished: publishedDate }),
+	...(modifiedDate && { dateModified: modifiedDate }),
+	...(reviewUrl && { url: reviewUrl }),
+	publisher: {
+		'@type': 'Organization',
+		name: 'Megaways Online',
+		url: siteUrl,
+		logo: {
+			'@type': 'ImageObject',
+			url: new URL('/images/logo.png', siteUrl).href,
+		},
+	},
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

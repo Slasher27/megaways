@@ -7,10 +7,17 @@ import { getCollection, render, type CollectionEntry, getEntry } from 'astro:con
 import CasinoReviewLayout from '../../layouts/CasinoReviewLayout.astro';
 import H1 from '../../components/typography/H1.astro';
 import H2 from '../../components/typography/H2.astro';
+import H3 from '../../components/typography/H3.astro';
 import P from '../../components/typography/P.astro';
 import Button from '../../components/ui/Button.astro';
 import Badge from '../../components/ui/Badge.astro';
-import Icon from '../../components/ui/Icon.astro';
+import Card from '../../components/ui/Card.astro';
+import Divider from '../../components/ui/Divider.astro';
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import Rating from '../../components/reviews/Rating.astro';
+import ProsCons from '../../components/reviews/ProsCons.astro';
+import AuthorCard from '../../components/reviews/AuthorCard.astro';
 
 export async function getStaticPaths() {
 	const casinos = await getCollection('casinos');
@@ -32,240 +39,265 @@ const { Content } = await render(casino);
 
 // Get author details if available
 const author = casino.data.author ? await getEntry(casino.data.author) : null;
-
-// Format dates
-const formatDate = (date: Date | undefined) => {
-	if (!date) return null;
-	return date.toLocaleDateString('en-US', {
-		year: 'numeric',
-		month: 'long',
-		day: 'numeric',
-	});
-};
-
-const publishedDateFormatted = formatDate(casino.data.publishedDate);
-const updatedDateFormatted = formatDate(casino.data.updatedDate);
 ---
 
 <CasinoReviewLayout casino={casino}>
-	<!-- Casino Header -->
-	<header class="mb-8">
-		<H1>{casino.data.name} Review</H1>
+	<!-- Title & Rating -->
+	<header class='mb-8'>
+		<H1 size='lg' class='mb-4'>{casino.data.name} Review</H1>
 
-							<!-- Author & Date Byline -->
-							{
-								(author || publishedDateFormatted || updatedDateFormatted) && (
-									<div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-										{author && (
-											<div class="flex items-center gap-2">
-												<span class="font-medium text-gray-900 dark:text-white">
-													By {author.data.name}
-												</span>
-												{author.data.role && (
-													<span class="text-gray-500 dark:text-gray-500">
-														• {author.data.role}
-													</span>
-												)}
-											</div>
-										)}
-										{publishedDateFormatted && (
-											<div>
-												<span class="text-gray-500 dark:text-gray-500">Published:</span>
-												<time datetime={casino.data.publishedDate?.toISOString()}>
-													{publishedDateFormatted}
-												</time>
-											</div>
-										)}
-										{updatedDateFormatted && (
-											<div>
-												<span class="text-gray-500 dark:text-gray-500">Updated:</span>
-												<time datetime={casino.data.updatedDate?.toISOString()}>
-													{updatedDateFormatted}
-												</time>
-											</div>
-										)}
+		{
+			casino.data.rating && (
+				<div class='mb-6'>
+					<Rating rating={casino.data.rating} size='lg' showNumber={true} />
+				</div>
+			)
+		}
+
+		<!-- Badges -->
+		<div class='flex flex-wrap gap-2'>
+			{casino.data.featured && <Badge variant='warning' size='md'>⭐ Featured</Badge>}
+			{casino.data.isNew && <Badge variant='success' size='md'>🎉 New</Badge>}
+			{casino.data.hasMegaways && <Badge variant='primary' size='md'>⚡ Megaways Slots</Badge>}
+			{casino.data.cryptoAccepted && <Badge variant='secondary' size='md'>🪙 Crypto Accepted</Badge>}
+		</div>
+	</header>
+
+	<!-- Welcome Bonus CTA Section -->
+	{
+		casino.data.welcomeBonus && (
+			<Card variant='bonus' padding='none' class='mb-8 overflow-hidden'>
+				<div class='flex flex-col lg:flex-row'>
+					<!-- Thumbnail Image (Left side on large screens, top on mobile) -->
+					{
+						(casino.data.thumbnail || casino.data.logo) && (
+							<div class='lg:w-80 flex-shrink-0'>
+								{casino.data.thumbnail ? (
+									<Image
+										src={casino.data.thumbnail}
+										alt={casino.data.name}
+										width={320}
+										height={320}
+										class='w-full h-48 lg:h-full object-cover'
+										loading='eager'
+									/>
+								) : casino.data.logo ? (
+									<div class='bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-48 lg:h-full flex items-center justify-center p-8'>
+										<Image
+											src={casino.data.logo}
+											alt={casino.data.name}
+											width={200}
+											height={100}
+											class='max-h-24 w-auto object-contain'
+											loading='eager'
+										/>
 									</div>
-								)
-							}
+								) : null}
+							</div>
+						)
+					}
 
-							<!-- Casino Key Info Box -->
-							<div class="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 rounded-xl p-6 mb-8">
-								<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-									<div class="flex-1">
-										<!-- Rating -->
-										{
-											casino.data.rating && (
-												<div class="flex items-center gap-3 mb-4">
-													<div class="flex items-center">
-														{Array.from({ length: 5 }).map((_, i) => (
-															<Icon
-																name="lucide:star"
-																size={24}
-																class={
-																	i < Math.floor(casino.data.rating!)
-																		? 'text-yellow-500'
-																		: 'text-gray-300 dark:text-gray-600'
-																}
-															/>
-														))}
-													</div>
-													<span class="text-2xl font-bold text-gray-900 dark:text-white">
-														{casino.data.rating.toFixed(1)}/5
-													</span>
-												</div>
-											)
-										}
-
-										<!-- Badges -->
-										<div class="flex flex-wrap gap-2">
-											{casino.data.featured && <Badge variant="primary">Featured</Badge>}
-											{casino.data.isNew && <Badge variant="success">New</Badge>}
-											{casino.data.hasMegaways && <Badge variant="info">Megaways</Badge>}
-											{casino.data.cryptoAccepted && <Badge variant="secondary">Crypto</Badge>}
-										</div>
+					<!-- Bonus Content -->
+					<div class='flex-1 p-6 lg:p-8'>
+						<div class='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6'>
+							<div class='flex-1'>
+								<div class='flex items-center gap-3 mb-3'>
+									<div class='p-3 bg-primary-100 dark:bg-primary-800/50 rounded-lg'>
+										<Icon name='lucide:gift' size={32} class='text-primary-600 dark:text-primary-400' />
 									</div>
-
-									<!-- CTA Button -->
-									<div class="flex-shrink-0">
-										<Button
-											href={casino.data.affiliateLink || '#'}
-											variant="primary"
-											class="text-lg px-8 py-4"
-											external
-											affiliate
-										>
-											Visit Casino
-										</Button>
-										<P class="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center">
-											18+. T&Cs apply
+									<div>
+										<P class='text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1'>
+											{casino.data.welcomeBonus.title}
+										</P>
+										<P class='text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-0'>
+											{casino.data.welcomeBonus.amount}
 										</P>
 									</div>
 								</div>
-							</div>
-
-							<!-- Welcome Bonus -->
-							{
-								casino.data.welcomeBonus && (
-									<div class="bg-white dark:bg-gray-800 rounded-xl border-2 border-primary-200 dark:border-primary-800 p-6 mb-8">
-										<H2 size="sm" class="mb-4">
-											Welcome Bonus
-										</H2>
-										<P class="text-2xl font-bold text-primary-600 dark:text-primary-400 mb-2">
-											{casino.data.welcomeBonus.amount}
-										</P>
-										<div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
-											{casino.data.welcomeBonus.wageringRequirement && (
-												<div>
-													<strong>Wagering:</strong>{' '}
-													{casino.data.welcomeBonus.wageringRequirement}x
-												</div>
-											)}
-											{casino.data.welcomeBonus.minDeposit && (
-												<div>
-													<strong>Min Deposit:</strong> €
-													{casino.data.welcomeBonus.minDeposit}
-												</div>
-											)}
-										</div>
-									</div>
-								)
-							}
-
-							<!-- Quick Stats Grid -->
-							<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-								{
-									casino.data.licenses && casino.data.licenses.length > 0 && (
-										<div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-											<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">
-												License
-											</P>
-											<P class="text-sm font-semibold">{casino.data.licenses[0]}</P>
-										</div>
-									)
-								}
-								{
-									casino.data.markets && casino.data.markets.length > 0 && (
-										<div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-											<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">Markets</P>
-											<P class="text-sm font-semibold capitalize">
-												{casino.data.markets.slice(0, 2).join(', ')}
-											</P>
-										</div>
-									)
-								}
-								{
-									casino.data.providers && casino.data.providers.length > 0 && (
-										<div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-											<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">
-												Providers
-											</P>
-											<P class="text-sm font-semibold">
-												{casino.data.providers.length}+
-											</P>
-										</div>
-									)
-								}
-								{
-									casino.data.cryptoAccepted && (
-										<div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-											<P class="text-xs text-gray-500 dark:text-gray-500 mb-1">
-												Crypto
-											</P>
-											<P class="text-sm font-semibold">Accepted</P>
-										</div>
-									)
-								}
-							</div>
-						</header>
-
-						<!-- Review Content -->
-						<section class="prose prose-lg dark:prose-invert max-w-none mb-8">
-							<Content />
-						</section>
-
-						<!-- Pros & Cons -->
-						{
-							(casino.data.pros?.length > 0 || casino.data.cons?.length > 0) && (
-								<section class="mb-8 grid md:grid-cols-2 gap-6">
-									{casino.data.pros?.length > 0 && (
-										<div class="p-6 bg-green-50 dark:bg-green-900/20 rounded-lg">
-											<H2 size="sm" class="text-green-700 dark:text-green-400">
-												Pros
-											</H2>
-											<ul class="space-y-2">
-												{casino.data.pros.map((pro) => (
-													<li class="flex items-start">
-														<Icon
-															name="lucide:check"
-															size={20}
-															class="text-green-600 dark:text-green-400 mr-2 mt-0.5"
-														/>
-														<span>{pro}</span>
-													</li>
-												))}
-											</ul>
-										</div>
+								<div class='flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400'>
+									{casino.data.welcomeBonus.wageringRequirement && (
+										<span class='flex items-center gap-1'>
+											<Icon name='lucide:repeat' size={14} />
+											{casino.data.welcomeBonus.wageringRequirement}x wagering
+										</span>
 									)}
-									{casino.data.cons?.length > 0 && (
-										<div class="p-6 bg-red-50 dark:bg-red-900/20 rounded-lg">
-											<H2 size="sm" class="text-red-700 dark:text-red-400">
-												Cons
-											</H2>
-											<ul class="space-y-2">
-												{casino.data.cons.map((con) => (
-													<li class="flex items-start">
-														<Icon
-															name="lucide:x"
-															size={20}
-															class="text-red-600 dark:text-red-400 mr-2 mt-0.5"
-														/>
-														<span>{con}</span>
-													</li>
-												))}
-											</ul>
-										</div>
+									{casino.data.welcomeBonus.minDeposit && (
+										<span class='flex items-center gap-1'>
+											<Icon name='lucide:coins' size={14} />
+											Min deposit: ${casino.data.welcomeBonus.minDeposit}
+										</span>
 									)}
-								</section>
-							)
-						}
+								</div>
+							</div>
+							<div class='flex-shrink-0'>
+								<Button
+									href={casino.data.affiliateLink}
+									variant='primary'
+									size='lg'
+									affiliate={true}
+									class='w-full lg:w-auto text-lg px-8 py-4 flex items-center justify-center gap-2'
+								>
+									Visit {casino.data.name}
+									<Icon name='lucide:arrow-right' size={20} />
+								</Button>
+								<P class='text-xs text-gray-500 dark:text-gray-500 mt-2 text-center'>
+									18+. T&Cs apply. Gamble responsibly.
+								</P>
+							</div>
+						</div>
+					</div>
+				</div>
+			</Card>
+		)
+	}
+
+	<!-- Quick Stats Grid -->
+	<div class='grid grid-cols-2 md:grid-cols-4 gap-4 mb-8'>
+		{
+			casino.data.licenses && casino.data.licenses.length > 0 && (
+				<Card padding='sm' class='text-center'>
+					<div class='flex items-center justify-center mb-2'>
+						<Icon name='lucide:shield-check' size={24} class='text-green-600 dark:text-green-400' />
+					</div>
+					<P class='text-xs text-gray-500 dark:text-gray-500 mb-1'>License</P>
+					<P class='text-sm font-semibold mb-0'>{casino.data.licenses[0]}</P>
+				</Card>
+			)
+		}
+		{
+			casino.data.markets && casino.data.markets.length > 0 && (
+				<Card padding='sm' class='text-center'>
+					<div class='flex items-center justify-center mb-2'>
+						<Icon name='lucide:globe' size={24} class='text-blue-600 dark:text-blue-400' />
+					</div>
+					<P class='text-xs text-gray-500 dark:text-gray-500 mb-1'>Markets</P>
+					<P class='text-sm font-semibold capitalize mb-0'>
+						{casino.data.markets.slice(0, 2).join(', ')}
+					</P>
+				</Card>
+			)
+		}
+		{
+			casino.data.providers && casino.data.providers.length > 0 && (
+				<Card padding='sm' class='text-center'>
+					<div class='flex items-center justify-center mb-2'>
+						<Icon name='lucide:building-2' size={24} class='text-purple-600 dark:text-purple-400' />
+					</div>
+					<P class='text-xs text-gray-500 dark:text-gray-500 mb-1'>Providers</P>
+					<P class='text-sm font-semibold mb-0'>{casino.data.providers.length}+ Games</P>
+				</Card>
+			)
+		}
+		{
+			casino.data.paymentMethods && casino.data.paymentMethods.length > 0 && (
+				<Card padding='sm' class='text-center'>
+					<div class='flex items-center justify-center mb-2'>
+						<Icon
+							name='lucide:credit-card'
+							size={24}
+							class='text-orange-600 dark:text-orange-400'
+						/>
+					</div>
+					<P class='text-xs text-gray-500 dark:text-gray-500 mb-1'>Payments</P>
+					<P class='text-sm font-semibold mb-0'>{casino.data.paymentMethods.length}+ Methods</P>
+				</Card>
+			)
+		}
+	</div>
+
+	<!-- Pros & Cons -->
+	{
+		(casino.data.pros?.length > 0 || casino.data.cons?.length > 0) && (
+			<div class='mb-8'>
+				<ProsCons pros={casino.data.pros} cons={casino.data.cons} />
+			</div>
+		)
+	}
+
+	<!-- Payment Methods Section -->
+	{
+		casino.data.paymentMethods && casino.data.paymentMethods.length > 0 && (
+			<section class='mb-6'>
+				<H3 size='md' class='mb-3'>
+					Payment Methods
+				</H3>
+				<Card>
+					<div class='flex flex-wrap gap-3'>
+						{casino.data.paymentMethods.map((method) => (
+							<Badge variant='secondary' size='md'>
+								{method.replace(/-/g, ' ')}
+							</Badge>
+						))}
+					</div>
+				</Card>
+			</section>
+		)
+	}
+
+	<!-- Game Providers Section -->
+	{
+		casino.data.providers && casino.data.providers.length > 0 && (
+			<section class='mb-8'>
+				<H3 size='md' class='mb-3'>
+					Game Providers
+				</H3>
+				<Card>
+					<div class='flex flex-wrap gap-3'>
+						{casino.data.providers.map((provider) => (
+							<Badge variant='primary' size='md'>
+								{provider.replace(/-/g, ' ')}
+							</Badge>
+						))}
+					</div>
+				</Card>
+			</section>
+		)
+	}
+
+	<Divider class='my-8' />
+
+	<!-- Review Content -->
+	<article class='prose prose-lg dark:prose-invert max-w-none mb-8'>
+		<Content />
+	</article>
+
+	<Divider class='my-8' />
+
+	<!-- Author & Date Info -->
+	{
+		author && (
+			<AuthorCard
+				author={author}
+				publishedDate={casino.data.publishedDate}
+				updatedDate={casino.data.updatedDate}
+				variant='full'
+				class='mb-8'
+			/>
+		)
+	}
+
+	<!-- Final CTA -->
+	<Card variant='elevated' class='mt-12 text-center bg-gradient-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20'>
+		<H3 size='lg' class='mb-4'>Ready to Play at {casino.data.name}?</H3>
+		<P class='mb-6 text-gray-700 dark:text-gray-300'>
+			{
+				casino.data.welcomeBonus
+					? `Claim your ${casino.data.welcomeBonus.amount} and start playing today!`
+					: 'Sign up now and start playing your favorite games!'
+			}
+		</P>
+		<Button
+			href={casino.data.affiliateLink}
+			variant='primary'
+			size='lg'
+			affiliate={true}
+			class='text-lg px-8 py-4'
+		>
+			Visit {casino.data.name}
+			<Icon name='lucide:arrow-right' size={20} class='ml-2' />
+		</Button>
+		<P class='text-xs text-gray-500 dark:text-gray-500 mt-4'>
+			18+. Terms and conditions apply. Please gamble responsibly.
+		</P>
+	</Card>
 </CasinoReviewLayout>

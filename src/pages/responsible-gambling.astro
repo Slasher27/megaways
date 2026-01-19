@@ -1,0 +1,487 @@
+---
+/**
+ * Responsible Gambling Page
+ * Critical for E-E-A-T and player safety
+ */
+
+import PageLayout from '../layouts/PageLayout.astro';
+import Container from '../components/layout/Container.astro';
+import H1 from '../components/typography/H1.astro';
+import H2 from '../components/typography/H2.astro';
+import H3 from '../components/typography/H3.astro';
+import P from '../components/typography/P.astro';
+import Card from '../components/ui/Card.astro';
+import Button from '../components/ui/Button.astro';
+import Divider from '../components/ui/Divider.astro';
+import { Icon } from 'astro-icon/components';
+
+const pageTitle = 'Responsible Gambling | Help & Support Resources';
+const pageDescription =
+	'Gambling should be fun, not harmful. Learn about responsible gambling, warning signs of problem gambling, and where to get help.';
+---
+
+<PageLayout title={pageTitle} description={pageDescription}>
+	<Container>
+		<!-- Hero Section -->
+		<header class='mb-12'>
+			<div class='flex items-center justify-center mb-6'>
+				<div class='p-4 bg-red-100 dark:bg-red-900/30 rounded-full'>
+					<Icon name='lucide:shield-alert' size={48} class='text-red-600 dark:text-red-400' />
+				</div>
+			</div>
+			<H1 size='xl' class='mb-4 text-center'>Responsible Gambling</H1>
+			<P class='text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto text-center'>
+				Gambling should be entertainment, not a way to make money. If you or someone you know needs
+				help, resources are available.
+			</P>
+		</header>
+
+		<!-- Quick Help Card -->
+		<Card
+			variant='elevated'
+			class='mb-12 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border-2 border-red-200 dark:border-red-800'
+		>
+			<div class='text-center'>
+				<H2 size='lg' class='mb-4 text-red-900 dark:text-red-200'>Need Help Now?</H2>
+				<P class='mb-6 text-gray-700 dark:text-gray-300'>
+					If you're experiencing gambling problems, these organizations offer free, confidential
+					support 24/7.
+				</P>
+
+				<div class='grid grid-cols-1 md:grid-cols-3 gap-4'>
+					<Button
+						href='https://www.begambleaware.org'
+						variant='primary'
+						size='lg'
+						class='w-full'
+						target='_blank'
+						rel='noopener noreferrer'
+					>
+						<Icon name='lucide:phone' size={20} class='mr-2' />
+						BeGambleAware (UK)
+					</Button>
+
+					<Button
+						href='https://www.gamcare.org.uk'
+						variant='primary'
+						size='lg'
+						class='w-full'
+						target='_blank'
+						rel='noopener noreferrer'
+					>
+						<Icon name='lucide:phone' size={20} class='mr-2' />
+						GamCare (UK)
+					</Button>
+
+					<Button
+						href='https://www.ncpgambling.org'
+						variant='primary'
+						size='lg'
+						class='w-full'
+						target='_blank'
+						rel='noopener noreferrer'
+					>
+						<Icon name='lucide:phone' size={20} class='mr-2' />
+						NCPG (US)
+					</Button>
+				</div>
+			</div>
+		</Card>
+
+		<!-- What is Responsible Gambling -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-6'>What is Responsible Gambling?</H2>
+
+			<Card class='mb-6'>
+				<P class='mb-4'>
+					Responsible gambling means keeping gambling as a fun form of entertainment, not a way to
+					earn income or escape problems. It involves:
+				</P>
+
+				<ul class='list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400'>
+					<li>Only gambling with money you can afford to lose</li>
+					<li>Setting time and money limits before you start</li>
+					<li>Never chasing losses</li>
+					<li>Taking regular breaks</li>
+					<li>Not gambling when upset, stressed, or under the influence</li>
+					<li>Keeping gambling in balance with other activities</li>
+				</ul>
+			</Card>
+
+			<Card variant='outlined' class='bg-blue-50 dark:bg-blue-900/20'>
+				<div class='flex gap-3'>
+					<Icon name='lucide:info' size={24} class='text-blue-600 dark:text-blue-400 flex-shrink-0' />
+					<P class='text-sm text-gray-700 dark:text-gray-300 mb-0'>
+						<strong>Remember:</strong> The house always has an edge. Over time, the casino will always
+						win. Gambling should never be seen as a way to make money or solve financial problems.
+					</P>
+				</div>
+			</Card>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- Warning Signs -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-6'>Warning Signs of Problem Gambling</H2>
+
+			<P class='mb-6 text-gray-600 dark:text-gray-400'>
+				Problem gambling can affect anyone. Watch for these warning signs in yourself or others:
+			</P>
+
+			<div class='grid grid-cols-1 md:grid-cols-2 gap-6'>
+				<!-- Behavioral Signs -->
+				<Card>
+					<H3 size='md' class='mb-4 flex items-center gap-2'>
+						<Icon name='lucide:alert-triangle' size={24} class='text-orange-600 dark:text-orange-400' />
+						Behavioral Signs
+					</H3>
+					<ul class='list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400 text-sm'>
+						<li>Gambling with money needed for bills or essentials</li>
+						<li>Borrowing money to gamble</li>
+						<li>Lying about gambling activities</li>
+						<li>Chasing losses</li>
+						<li>Gambling for longer than intended</li>
+						<li>Neglecting work, school, or family</li>
+						<li>Gambling to escape problems or relieve anxiety</li>
+					</ul>
+				</Card>
+
+				<!-- Emotional Signs -->
+				<Card>
+					<H3 size='md' class='mb-4 flex items-center gap-2'>
+						<Icon name='lucide:heart-crack' size={24} class='text-red-600 dark:text-red-400' />
+						Emotional Signs
+					</H3>
+					<ul class='list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400 text-sm'>
+						<li>Feeling guilty or ashamed about gambling</li>
+						<li>Mood swings related to wins and losses</li>
+						<li>Becoming defensive when questioned</li>
+						<li>Restlessness or irritability when not gambling</li>
+						<li>Depression or anxiety</li>
+						<li>Relationship problems</li>
+						<li>Feeling unable to stop despite wanting to</li>
+					</ul>
+				</Card>
+			</div>
+
+			<Card variant='outlined' class='mt-6 bg-red-50 dark:bg-red-900/20'>
+				<div class='flex gap-3'>
+					<Icon
+						name='lucide:alert-circle'
+						size={24}
+						class='text-red-600 dark:text-red-400 flex-shrink-0'
+					/>
+					<div>
+						<P class='font-semibold text-gray-900 dark:text-gray-100 mb-2'>
+							If you recognize any of these signs:
+						</P>
+						<P class='text-sm text-gray-700 dark:text-gray-300 mb-0'>
+							Take action now. Problem gambling is a progressive condition that typically gets worse
+							over time without intervention. The sooner you seek help, the easier it is to regain
+							control.
+						</P>
+					</div>
+				</div>
+			</Card>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- Self-Help Tools -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-6'>Self-Help Tools</H2>
+
+			<P class='mb-6 text-gray-600 dark:text-gray-400'>
+				Most online casinos offer tools to help you stay in control:
+			</P>
+
+			<div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+				<!-- Deposit Limits -->
+				<Card>
+					<Icon
+						name='lucide:wallet'
+						size={32}
+						class='text-primary-600 dark:text-primary-400 mb-3'
+					/>
+					<H3 size='sm' class='mb-2'>Deposit Limits</H3>
+					<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+						Set daily, weekly, or monthly limits on how much you can deposit.
+					</P>
+				</Card>
+
+				<!-- Loss Limits -->
+				<Card>
+					<Icon
+						name='lucide:trending-down'
+						size={32}
+						class='text-primary-600 dark:text-primary-400 mb-3'
+					/>
+					<H3 size='sm' class='mb-2'>Loss Limits</H3>
+					<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+						Set a maximum amount you're willing to lose in a given period.
+					</P>
+				</Card>
+
+				<!-- Time Limits -->
+				<Card>
+					<Icon name='lucide:clock' size={32} class='text-primary-600 dark:text-primary-400 mb-3' />
+					<H3 size='sm' class='mb-2'>Time Limits</H3>
+					<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+						Set reminders or automatic logouts after a set playing time.
+					</P>
+				</Card>
+
+				<!-- Reality Checks -->
+				<Card>
+					<Icon name='lucide:bell' size={32} class='text-primary-600 dark:text-primary-400 mb-3' />
+					<H3 size='sm' class='mb-2'>Reality Checks</H3>
+					<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+						Get pop-up reminders showing how long you've been playing.
+					</P>
+				</Card>
+
+				<!-- Take a Break -->
+				<Card>
+					<Icon name='lucide:pause' size={32} class='text-primary-600 dark:text-primary-400 mb-3' />
+					<H3 size='sm' class='mb-2'>Take a Break</H3>
+					<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+						Temporarily suspend your account for 24 hours to 6 weeks.
+					</P>
+				</Card>
+
+				<!-- Self-Exclusion -->
+				<Card>
+					<Icon name='lucide:ban' size={32} class='text-primary-600 dark:text-primary-400 mb-3' />
+					<H3 size='sm' class='mb-2'>Self-Exclusion</H3>
+					<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+						Block access to your account for 6 months to 5 years (or permanently).
+					</P>
+				</Card>
+			</div>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- Help Organizations -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-6'>Where to Get Help</H2>
+
+			<P class='mb-6 text-gray-600 dark:text-gray-400'>
+				These organizations offer free, confidential support for problem gambling:
+			</P>
+
+			<div class='space-y-4'>
+				<!-- UK Organizations -->
+				<Card>
+					<div class='flex items-start gap-4'>
+						<div class='flex-shrink-0 mt-1'>
+							<Icon name='lucide:phone' size={24} class='text-primary-600 dark:text-primary-400' />
+						</div>
+						<div class='flex-1'>
+							<H3 size='sm' class='mb-2'>BeGambleAware (UK)</H3>
+							<P class='text-sm text-gray-600 dark:text-gray-400 mb-2'>
+								Free, confidential helpline and online support for anyone affected by problem
+								gambling.
+							</P>
+							<div class='flex flex-wrap gap-4 text-sm'>
+								<a
+									href='https://www.begambleaware.org'
+									target='_blank'
+									rel='noopener noreferrer'
+									class='text-primary-600 dark:text-primary-400 hover:underline'
+								>
+									Website →
+								</a>
+								<span class='text-gray-600 dark:text-gray-400'>
+									Helpline: <strong>0808 8020 133</strong>
+								</span>
+							</div>
+						</div>
+					</div>
+				</Card>
+
+				<Card>
+					<div class='flex items-start gap-4'>
+						<div class='flex-shrink-0 mt-1'>
+							<Icon name='lucide:phone' size={24} class='text-primary-600 dark:text-primary-400' />
+						</div>
+						<div class='flex-1'>
+							<H3 size='sm' class='mb-2'>GamCare (UK)</H3>
+							<P class='text-sm text-gray-600 dark:text-gray-400 mb-2'>
+								Free counseling, support groups, and online chat for problem gamblers and their
+								families.
+							</P>
+							<div class='flex flex-wrap gap-4 text-sm'>
+								<a
+									href='https://www.gamcare.org.uk'
+									target='_blank'
+									rel='noopener noreferrer'
+									class='text-primary-600 dark:text-primary-400 hover:underline'
+								>
+									Website →
+								</a>
+								<span class='text-gray-600 dark:text-gray-400'>
+									Helpline: <strong>0808 8020 133</strong>
+								</span>
+							</div>
+						</div>
+					</div>
+				</Card>
+
+				<!-- US Organizations -->
+				<Card>
+					<div class='flex items-start gap-4'>
+						<div class='flex-shrink-0 mt-1'>
+							<Icon name='lucide:phone' size={24} class='text-primary-600 dark:text-primary-400' />
+						</div>
+						<div class='flex-1'>
+							<H3 size='sm' class='mb-2'>National Council on Problem Gambling (US)</H3>
+							<P class='text-sm text-gray-600 dark:text-gray-400 mb-2'>
+								24/7 confidential helpline and text support for anyone struggling with gambling
+								addiction.
+							</P>
+							<div class='flex flex-wrap gap-4 text-sm'>
+								<a
+									href='https://www.ncpgambling.org'
+									target='_blank'
+									rel='noopener noreferrer'
+									class='text-primary-600 dark:text-primary-400 hover:underline'
+								>
+									Website →
+								</a>
+								<span class='text-gray-600 dark:text-gray-400'>
+									Helpline: <strong>1-800-522-4700</strong>
+								</span>
+							</div>
+						</div>
+					</div>
+				</Card>
+
+				<!-- International -->
+				<Card>
+					<div class='flex items-start gap-4'>
+						<div class='flex-shrink-0 mt-1'>
+							<Icon name='lucide:globe' size={24} class='text-primary-600 dark:text-primary-400' />
+						</div>
+						<div class='flex-1'>
+							<H3 size='sm' class='mb-2'>Gambling Therapy (International)</H3>
+							<P class='text-sm text-gray-600 dark:text-gray-400 mb-2'>
+								Free online support for problem gamblers and their families worldwide, available in
+								multiple languages.
+							</P>
+							<a
+								href='https://www.gamblingtherapy.org'
+								target='_blank'
+								rel='noopener noreferrer'
+								class='text-sm text-primary-600 dark:text-primary-400 hover:underline'
+							>
+								Website →
+							</a>
+						</div>
+					</div>
+				</Card>
+
+				<!-- Gamblers Anonymous -->
+				<Card>
+					<div class='flex items-start gap-4'>
+						<div class='flex-shrink-0 mt-1'>
+							<Icon name='lucide:users' size={24} class='text-primary-600 dark:text-primary-400' />
+						</div>
+						<div class='flex-1'>
+							<H3 size='sm' class='mb-2'>Gamblers Anonymous</H3>
+							<P class='text-sm text-gray-600 dark:text-gray-400 mb-2'>
+								Fellowship of men and women who share experience and support to solve their gambling
+								problem.
+							</P>
+							<a
+								href='https://www.gamblersanonymous.org'
+								target='_blank'
+								rel='noopener noreferrer'
+								class='text-sm text-primary-600 dark:text-primary-400 hover:underline'
+							>
+								Website →
+							</a>
+						</div>
+					</div>
+				</Card>
+			</div>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- Tips for Safe Gambling -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-6'>Tips for Safe Gambling</H2>
+
+			<div class='grid grid-cols-1 md:grid-cols-2 gap-6'>
+				<Card>
+					<H3 size='sm' class='mb-3 text-green-700 dark:text-green-400'>✓ Do</H3>
+					<ul class='list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400'>
+						<li>Set a budget before you start and stick to it</li>
+						<li>Use deposit and time limits</li>
+						<li>Take regular breaks</li>
+						<li>Gamble for fun, not to make money</li>
+						<li>Keep track of time and money spent</li>
+						<li>Balance gambling with other activities</li>
+						<li>Only gamble when you're in a good mood</li>
+					</ul>
+				</Card>
+
+				<Card>
+					<H3 size='sm' class='mb-3 text-red-700 dark:text-red-400'>✗ Don't</H3>
+					<ul class='list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400'>
+						<li>Never chase your losses</li>
+						<li>Don't gamble with money you can't afford to lose</li>
+						<li>Don't gamble on credit</li>
+						<li>Don't gamble when upset, stressed, or depressed</li>
+						<li>Don't lie about your gambling</li>
+						<li>Don't neglect responsibilities to gamble</li>
+						<li>Don't gamble under the influence of alcohol or drugs</li>
+					</ul>
+				</Card>
+			</div>
+		</section>
+
+		<!-- Age Restrictions -->
+		<section class='mb-16'>
+			<Card variant='outlined' class='bg-orange-50 dark:bg-orange-900/20'>
+				<H3 size='md' class='mb-4 flex items-center gap-2'>
+					<Icon name='lucide:user-x' size={24} class='text-orange-600 dark:text-orange-400' />
+					Underage Gambling
+				</H3>
+				<P class='mb-4 text-gray-700 dark:text-gray-300'>
+					Online gambling is illegal for anyone under 18 (or 21 in some jurisdictions). All reputable
+					casinos verify age and identity before allowing real money play.
+				</P>
+				<P class='mb-0 text-gray-700 dark:text-gray-300'>
+					Parents and guardians should use parental controls and monitor online activity to prevent
+					underage gambling.
+				</P>
+			</Card>
+		</section>
+
+		<!-- Final Message -->
+		<section class='mb-16'>
+			<Card
+				variant='elevated'
+				class='text-center bg-gradient-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20'
+			>
+				<Icon
+					name='lucide:heart'
+					size={48}
+					class='mx-auto mb-4 text-primary-600 dark:text-primary-400'
+				/>
+				<H3 size='lg' class='mb-4'>Gambling Should Be Fun</H3>
+				<P class='mb-6 text-gray-700 dark:text-gray-300 max-w-2xl mx-auto'>
+					When gambling stops being fun and starts causing problems, it's time to take a break or seek
+					help. There's no shame in asking for support—problem gambling is a recognized addiction that
+					affects millions of people worldwide.
+				</P>
+				<P class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+					Remember: Help is always available, and recovery is possible.
+				</P>
+			</Card>
+		</section>
+	</Container>
+</PageLayout>

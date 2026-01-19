@@ -1,0 +1,320 @@
+---
+/**
+ * About Page
+ * Establishes site authority and trust (E-E-A-T)
+ */
+
+import PageLayout from '../../layouts/PageLayout.astro';
+import Container from '../../components/layout/Container.astro';
+import H1 from '../../components/typography/H1.astro';
+import H2 from '../../components/typography/H2.astro';
+import H3 from '../../components/typography/H3.astro';
+import P from '../../components/typography/P.astro';
+import Card from '../../components/ui/Card.astro';
+import Button from '../../components/ui/Button.astro';
+import Divider from '../../components/ui/Divider.astro';
+import OrganizationSchema from '../../components/seo/OrganizationSchema.astro';
+import { Icon } from 'astro-icon/components';
+
+const pageTitle = 'About Megaways Online | Expert Slot & Casino Reviews';
+const pageDescription =
+	'Learn about Megaways Online, our team of experts, and our commitment to providing honest, in-depth reviews of Megaways slots and online casinos.';
+---
+
+<OrganizationSchema />
+
+<PageLayout title={pageTitle} description={pageDescription}>
+	<Container>
+		<!-- Hero Section -->
+		<header class='mb-12 text-center'>
+			<H1 size='xl' class='mb-4'>About Megaways Online</H1>
+			<P class='text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto'>
+				Your trusted source for expert Megaways slot reviews and online casino recommendations since
+				2024.
+			</P>
+		</header>
+
+		<!-- Mission Section -->
+		<section class='mb-16'>
+			<Card variant='elevated' class='max-w-4xl mx-auto'>
+				<H2 size='lg' class='mb-6 text-center'>Our Mission</H2>
+				<P class='text-lg mb-4'>
+					At Megaways Online, we're passionate about one thing: helping players discover the best
+					Megaways slots and reputable online casinos. We provide honest, comprehensive reviews based
+					on real gameplay experience and thorough research.
+				</P>
+				<P class='text-lg mb-0'>
+					We believe every player deserves access to accurate information about RTP, volatility,
+					features, and casino reliability before they play. That's why we test every slot, verify
+					every casino, and update our content regularly to keep you informed.
+				</P>
+			</Card>
+		</section>
+
+		<!-- What We Do -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-8 text-center'>What We Do</H2>
+
+			<div class='grid grid-cols-1 md:grid-cols-3 gap-6'>
+				<!-- Slot Reviews -->
+				<Card padding='lg' class='text-center'>
+					<div class='mb-4 flex justify-center'>
+						<div class='p-4 bg-primary-100 dark:bg-primary-800/50 rounded-full'>
+							<Icon
+								name='lucide:sparkles'
+								size={40}
+								class='text-primary-600 dark:text-primary-400'
+							/>
+						</div>
+					</div>
+					<H3 size='md' class='mb-3'>Slot Reviews</H3>
+					<P class='mb-0'>
+						We review hundreds of Megaways slots, analyzing RTP, volatility, max win potential, and
+						bonus features to help you find your next favorite game.
+					</P>
+				</Card>
+
+				<!-- Casino Reviews -->
+				<Card padding='lg' class='text-center'>
+					<div class='mb-4 flex justify-center'>
+						<div class='p-4 bg-primary-100 dark:bg-primary-800/50 rounded-full'>
+							<Icon
+								name='lucide:shield-check'
+								size={40}
+								class='text-primary-600 dark:text-primary-400'
+							/>
+						</div>
+					</div>
+					<H3 size='md' class='mb-3'>Casino Reviews</H3>
+					<P class='mb-0'>
+						We thoroughly vet online casinos, checking licenses, payment methods, game selection,
+						and customer support to recommend only trustworthy operators.
+					</P>
+				</Card>
+
+				<!-- Guides & Resources -->
+				<Card padding='lg' class='text-center'>
+					<div class='mb-4 flex justify-center'>
+						<div class='p-4 bg-primary-100 dark:bg-primary-800/50 rounded-full'>
+							<Icon name='lucide:book-open' size={40} class='text-primary-600 dark:text-primary-400' />
+						</div>
+					</div>
+					<H3 size='md' class='mb-3'>Guides & Resources</H3>
+					<P class='mb-0'>
+						From understanding Megaways mechanics to choosing the right casino, our guides help both
+						new and experienced players make informed decisions.
+					</P>
+				</Card>
+			</div>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- Our Values -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-8 text-center'>Our Values</H2>
+
+			<div class='grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto'>
+				<!-- Honesty -->
+				<div class='flex gap-4'>
+					<div class='flex-shrink-0'>
+						<Icon name='lucide:heart' size={24} class='text-primary-600 dark:text-primary-400' />
+					</div>
+					<div>
+						<H3 size='sm' class='mb-2'>Honesty First</H3>
+						<P class='mb-0 text-gray-600 dark:text-gray-400'>
+							We never sugarcoat our reviews. If a slot has low RTP or a casino has poor customer
+							service, we'll tell you.
+						</P>
+					</div>
+				</div>
+
+				<!-- Independence -->
+				<div class='flex gap-4'>
+					<div class='flex-shrink-0'>
+						<Icon name='lucide:users' size={24} class='text-primary-600 dark:text-primary-400' />
+					</div>
+					<div>
+						<H3 size='sm' class='mb-2'>Player-Focused</H3>
+						<P class='mb-0 text-gray-600 dark:text-gray-400'>
+							Every review is written with the player in mind. We prioritize your interests, not
+							casino profits.
+						</P>
+					</div>
+				</div>
+
+				<!-- Expertise -->
+				<div class='flex gap-4'>
+					<div class='flex-shrink-0'>
+						<Icon name='lucide:award' size={24} class='text-primary-600 dark:text-primary-400' />
+					</div>
+					<div>
+						<H3 size='sm' class='mb-2'>Expert Analysis</H3>
+						<P class='mb-0 text-gray-600 dark:text-gray-400'>
+							Our team has years of experience playing and analyzing slots. We know what makes a
+							great game.
+						</P>
+					</div>
+				</div>
+
+				<!-- Transparency -->
+				<div class='flex gap-4'>
+					<div class='flex-shrink-0'>
+						<Icon name='lucide:eye' size={24} class='text-primary-600 dark:text-primary-400' />
+					</div>
+					<div>
+						<H3 size='sm' class='mb-2'>Full Transparency</H3>
+						<P class='mb-0 text-gray-600 dark:text-gray-400'>
+							We disclose our affiliate relationships and always maintain editorial independence in
+							our reviews.
+						</P>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- How We Review -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-6 text-center'>How We Review</H2>
+
+			<Card class='max-w-4xl mx-auto'>
+				<div class='space-y-6'>
+					<div>
+						<H3 size='sm' class='mb-2 flex items-center gap-2'>
+							<Icon name='lucide:play' size={20} class='text-primary-600 dark:text-primary-400' />
+							Real Gameplay Testing
+						</H3>
+						<P class='mb-0 text-gray-600 dark:text-gray-400'>
+							We play every slot we review, testing features, tracking wins, and experiencing the
+							gameplay firsthand.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2 flex items-center gap-2'>
+							<Icon name='lucide:calculator' size={20} class='text-primary-600 dark:text-primary-400' />
+							Data Analysis
+						</H3>
+						<P class='mb-0 text-gray-600 dark:text-gray-400'>
+							We verify RTP percentages, analyze volatility indicators, and calculate max win
+							potential to give you accurate stats.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2 flex items-center gap-2'>
+							<Icon name='lucide:search' size={20} class='text-primary-600 dark:text-primary-400' />
+							Casino Verification
+						</H3>
+						<P class='mb-0 text-gray-600 dark:text-gray-400'>
+							We check licenses, test withdrawal times, evaluate customer support, and read player
+							feedback before recommending casinos.
+						</P>
+					</div>
+
+					<div>
+						<H3 size='sm' class='mb-2 flex items-center gap-2'>
+							<Icon
+								name='lucide:refresh-cw'
+								size={20}
+								class='text-primary-600 dark:text-primary-400'
+							/>
+							Regular Updates
+						</H3>
+						<P class='mb-0 text-gray-600 dark:text-gray-400'>
+							We update our reviews regularly to reflect changes in RTPs, casino terms, and new
+							features.
+						</P>
+					</div>
+				</div>
+			</Card>
+
+			<div class='mt-6 text-center'>
+				<Button href='/about/methodology/' variant='primary' size='lg'>
+					Read Our Full Methodology
+					<Icon name='lucide:arrow-right' size={20} class='ml-2' />
+				</Button>
+			</div>
+		</section>
+
+		<Divider class='my-16' />
+
+		<!-- Meet the Team -->
+		<section class='mb-16'>
+			<H2 size='lg' class='mb-6 text-center'>Meet the Team</H2>
+			<P class='text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-8'>
+				Our team of experienced slot players and gambling industry experts work together to bring you
+				the most accurate and helpful reviews.
+			</P>
+
+			<div class='text-center'>
+				<Button href='/about/team/' variant='primary' size='lg'>
+					Meet Our Experts
+					<Icon name='lucide:arrow-right' size={20} class='ml-2' />
+				</Button>
+			</div>
+		</section>
+
+		<!-- Affiliate Disclosure -->
+		<section class='mb-16'>
+			<Card variant='outlined' class='max-w-4xl mx-auto bg-gray-50 dark:bg-gray-900'>
+				<H3 size='md' class='mb-4 flex items-center gap-2'>
+					<Icon name='lucide:info' size={24} class='text-primary-600 dark:text-primary-400' />
+					Affiliate Disclosure
+				</H3>
+				<P class='mb-4 text-gray-600 dark:text-gray-400'>
+					Megaways Online participates in affiliate programs with online casinos. When you click on
+					our casino links and sign up, we may receive a commission at no extra cost to you.
+				</P>
+				<P class='mb-0 text-gray-600 dark:text-gray-400'>
+					These affiliate relationships help us maintain this site and continue providing free,
+					high-quality content. However, they never influence our editorial decisions. We only
+					recommend casinos we trust and would use ourselves. Our reviews remain honest and
+					independent, always prioritizing your best interests.
+				</P>
+			</Card>
+		</section>
+
+		<!-- Responsible Gambling -->
+		<section class='mb-16'>
+			<Card variant='elevated' class='max-w-4xl mx-auto text-center bg-gradient-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20'>
+				<Icon
+					name='lucide:shield-alert'
+					size={48}
+					class='mx-auto mb-4 text-primary-600 dark:text-primary-400'
+				/>
+				<H3 size='lg' class='mb-4'>Play Responsibly</H3>
+				<P class='mb-6 text-gray-700 dark:text-gray-300'>
+					Gambling should be fun, not a way to make money. Set limits, play within your means, and
+					seek help if gambling becomes a problem.
+				</P>
+				<Button href='/responsible-gambling/' variant='primary' size='lg'>
+					Responsible Gambling Resources
+					<Icon name='lucide:arrow-right' size={20} class='ml-2' />
+				</Button>
+			</Card>
+		</section>
+
+		<!-- Contact CTA -->
+		<section class='mb-16'>
+			<div class='text-center max-w-3xl mx-auto'>
+				<H2 size='lg' class='mb-4'>Questions or Feedback?</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-6'>
+					We're always looking to improve. If you have suggestions, questions, or feedback about our
+					reviews, we'd love to hear from you.
+				</P>
+				<P class='text-gray-600 dark:text-gray-400'>
+					<strong>Email:</strong>{' '}
+					<a
+						href='mailto:hello@megawaysonline.com'
+						class='text-primary-600 dark:text-primary-400 hover:underline'
+					>
+						hello@megawaysonline.com
+					</a>
+				</P>
+			</div>
+		</section>
+	</Container>
+</PageLayout>

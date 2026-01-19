@@ -1,0 +1,39 @@
+---
+/**
+ * OrganizationSchema Component
+ *
+ * Generates JSON-LD structured data for the organization/website
+ * Should be included on the homepage and key landing pages
+ *
+ * Usage:
+ * <OrganizationSchema />
+ */
+
+// Get absolute URL
+const siteUrl = Astro.site?.href || 'https://megawaysonline.com';
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'Organization',
+	name: 'Megaways Online',
+	url: siteUrl,
+	logo: {
+		'@type': 'ImageObject',
+		url: new URL('/images/logo.png', siteUrl).href,
+	},
+	description:
+		'Expert reviews of Megaways slots and online casinos. In-depth analysis of RTP, features, bonuses, and where to play.',
+	sameAs: [
+		// Add social media profiles here when available
+		// 'https://twitter.com/megawaysonline',
+		// 'https://facebook.com/megawaysonline',
+	],
+	contactPoint: {
+		'@type': 'ContactPoint',
+		contactType: 'Customer Service',
+		availableLanguage: 'English',
+	},
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
