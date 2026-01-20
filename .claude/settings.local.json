@@ -8,7 +8,10 @@
       "mcp__ide__getDiagnostics",
       "Bash(dir:*)",
       "Bash(srccomponentslayoutNavDropdown.astro)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "WebSearch",
+      "WebFetch(domain:www.bigwinboard.com)",
+      "WebFetch(domain:www.vegasslotsonline.com)"
     ],
     "deny": [],
     "ask": []
