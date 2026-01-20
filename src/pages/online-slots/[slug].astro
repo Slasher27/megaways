@@ -166,9 +166,9 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 	{
 		slot.data.rating && (
 			<section class='bg-linear-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 rounded-xl p-8 text-center border border-primary-200 dark:border-primary-800'>
-				<H2 size='md' class='mb-4!'>
-					Our Verdict
-				</H2>
+				<h3 class='text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
+					Our Rating
+				</h3>
 				<div class='flex items-center justify-center gap-4 mb-4'>
 					<Rating rating={slot.data.rating} size='xl' />
 				</div>
