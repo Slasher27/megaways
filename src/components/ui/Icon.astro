@@ -6,9 +6,10 @@ interface Props {
 	size?: number | string;
 	class?: string;
 	title?: string;
+	style?: string;
 }
 
-const { name, size = 24, class: className = '', title } = Astro.props;
+const { name, size = 24, class: className = '', title, style } = Astro.props;
 
 // Convert size to appropriate format
 const sizeValue = typeof size === 'number' ? `${size}px` : size;
@@ -20,4 +21,5 @@ const sizeValue = typeof size === 'number' ? `${size}px` : size;
 	height={sizeValue}
 	class:list={['inline-block', className]}
 	title={title}
+	style={style}
 />

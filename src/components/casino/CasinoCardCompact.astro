@@ -23,10 +23,15 @@ const casino = casinoEntry.data;
 const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 ---
 
-<Card variant='default' padding='sm' hover={true} class:list={['group', className]}>
+<Card
+	variant='default'
+	padding='sm'
+	hover={true}
+	class:list={['group', className]}
+>
 	<div class='flex items-start gap-3'>
 		<!-- Casino Logo -->
-		<div class='flex-shrink-0'>
+		<div class='shrink-0'>
 			{
 				casino.logo ? (
 					<Image
@@ -39,7 +44,9 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 					/>
 				) : (
 					<div class='h-8 flex items-center'>
-						<span class='text-sm font-bold text-gray-900 dark:text-white'>{casino.name}</span>
+						<span class='text-sm font-bold text-gray-900 dark:text-white'>
+							{casino.name}
+						</span>
 					</div>
 				)
 			}
@@ -52,15 +59,31 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 				{
 					casino.rating && (
 						<div class='flex items-center gap-1'>
-							<Icon name='lucide:star' size={14} class='text-yellow-500 fill-yellow-500' />
+							<Icon
+								name='lucide:star'
+								size={14}
+								class='text-yellow-500 fill-yellow-500'
+							/>
 							<span class='text-sm font-semibold text-gray-900 dark:text-white'>
 								{casino.rating.toFixed(1)}
 							</span>
 						</div>
 					)
 				}
-				{casino.featured && <Badge variant='warning' size='sm'>Featured</Badge>}
-				{casino.isNew && <Badge variant='success' size='sm'>New</Badge>}
+				{
+					casino.featured && (
+						<Badge variant='warning' size='sm'>
+							Featured
+						</Badge>
+					)
+				}
+				{
+					casino.isNew && (
+						<Badge variant='success' size='sm'>
+							New
+						</Badge>
+					)
+				}
 			</div>
 
 			<!-- Bonus -->
@@ -78,23 +101,43 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 			}
 
 			<!-- Quick Stats -->
-			<div class='flex flex-wrap gap-2 mb-3 text-xs text-gray-600 dark:text-gray-400'>
-				{casino.hasMegaways && (
-					<span class='flex items-center gap-1'>
-						<Icon name='lucide:zap' size={12} class='text-primary-600 dark:text-primary-400' />
-						Megaways
-					</span>
-				)}
-				{casino.cryptoAccepted && (
-					<span class='flex items-center gap-1'>
-						<Icon name='lucide:coins' size={12} class='text-orange-600 dark:text-orange-400' />
-						Crypto
-					</span>
-				)}
+			<div
+				class='flex flex-wrap gap-2 mb-3 text-xs text-gray-600 dark:text-gray-400'
+			>
+				{
+					casino.hasMegaways && (
+						<span class='flex items-center gap-1'>
+							<Icon
+								name='lucide:zap'
+								size={12}
+								class='text-primary-600 dark:text-primary-400'
+							/>
+							Megaways
+						</span>
+					)
+				}
+				{
+					casino.cryptoAccepted && (
+						<span class='flex items-center gap-1'>
+							<Icon
+								name='lucide:coins'
+								size={12}
+								class='text-orange-600 dark:text-orange-400'
+							/>
+							Crypto
+						</span>
+					)
+				}
 			</div>
 
 			<!-- CTA -->
-			<Button href={casino.affiliateLink} variant='primary' size='sm' affiliate={true} class='w-full'>
+			<Button
+				href={casino.affiliateLink}
+				variant='primary'
+				size='sm'
+				affiliate={true}
+				class='w-full'
+			>
 				Play Now
 			</Button>
 		</div>

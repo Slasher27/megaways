@@ -11,7 +11,10 @@
       "Bash(npm install:*)",
       "WebSearch",
       "WebFetch(domain:www.bigwinboard.com)",
-      "WebFetch(domain:www.vegasslotsonline.com)"
+      "WebFetch(domain:www.vegasslotsonline.com)",
+      "WebFetch(domain:www.bitstarz.com)",
+      "WebFetch(domain:www.starzpartners.com)",
+      "WebFetch(domain:www.woocasino.com)"
     ],
     "deny": [],
     "ask": []

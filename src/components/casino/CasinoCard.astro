@@ -24,9 +24,17 @@ const casino = casinoEntry.data;
 const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 ---
 
-<Card variant='casino' padding='none' hover={true} class:list={['group overflow-hidden', className]}>
+<Card
+	variant='casino'
+	padding='none'
+	hover={true}
+	class:list={['group overflow-hidden', className]}
+>
 	<!-- Thumbnail / Logo Banner -->
-	<a href={casinoUrl} class='block relative overflow-hidden aspect-[16/9] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900'>
+	<a
+		href={casinoUrl}
+		class='block relative overflow-hidden aspect-video bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900'
+	>
 		{
 			casino.thumbnail ? (
 				<Image
@@ -50,7 +58,9 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 				</div>
 			) : (
 				<div class='absolute inset-0 flex items-center justify-center p-6'>
-					<H3 size='sm' class='text-center mb-0'>{casino.name}</H3>
+					<H3 size='sm' class='text-center mb-0'>
+						{casino.name}
+					</H3>
 				</div>
 			)
 		}
@@ -81,7 +91,9 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 		{
 			casino.isNew && (
 				<div class='absolute top-3 left-3'>
-					<Badge variant='success' size='sm'>New</Badge>
+					<Badge variant='success' size='sm'>
+						New
+					</Badge>
 				</div>
 			)
 		}
@@ -90,8 +102,14 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 	<!-- Content -->
 	<div class='p-5'>
 		<!-- Title -->
-		<a href={casinoUrl} class='block mb-3 no-underline hover:no-underline group/title'>
-			<H3 size='sm' class='group-hover/title:text-primary-600 dark:group-hover/title:text-primary-400 transition-colors line-clamp-1'>
+		<a
+			href={casinoUrl}
+			class='block mb-3 no-underline hover:no-underline group/title'
+		>
+			<H3
+				size='sm'
+				class='group-hover/title:text-primary-600 dark:group-hover/title:text-primary-400 transition-colors line-clamp-1'
+			>
 				{casino.name}
 			</H3>
 		</a>
@@ -115,7 +133,11 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 			{
 				casino.hasMegaways && (
 					<div class='flex items-center gap-1.5'>
-						<Icon name='lucide:zap' size={14} class='text-primary-600 dark:text-primary-400' />
+						<Icon
+							name='lucide:zap'
+							size={14}
+							class='text-primary-600 dark:text-primary-400'
+						/>
 						<span class='text-gray-700 dark:text-gray-300'>Megaways</span>
 					</div>
 				)
@@ -123,7 +145,11 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 			{
 				casino.cryptoAccepted && (
 					<div class='flex items-center gap-1.5'>
-						<Icon name='lucide:coins' size={14} class='text-orange-600 dark:text-orange-400' />
+						<Icon
+							name='lucide:coins'
+							size={14}
+							class='text-orange-600 dark:text-orange-400'
+						/>
 						<span class='text-gray-700 dark:text-gray-300'>Crypto</span>
 					</div>
 				)
@@ -131,16 +157,28 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 			{
 				casino.paymentMethods && casino.paymentMethods.length > 0 && (
 					<div class='flex items-center gap-1.5'>
-						<Icon name='lucide:credit-card' size={14} class='text-blue-600 dark:text-blue-400' />
-						<span class='text-gray-700 dark:text-gray-300'>{casino.paymentMethods.length} Methods</span>
+						<Icon
+							name='lucide:credit-card'
+							size={14}
+							class='text-blue-600 dark:text-blue-400'
+						/>
+						<span class='text-gray-700 dark:text-gray-300'>
+							{casino.paymentMethods.length} Methods
+						</span>
 					</div>
 				)
 			}
 			{
 				casino.providers && casino.providers.length > 0 && (
 					<div class='flex items-center gap-1.5'>
-						<Icon name='lucide:building-2' size={14} class='text-purple-600 dark:text-purple-400' />
-						<span class='text-gray-700 dark:text-gray-300'>{casino.providers.length} Providers</span>
+						<Icon
+							name='lucide:building-2'
+							size={14}
+							class='text-purple-600 dark:text-purple-400'
+						/>
+						<span class='text-gray-700 dark:text-gray-300'>
+							{casino.providers.length} Providers
+						</span>
 					</div>
 				)
 			}

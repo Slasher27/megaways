@@ -13,7 +13,7 @@ import Button from '../../components/ui/Button.astro';
 import Badge from '../../components/ui/Badge.astro';
 import Card from '../../components/ui/Card.astro';
 import Divider from '../../components/ui/Divider.astro';
-import { Icon } from 'astro-icon/components';
+import Icon from '../../components/ui/Icon.astro';
 import { Image } from 'astro:assets';
 import Rating from '../../components/reviews/Rating.astro';
 import ProsCons from '../../components/reviews/ProsCons.astro';
@@ -56,33 +56,53 @@ const author = casino.data.author ? await getEntry(casino.data.author) : null;
 
 		<!-- Badges -->
 		<div class='flex flex-wrap gap-2'>
-			{casino.data.featured && <Badge variant='warning' size='md'>⭐ Featured</Badge>}
-			{casino.data.isNew && <Badge variant='success' size='md'>🎉 New</Badge>}
-			{casino.data.hasMegaways && <Badge variant='primary' size='md'>⚡ Megaways Slots</Badge>}
-			{casino.data.cryptoAccepted && <Badge variant='secondary' size='md'>🪙 Crypto Accepted</Badge>}
+			{casino.data.featured && (
+				<Badge variant='warning' size='md'>
+					<Icon name='lucide:star' size={14} class='inline mr-1' />
+					Featured
+				</Badge>
+			)}
+			{casino.data.isNew && (
+				<Badge variant='success' size='md'>
+					<Icon name='lucide:sparkles' size={14} class='inline mr-1' />
+					New
+				</Badge>
+			)}
+			{casino.data.hasMegaways && (
+				<Badge variant='primary' size='md'>
+					<Icon name='lucide:zap' size={14} class='inline mr-1' />
+					Megaways Slots
+				</Badge>
+			)}
+			{casino.data.cryptoAccepted && (
+				<Badge variant='secondary' size='md'>
+					<Icon name='lucide:coins' size={14} class='inline mr-1' />
+					Crypto Accepted
+				</Badge>
+			)}
 		</div>
 	</header>
 
 	<!-- Welcome Bonus CTA Section -->
 	{
 		casino.data.welcomeBonus && (
-			<Card variant='bonus' padding='none' class='mb-8 overflow-hidden'>
-				<div class='flex flex-col lg:flex-row'>
+			<Card variant='bonus' padding='none' class='mb-8'>
+				<div class='flex flex-col lg:flex-row overflow-hidden rounded-xl'>
 					<!-- Thumbnail Image (Left side on large screens, top on mobile) -->
 					{
 						(casino.data.thumbnail || casino.data.logo) && (
-							<div class='lg:w-80 flex-shrink-0'>
+							<div class='w-full lg:w-auto lg:max-w-md shrink-0 p-2 lg:p-4'>
 								{casino.data.thumbnail ? (
 									<Image
 										src={casino.data.thumbnail}
 										alt={casino.data.name}
-										width={320}
-										height={320}
-										class='w-full h-48 lg:h-full object-cover'
+										width={400}
+										height={300}
+										class='w-full h-auto object-contain rounded-lg'
 										loading='eager'
 									/>
 								) : casino.data.logo ? (
-									<div class='bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-48 lg:h-full flex items-center justify-center p-8'>
+									<div class='bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-48 lg:h-full flex items-center justify-center p-8'>
 										<Image
 											src={casino.data.logo}
 											alt={casino.data.name}
@@ -103,7 +123,7 @@ const author = casino.data.author ? await getEntry(casino.data.author) : null;
 							<div class='flex-1'>
 								<div class='flex items-center gap-3 mb-3'>
 									<div class='p-3 bg-primary-100 dark:bg-primary-800/50 rounded-lg'>
-										<Icon name='lucide:gift' size={32} class='text-primary-600 dark:text-primary-400' />
+										<Icon name='lucide:gift' size={24} class='text-primary-600 dark:text-primary-400' />
 									</div>
 									<div>
 										<P class='text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1'>
@@ -129,16 +149,15 @@ const author = casino.data.author ? await getEntry(casino.data.author) : null;
 									)}
 								</div>
 							</div>
-							<div class='flex-shrink-0'>
+							<div class='shrink-0'>
 								<Button
 									href={casino.data.affiliateLink}
 									variant='primary'
 									size='lg'
 									affiliate={true}
-									class='w-full lg:w-auto text-lg px-8 py-4 flex items-center justify-center gap-2'
+									class='w-full lg:w-auto text-lg px-8 py-4'
 								>
 									Visit {casino.data.name}
-									<Icon name='lucide:arrow-right' size={20} />
 								</Button>
 								<P class='text-xs text-gray-500 dark:text-gray-500 mt-2 text-center'>
 									18+. T&Cs apply. Gamble responsibly.
@@ -277,7 +296,7 @@ const author = casino.data.author ? await getEntry(casino.data.author) : null;
 	}
 
 	<!-- Final CTA -->
-	<Card variant='elevated' class='mt-12 text-center bg-gradient-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20'>
+	<Card variant='elevated' class='mt-12 text-center bg-linear-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20'>
 		<H3 size='lg' class='mb-4'>Ready to Play at {casino.data.name}?</H3>
 		<P class='mb-6 text-gray-700 dark:text-gray-300'>
 			{
@@ -294,7 +313,6 @@ const author = casino.data.author ? await getEntry(casino.data.author) : null;
 			class='text-lg px-8 py-4'
 		>
 			Visit {casino.data.name}
-			<Icon name='lucide:arrow-right' size={20} class='ml-2' />
 		</Button>
 		<P class='text-xs text-gray-500 dark:text-gray-500 mt-4'>
 			18+. Terms and conditions apply. Please gamble responsibly.
