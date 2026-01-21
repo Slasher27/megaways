@@ -2,6 +2,7 @@
 /// <reference path="../alpine.d.ts" />
 import '../styles/global.css';
 import SEOHead from '../components/seo/SEOHead.astro';
+import BackToTop from '../components/interactive/alpinejs/BackToTop.astro';
 
 interface Props {
 	title: string;
@@ -110,5 +111,8 @@ const {
 	</head>
 	<body class='min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200'>
 		<slot />
+
+		<!-- Back to Top Button -->
+		<BackToTop />
 	</body>
 </html>

@@ -28,7 +28,7 @@ export default defineConfig({
         '/online-slots/red-tiger/primate-king-megaways/':
             '/online-slots/primate-king-megaways-review/',
 
-        // Casino reviews → shorter URLs (6 redirects)
+        // Casino reviews → shorter URLs (8 redirects)
         '/online-casinos/bitstarz-online-casino-review/':
             '/online-casinos/bitstarz-casino-review/',
         '/online-casinos/fastpay-online-casino-review/':
@@ -41,5 +41,9 @@ export default defineConfig({
             '/online-casinos/woo-casino-review/',
         '/online-casinos/blueleo-online-casino-review/':
             '/online-casinos/blueleo-casino-review/',
+        '/online-casinos/rocket-play-online-casino/':
+            '/online-casinos/rocketplay-casino-review/',
+        '/online-casinos/oshi-online-casino/':
+            '/online-casinos/oshi-casino-review/',
     },
 });
