@@ -1,0 +1,154 @@
+---
+/**
+ * VideoPlayer Component
+ *
+ * Responsive video player for casino/slot review videos
+ * Supports YouTube and Vimeo embeds with optimal settings
+ *
+ * Features:
+ * - Responsive 16:9 aspect ratio
+ * - Lazy loading for performance
+ * - Auto-detects YouTube vs Vimeo
+ * - Privacy-enhanced embeds
+ * - Customizable styling
+ */
+
+interface Props {
+	/** Video URL (YouTube or Vimeo) */
+	videoUrl: string;
+	/** Optional title for accessibility */
+	title?: string;
+	/** Custom CSS classes */
+	class?: string;
+	/** Whether to allow fullscreen (default: true) */
+	allowFullscreen?: boolean;
+}
+
+const {
+	videoUrl,
+	title = 'Casino Review Video',
+	class: className = '',
+	allowFullscreen = true,
+} = Astro.props;
+
+/**
+ * Convert video URL to embed URL
+ * Supports:
+ * - YouTube: youtube.com/watch?v=ID or youtu.be/ID
+ * - Vimeo: vimeo.com/ID
+ */
+function getEmbedUrl(url: string): { embedUrl: string; platform: 'youtube' | 'vimeo' | 'unknown' } {
+	try {
+		const urlObj = new URL(url);
+
+		// YouTube detection
+		if (urlObj.hostname.includes('youtube.com') || urlObj.hostname.includes('youtu.be')) {
+			let videoId = '';
+
+			if (urlObj.hostname.includes('youtu.be')) {
+				// youtu.be/VIDEO_ID
+				videoId = urlObj.pathname.slice(1);
+			} else {
+				// youtube.com/watch?v=VIDEO_ID
+				videoId = urlObj.searchParams.get('v') || '';
+			}
+
+			if (videoId) {
+				// Use youtube-nocookie.com for privacy-enhanced mode
+				return {
+					embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`,
+					platform: 'youtube',
+				};
+			}
+		}
+
+		// Vimeo detection
+		if (urlObj.hostname.includes('vimeo.com')) {
+			const videoId = urlObj.pathname.split('/').filter(Boolean)[0];
+			if (videoId) {
+				return {
+					embedUrl: `https://player.vimeo.com/video/${videoId}?title=0&byline=0&portrait=0`,
+					platform: 'vimeo',
+				};
+			}
+		}
+
+		// If already an embed URL, return as-is
+		if (url.includes('embed') || url.includes('player')) {
+			const platform = url.includes('youtube') ? 'youtube' : url.includes('vimeo') ? 'vimeo' : 'unknown';
+			return { embedUrl: url, platform };
+		}
+
+		return { embedUrl: url, platform: 'unknown' };
+	} catch (error) {
+		console.error('Error parsing video URL:', error);
+		return { embedUrl: url, platform: 'unknown' };
+	}
+}
+
+const { embedUrl, platform } = getEmbedUrl(videoUrl);
+---
+
+<div class={`video-player-wrapper ${className}`}>
+	<!-- Responsive container with 16:9 aspect ratio -->
+	<div class="relative w-full pb-[56.25%] bg-gray-900 dark:bg-gray-950 rounded-lg overflow-hidden shadow-lg">
+		<iframe
+			src={embedUrl}
+			title={title}
+			class="absolute top-0 left-0 w-full h-full"
+			frameborder="0"
+			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+			allowfullscreen={allowFullscreen}
+			loading="lazy"
+		></iframe>
+	</div>
+
+	<!-- Platform badge (optional, can be hidden with CSS) -->
+	{platform !== 'unknown' && (
+		<div class="flex items-center justify-center gap-2 mt-2 text-xs text-gray-500 dark:text-gray-400">
+			<span class="inline-flex items-center gap-1">
+				{platform === 'youtube' && (
+					<>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							class="text-red-600"
+						>
+							<path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+						</svg>
+						<span>Watch on YouTube</span>
+					</>
+				)}
+				{platform === 'vimeo' && (
+					<>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							class="text-blue-500"
+						>
+							<path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197c1.185-1.044 2.351-2.084 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z"/>
+						</svg>
+						<span>Watch on Vimeo</span>
+					</>
+				)}
+			</span>
+		</div>
+	)}
+</div>
+
+<style>
+	.video-player-wrapper {
+		@apply w-full;
+	}
+
+	/* Ensure iframe covers the container */
+	.video-player-wrapper iframe {
+		border: none;
+	}
+</style>

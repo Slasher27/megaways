@@ -1,0 +1,72 @@
+---
+/**
+ * VideoSchema Component
+ *
+ * Generates VideoObject schema markup for SEO
+ * Helps videos appear in Google search results with rich snippets
+ *
+ * Reference: https://schema.org/VideoObject
+ * Google docs: https://developers.google.com/search/docs/appearance/structured-data/video
+ */
+
+interface Props {
+	/** Video title */
+	name: string;
+	/** Video description */
+	description: string;
+	/** Thumbnail URL (absolute) */
+	thumbnailUrl: string;
+	/** Video upload/publish date */
+	uploadDate: Date | string;
+	/** Duration in seconds (e.g., 60) */
+	duration?: number;
+	/** Embed URL (YouTube, Vimeo, etc.) */
+	embedUrl: string;
+	/** Content URL (video page URL) */
+	contentUrl?: string;
+	/** Publisher/organization name */
+	publisher?: string;
+}
+
+const {
+	name,
+	description,
+	thumbnailUrl,
+	uploadDate,
+	duration = 60,
+	embedUrl,
+	contentUrl,
+	publisher = 'Megaways Online',
+} = Astro.props;
+
+// Convert duration to ISO 8601 format (PT60S = 60 seconds)
+const durationISO = `PT${duration}S`;
+
+// Ensure upload date is in ISO format
+const uploadDateISO = uploadDate instanceof Date
+	? uploadDate.toISOString()
+	: new Date(uploadDate).toISOString();
+
+// Build schema object
+const videoSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'VideoObject',
+	name,
+	description,
+	thumbnailUrl: [thumbnailUrl],
+	uploadDate: uploadDateISO,
+	duration: durationISO,
+	embedUrl,
+	...(contentUrl && { contentUrl }),
+	publisher: {
+		'@type': 'Organization',
+		name: publisher,
+		logo: {
+			'@type': 'ImageObject',
+			url: `${Astro.site}logo.png`, // Your site logo
+		},
+	},
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(videoSchema)} />

@@ -118,6 +118,12 @@ const casinos = defineCollection({
 		// Affiliate
 		affiliateLink: z.string().url().optional(), // Affiliate tracking link
 
+		// Video Review (60-second summary)
+		videoUrl: z.string().url().optional(), // YouTube or Vimeo embed URL
+		videoThumbnail: image().optional(), // Custom video thumbnail (optional, falls back to auto-generated)
+		videoDuration: z.number().positive().optional(), // Duration in seconds (e.g., 60)
+		videoUploadDate: z.coerce.date().optional(), // When video was published
+
 		// Review
 		pros: z.array(z.string()).default([]),
 		cons: z.array(z.string()).default([]),

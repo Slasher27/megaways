@@ -18,6 +18,8 @@ import { Image } from 'astro:assets';
 import Rating from '../../components/reviews/Rating.astro';
 import ProsCons from '../../components/reviews/ProsCons.astro';
 import AuthorCard from '../../components/reviews/AuthorCard.astro';
+import VideoPlayer from '../../components/reviews/VideoPlayer.astro';
+import VideoSchema from '../../components/seo/VideoSchema.astro';
 
 export async function getStaticPaths() {
 	const casinos = await getCollection('casinos');
@@ -39,7 +41,28 @@ const { Content } = await render(casino);
 
 // Get author details if available
 const author = casino.data.author ? await getEntry(casino.data.author) : null;
+
+// Prepare video schema data if video exists
+const hasVideo = !!casino.data.videoUrl;
+const videoThumbnailUrl = casino.data.videoThumbnail
+	? new URL(casino.data.videoThumbnail.src, Astro.site).href
+	: casino.data.thumbnail
+		? new URL(casino.data.thumbnail.src, Astro.site).href
+		: '';
 ---
+
+<!-- Video Schema Markup (if video exists) -->
+{hasVideo && casino.data.videoUrl && videoThumbnailUrl && (
+	<VideoSchema
+		name={`${casino.data.name} Review - 60 Second Summary`}
+		description={`Quick 60-second video review of ${casino.data.name} covering bonuses, games, payment methods, and our expert verdict.`}
+		thumbnailUrl={videoThumbnailUrl}
+		uploadDate={casino.data.videoUploadDate || casino.data.publishedDate || new Date()}
+		duration={casino.data.videoDuration || 60}
+		embedUrl={casino.data.videoUrl}
+		contentUrl={Astro.url.href}
+	/>
+)}
 
 <CasinoReviewLayout casino={casino}>
 	<!-- Title & Rating -->
@@ -82,6 +105,23 @@ const author = casino.data.author ? await getEntry(casino.data.author) : null;
 			)}
 		</div>
 	</header>
+
+	<!-- 60-Second Video Review (if available) -->
+	{hasVideo && casino.data.videoUrl && (
+		<section class="mb-8">
+			<div class="mb-4 flex items-center gap-2">
+				<Icon name="lucide:play-circle" size={24} class="text-primary-600 dark:text-primary-400" />
+				<H2 size="md" class="mb-0">60-Second Video Review</H2>
+			</div>
+			<VideoPlayer
+				videoUrl={casino.data.videoUrl}
+				title={`${casino.data.name} Review - 60 Second Summary`}
+			/>
+			<P class="mt-3 text-sm text-gray-600 dark:text-gray-400 text-center">
+				Quick overview of {casino.data.name} - Watch our 60-second expert review
+			</P>
+		</section>
+	)}
 
 	<!-- Welcome Bonus CTA Section -->
 	{
