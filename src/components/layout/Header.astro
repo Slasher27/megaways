@@ -7,7 +7,7 @@ import NavDropdownMobile from './NavDropdownMobile.astro';
 import Search from './Search.astro';
 import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
-import { mainNavigation, isDropdown } from '../../data/navigation';
+import { mainNavigation, isDropdown, type NavLink } from '../../data/navigation';
 import logo from '../../assets/images/megaways-logo.png';
 
 // Get current pathname for active state
@@ -59,10 +59,10 @@ function isActive(href: string): boolean {
 								<NavDropdown label={item.label} items={item.items} />
 							) : (
 								<Link
-									href={item.href}
+									href={(item as NavLink).href}
 									variant='muted'
 									underline={false}
-									class={isActive(item.href)
+									class={isActive((item as NavLink).href)
 										? 'font-semibold text-primary-600 dark:text-primary-400'
 										: ''
 									}
@@ -122,10 +122,10 @@ function isActive(href: string): boolean {
 									.filter((item) => !isDropdown(item))
 									.map((item) => (
 										<a
-											href={item.href}
+											href={(item as NavLink).href}
 											@click='$dialog.close()'
 											class={`block px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${
-												isActive(item.href)
+												isActive((item as NavLink).href)
 													? 'font-semibold bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
 													: 'text-gray-700 dark:text-gray-300'
 											}`}
