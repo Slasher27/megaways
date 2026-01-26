@@ -10,6 +10,11 @@ export default defineConfig({
     site: 'https://megawaysonline.com',
     trailingSlash: 'always',
     integrations: [icon(), mdx()],
+    image: {
+        // Optimize images to WebP format for better performance
+        formats: ['webp'],
+        quality: 80,
+    },
     vite: {
         plugins: [tailwindcss()],
     },

@@ -15,9 +15,10 @@ import { Icon } from 'astro-icon/components';
 interface Props {
 	casinoEntry: CollectionEntry<'casinos'>;
 	class?: string;
+	eager?: boolean; // Load image eagerly for above-fold cards
 }
 
-const { casinoEntry, class: className } = Astro.props;
+const { casinoEntry, class: className, eager = false } = Astro.props;
 const casino = casinoEntry.data;
 
 // Generate casino URL
@@ -43,7 +44,8 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 					width={400}
 					height={225}
 					class='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
-					loading='lazy'
+					loading={eager ? 'eager' : 'lazy'}
+					fetchpriority={eager ? 'high' : 'auto'}
 				/>
 			) : casino.logo ? (
 				<div class='absolute inset-0 flex items-center justify-center p-6'>
@@ -53,7 +55,8 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 						width={200}
 						height={80}
 						class='max-h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-300'
-						loading='lazy'
+						loading={eager ? 'eager' : 'lazy'}
+						fetchpriority={eager ? 'high' : 'auto'}
 					/>
 				</div>
 			) : (

@@ -21,15 +21,26 @@ const { class: className, placeholder = 'Search slots and casinos...' } = Astro.
 		results: [],
 		allData: { slots: [], casinos: [] },
 		loading: false,
+		dataLoaded: false,
 		selectedIndex: -1,
 
 		async init() {
-			// Fetch search data on component mount
+			// Defer loading search data until user focuses the search input
+			// This improves initial page load performance
+		},
+
+		async loadSearchData() {
+			if (this.dataLoaded) return;
+
+			this.loading = true;
 			try {
 				const response = await fetch("/api/search.json");
 				this.allData = await response.json();
+				this.dataLoaded = true;
 			} catch (error) {
 				console.error("Failed to load search data:", error);
+			} finally {
+				this.loading = false;
 			}
 		},
 
@@ -101,6 +112,7 @@ const { class: className, placeholder = 'Search slots and casinos...' } = Astro.
 		<input
 			type='text'
 			x-model='query'
+			x-on:focus='loadSearchData()'
 			x-on:input.debounce.300ms='search()'
 			x-on:keydown.arrow-down.prevent='selectNext()'
 			x-on:keydown.arrow-up.prevent='selectPrev()'

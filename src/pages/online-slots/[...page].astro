@@ -1,0 +1,141 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import PageLayout from '../../layouts/PageLayout.astro';
+import Container from '../../components/layout/Container.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import H1 from '../../components/typography/H1.astro';
+import H2 from '../../components/typography/H2.astro';
+import P from '../../components/typography/P.astro';
+import Breadcrumb from '../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
+import SlotCard from '../../components/slots/SlotCard.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+	// Get all slots from content collection
+	const allSlots = await getCollection('slots');
+
+	// Sort slots by name alphabetically
+	const sortedSlots = allSlots.sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+	// Generate paginated routes
+	return paginate(sortedSlots, { pageSize: 12 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+
+const metadata = {
+	title: page.currentPage === 1
+		? 'Online Slots Reviews | Megaways & More'
+		: `Online Slots Reviews | Page ${page.currentPage}`,
+	description: 'Comprehensive reviews of online slots including Megaways, features, RTP, volatility, and where to play. Expert analysis and ratings.',
+};
+
+// Build breadcrumb items
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Online Slots', href: '/online-slots/' },
+];
+---
+
+<!-- Breadcrumb Schema for SEO -->
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<PageLayout title={metadata.title} description={metadata.description}>
+	<Header slot='header' />
+
+	<Container>
+		<!-- Breadcrumb Navigation -->
+		<Breadcrumb items={breadcrumbItems} class="mb-6" />
+
+		<div class="mb-12">
+			<H1 size="lg">Online Slots</H1>
+			<P variant="lead" size="lg" class="mt-4">
+				Browse our comprehensive collection of slot reviews. Find detailed information on RTP, volatility, features, and the best casinos to play.
+			</P>
+		</div>
+
+		<!-- Slots Section -->
+		<section aria-labelledby="slots-heading">
+			<H2 id="slots-heading" size="md" class="mb-4">All Slot Reviews</H2>
+
+			<!-- Slot Count -->
+			<div class="mb-8">
+				<P class="text-gray-600 dark:text-gray-400">
+					Showing {page.start + 1}-{page.end + 1} of {page.total} {page.total === 1 ? 'slot' : 'slots'}
+				</P>
+			</div>
+
+		<!-- Slots Grid -->
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			{page.data.map((slotEntry, index) => (
+				<SlotCard slotEntry={slotEntry} eager={page.currentPage === 1 && index < 6} />
+			))}
+		</div>
+
+		<!-- Empty State -->
+		{page.data.length === 0 && (
+			<div class="text-center py-12">
+				<P class="text-gray-500 dark:text-gray-400">
+					No slots found. Check back soon!
+				</P>
+			</div>
+		)}
+
+		<!-- Pagination Controls -->
+		{page.lastPage > 1 && (
+			<div class="mt-12 flex items-center justify-center gap-2">
+				<!-- Previous Button -->
+				{page.url.prev ? (
+					<a
+						href={page.url.prev}
+						class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+					>
+						← Previous
+					</a>
+				) : (
+					<span class="px-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-400 dark:text-gray-600 cursor-not-allowed">
+						← Previous
+					</span>
+				)}
+
+				<!-- Page Numbers -->
+				<div class="flex gap-1">
+					{Array.from({ length: page.lastPage }, (_, i) => i + 1).map((pageNum) => {
+						const pageUrl = pageNum === 1 ? '/online-slots/' : `/online-slots/${pageNum}/`;
+						return pageNum === page.currentPage ? (
+							<span class="px-4 py-2 bg-primary-600 text-white rounded-lg font-semibold">
+								{pageNum}
+							</span>
+						) : (
+							<a
+								href={pageUrl}
+								class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+							>
+								{pageNum}
+							</a>
+						);
+					})}
+				</div>
+
+				<!-- Next Button -->
+				{page.url.next ? (
+					<a
+						href={page.url.next}
+						class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+					>
+						Next →
+					</a>
+				) : (
+					<span class="px-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-400 dark:text-gray-600 cursor-not-allowed">
+						Next →
+					</span>
+				)}
+			</div>
+		)}
+		</section>
+	</Container>
+
+	<Footer slot='footer' />
+</PageLayout>

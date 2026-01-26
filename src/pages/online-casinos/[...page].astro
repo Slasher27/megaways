@@ -1,0 +1,146 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import PageLayout from '../../layouts/PageLayout.astro';
+import Container from '../../components/layout/Container.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import H1 from '../../components/typography/H1.astro';
+import H2 from '../../components/typography/H2.astro';
+import P from '../../components/typography/P.astro';
+import Breadcrumb from '../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
+import CasinoCard from '../../components/casino/CasinoCard.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+	// Get all casinos from content collection
+	const allCasinos = await getCollection('casinos');
+
+	// Sort by rating (highest first), then by name
+	const sortedCasinos = allCasinos.sort((a, b) => {
+		if (b.data.rating && a.data.rating) {
+			return b.data.rating - a.data.rating;
+		}
+		return a.data.name.localeCompare(b.data.name);
+	});
+
+	// Generate paginated routes (12 casinos per page)
+	return paginate(sortedCasinos, { pageSize: 12 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+
+const metadata = {
+	title: page.currentPage === 1
+		? 'Online Casino Reviews | Best Casinos for Megaways Slots'
+		: `Online Casino Reviews | Page ${page.currentPage}`,
+	description: 'Expert reviews of online casinos featuring Megaways slots. Compare bonuses, payment methods, and game selection. Find the best casino for you.',
+};
+
+// Build breadcrumb items
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Online Casinos', href: '/online-casinos/' },
+];
+---
+
+<!-- Breadcrumb Schema for SEO -->
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<PageLayout title={metadata.title} description={metadata.description}>
+	<Header slot="header" />
+
+	<Container>
+		<!-- Breadcrumb Navigation -->
+		<Breadcrumb items={breadcrumbItems} class="mb-6" />
+
+		<div class="mb-12">
+			<H1 size="lg">Online Casinos</H1>
+			<P variant="lead" size="lg" class="mt-4">
+				Find the best online casinos for Megaways slots. Expert reviews with detailed information on bonuses, payment methods, and game selection.
+			</P>
+		</div>
+
+		<!-- Casinos Section -->
+		<section aria-labelledby="casinos-heading">
+			<H2 id="casinos-heading" size="md" class="mb-4">All Casino Reviews</H2>
+
+			<!-- Casino Count -->
+			<div class="mb-8">
+				<P class="text-gray-600 dark:text-gray-400">
+					Showing {page.start + 1}-{page.end + 1} of {page.total} {page.total === 1 ? 'casino' : 'casinos'}
+				</P>
+			</div>
+
+		<!-- Casinos Grid -->
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+			{page.data.map((casinoEntry, index) => (
+				<CasinoCard casinoEntry={casinoEntry} eager={page.currentPage === 1 && index < 8} />
+			))}
+		</div>
+
+		<!-- Empty State -->
+		{page.data.length === 0 && (
+			<div class="text-center py-12">
+				<P class="text-gray-500 dark:text-gray-400">
+					No casinos found. Check back soon!
+				</P>
+			</div>
+		)}
+
+		<!-- Pagination Controls -->
+		{page.lastPage > 1 && (
+			<div class="mt-12 flex items-center justify-center gap-2">
+				<!-- Previous Button -->
+				{page.url.prev ? (
+					<a
+						href={page.url.prev}
+						class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+					>
+						← Previous
+					</a>
+				) : (
+					<span class="px-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-400 dark:text-gray-600 cursor-not-allowed">
+						← Previous
+					</span>
+				)}
+
+				<!-- Page Numbers -->
+				<div class="flex gap-1">
+					{Array.from({ length: page.lastPage }, (_, i) => i + 1).map((pageNum) => {
+						const pageUrl = pageNum === 1 ? '/online-casinos/' : `/online-casinos/${pageNum}/`;
+						return pageNum === page.currentPage ? (
+							<span class="px-4 py-2 bg-primary-600 text-white rounded-lg font-semibold">
+								{pageNum}
+							</span>
+						) : (
+							<a
+								href={pageUrl}
+								class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+							>
+								{pageNum}
+							</a>
+						);
+					})}
+				</div>
+
+				<!-- Next Button -->
+				{page.url.next ? (
+					<a
+						href={page.url.next}
+						class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+					>
+						Next →
+					</a>
+				) : (
+					<span class="px-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-400 dark:text-gray-600 cursor-not-allowed">
+						Next →
+					</span>
+				)}
+			</div>
+		)}
+		</section>
+	</Container>
+
+	<Footer slot="footer" />
+</PageLayout>
