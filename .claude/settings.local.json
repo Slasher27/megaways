@@ -17,7 +17,8 @@
       "WebFetch(domain:www.woocasino.com)",
       "WebFetch(domain:megawaysonline.com)",
       "WebFetch(domain:www.googleapis.com)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "WebFetch(domain:playin.com)"
     ],
     "deny": [],
     "ask": []
