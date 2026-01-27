@@ -29,11 +29,13 @@ export const mainNavigation: NavItem[] = [
 			{ label: 'Big Time Gaming', href: '/online-slots/btg/' },
 			{ label: 'Blueprint Gaming', href: '/online-slots/blueprint/' },
 			{ label: 'Iron Dog Studio', href: '/online-slots/iron-dog/' },
+			{ label: 'Jelly', href: '/online-slots/jelly/' },
 			{ label: 'Microgaming', href: '/online-slots/microgaming/' },
 			{ label: 'NetEnt', href: '/online-slots/netent/' },
 			{ label: 'Pragmatic Play', href: '/online-slots/pragmatic-play/' },
 			{ label: 'Red Tiger', href: '/online-slots/red-tiger/' },
 			{ label: 'Scientific Games', href: '/online-slots/scientific-games/' },
+			{ label: 'Yggdrasil', href: '/online-slots/yggdrasil/' },
 		],
 	},
 	{

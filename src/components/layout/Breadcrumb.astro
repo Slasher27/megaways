@@ -32,8 +32,8 @@ const breadcrumbItems = items.length === 0 || items[0].href !== '/'
 	: items;
 ---
 
-<nav aria-label="Breadcrumb" class={`flex items-center space-x-2 text-sm ${className}`}>
-	<ol class="flex items-center space-x-2" itemscope itemtype="https://schema.org/BreadcrumbList">
+<nav aria-label="Breadcrumb" class={`flex items-center text-sm ${className}`}>
+	<ol class="flex items-center" itemscope itemtype="https://schema.org/BreadcrumbList">
 		{breadcrumbItems.map((item, index) => {
 			const isLast = index === breadcrumbItems.length - 1;
 			const position = index + 1;
