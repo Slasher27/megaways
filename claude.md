@@ -42,6 +42,9 @@ All detailed documentation is in the `docs/` folder:
 | **[docs/STYLING.md](./docs/STYLING.md)** | Tailwind CSS, colors, icons, dark mode, responsive |
 | **[docs/SEO-GUIDELINES.md](./docs/SEO-GUIDELINES.md)** | SEO, E-E-A-T, schema markup, affiliate links |
 | **[docs/WORKFLOWS.md](./docs/WORKFLOWS.md)** | Common tasks, migration, testing checklist |
+| **[docs/CASINO-COMPONENTS.md](./docs/CASINO-COMPONENTS.md)** | Casino component documentation and usage |
+| **[docs/VIDEO-REVIEWS.md](./docs/VIDEO-REVIEWS.md)** | Video reviews implementation and creation guide |
+| **[docs/SLOT-REVIEW-GUIDE.md](./docs/SLOT-REVIEW-GUIDE.md)** | Comprehensive slot review writing guide |
 
 ---
 
@@ -146,6 +149,15 @@ See [docs/STYLING.md](./docs/STYLING.md) for complete styling guide.
 
 ### "I need to add a slot or casino review"
 → Read [docs/CONTENT-SCHEMAS.md](./docs/CONTENT-SCHEMAS.md) and [docs/WORKFLOWS.md](./docs/WORKFLOWS.md)
+
+### "I need to write a comprehensive slot review"
+→ Read [docs/SLOT-REVIEW-GUIDE.md](./docs/SLOT-REVIEW-GUIDE.md)
+
+### "I need to add video reviews to casino pages"
+→ Read [docs/VIDEO-REVIEWS.md](./docs/VIDEO-REVIEWS.md)
+
+### "I need to work with casino components"
+→ Read [docs/CASINO-COMPONENTS.md](./docs/CASINO-COMPONENTS.md)
 
 ### "I need to implement SEO or schema markup"
 → Read [docs/SEO-GUIDELINES.md](./docs/SEO-GUIDELINES.md)
