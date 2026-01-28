@@ -20,7 +20,7 @@ export const getStaticPaths = (async ({ paginate }) => {
 	const allSlots = await getCollection('slots');
 	const providerSlots = allSlots.filter((slot) => {
 		const slotProvider = slot.data.provider.toLowerCase().replace(/\s+/g, '-');
-		return slotProvider === providerSlug || slotProvider === 'blueprint';
+		return slotProvider === providerSlug || slotProvider === 'blueprint' || slotProvider === 'blueprint-gaming';
 	});
 
 	// Sort by rating (highest first), then by name
@@ -176,7 +176,7 @@ const pageDescription =
 
 		<!-- CTA (only on page 1) -->
 		{page.currentPage === 1 && (
-			<div class='bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 rounded-xl p-8 text-center'>
+			<div class='bg-linear-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 rounded-xl p-8 text-center'>
 				<H3 size='md' class='mb-4'>
 					Explore More Megaways Slots
 				</H3>
