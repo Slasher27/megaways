@@ -1,0 +1,124 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Container from '../components/layout/Container.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import H1 from '../components/typography/H1.astro';
+import P from '../components/typography/P.astro';
+import { Icon } from 'astro-icon/components';
+
+// Internal search results page. Target of the WebSite SearchAction (/search/?q=).
+// Results are filtered client-side from /api/search.json. noindex: thin/duplicate.
+---
+
+<PageLayout
+	title="Search — Megaways Online"
+	description="Search Megaways slots and online casino reviews."
+	noindex={true}
+>
+	<Header slot="header" />
+
+	<Container class="py-8">
+		<div
+			x-data='{
+				query: "",
+				results: [],
+				loaded: false,
+				loading: true,
+				init() {
+					const params = new URLSearchParams(window.location.search);
+					this.query = (params.get("q") || "").trim();
+					this.run();
+				},
+				async run() {
+					if (this.query.length < 2) { this.loading = false; this.results = []; return; }
+					try {
+						const res = await fetch("/api/search.json");
+						const data = await res.json();
+						const term = this.query.toLowerCase();
+						const slots = data.slots.filter(s =>
+							s.name.toLowerCase().includes(term) ||
+							(s.provider || "").toLowerCase().includes(term));
+						const casinos = data.casinos.filter(c =>
+							c.name.toLowerCase().includes(term));
+						this.results = [...slots, ...casinos];
+					} catch (e) {
+						console.error("Search failed:", e);
+					} finally {
+						this.loading = false;
+						this.loaded = true;
+					}
+				}
+			}'
+		>
+			<H1>Search</H1>
+
+			<!-- Search form (GET to /search/ so it works without JS) -->
+			<form action="/search/" method="get" role="search" class="mt-6 mb-8 max-w-xl">
+				<label for="q" class="sr-only">Search slots and casinos</label>
+				<div class="relative">
+					<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+						<Icon name="lucide:search" class="size-5 text-gray-400" />
+					</div>
+					<input
+						id="q"
+						name="q"
+						type="search"
+						x-model="query"
+						placeholder="Search slots and casinos..."
+						class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+						autocomplete="off"
+					/>
+				</div>
+			</form>
+
+			<template x-if="query.length >= 2 && !loading">
+				<P>
+					<span x-text="results.length"></span> result(s) for
+					&ldquo;<span x-text="query"></span>&rdquo;
+				</P>
+			</template>
+
+			<template x-if="loading">
+				<P>Searching…</P>
+			</template>
+
+			<ul class="mt-6 divide-y divide-gray-200 dark:divide-gray-700" x-show="results.length > 0">
+				<template x-for="result in results" :key="result.url">
+					<li>
+						<a
+							:href="result.url"
+							class="flex items-center justify-between py-4 group"
+						>
+							<span>
+								<span class="block font-medium text-gray-900 dark:text-white group-hover:text-primary-600" x-text="result.name"></span>
+								<span class="block text-sm text-gray-500 dark:text-gray-400">
+									<span x-show="result.type === 'slot'">
+										<span class="capitalize" x-text="(result.provider || '').replace(/-/g, ' ')"></span>
+										<span> • Slot</span>
+									</span>
+									<span x-show="result.type === 'casino'">Casino</span>
+								</span>
+							</span>
+							<Icon name="lucide:arrow-right" class="size-4 text-gray-400" />
+						</a>
+					</li>
+				</template>
+			</ul>
+
+			<template x-if="loaded && query.length >= 2 && results.length === 0">
+				<P>No results found. Try a different term, or browse <a href="/online-slots/" class="text-primary-600 underline">all slots</a>.</P>
+			</template>
+
+			<template x-if="query.length < 2 && !loading">
+				<P>Enter at least two characters to search.</P>
+			</template>
+
+			<noscript>
+				<P>Search requires JavaScript. Browse <a href="/online-slots/" class="text-primary-600 underline">all slots</a> or <a href="/online-casinos/" class="text-primary-600 underline">all casinos</a>.</P>
+			</noscript>
+		</div>
+	</Container>
+
+	<Footer slot="footer" />
+</PageLayout>

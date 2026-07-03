@@ -1,0 +1,118 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Container from '../../components/layout/Container.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import H1 from '../../components/typography/H1.astro';
+import H2 from '../../components/typography/H2.astro';
+import P from '../../components/typography/P.astro';
+import Breadcrumb from '../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
+
+const pageTitle = 'Privacy Policy | Megaways Online';
+const pageDescription =
+	'How Megaways Online handles your data: no accounts, no tracking cookies set by us, a theme preference stored on your device, and standard hosting logs.';
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Privacy Policy', href: '/privacy/' },
+];
+
+const lastUpdated = '2026-07-03';
+---
+
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<PageLayout title={pageTitle} description={pageDescription}>
+	<Header slot='header' />
+
+	<Container>
+		<Breadcrumb items={breadcrumbItems} class='mb-6' />
+
+		<article class='max-w-3xl mb-16'>
+			<header class='mb-10'>
+				<H1 size='lg'>Privacy Policy</H1>
+				<P class='text-gray-500 dark:text-gray-400 mb-0'>
+					Last updated: <time datetime={lastUpdated}>3 July 2026</time>
+				</P>
+			</header>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Who we are</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					Megaways Online (megawaysonline.com) is an informational website publishing
+					reviews of online slot games and casinos. We do not operate gambling services
+					and we do not process payments or wagers. For anything in this policy, contact
+					<a href='mailto:hello@megawaysonline.com' class='underline hover:text-primary-600 dark:hover:text-primary-400'>hello@megawaysonline.com</a>.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>What we collect</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-4'>
+					Very little. This site has no user accounts, no comment forms and no
+					newsletter. We do not run analytics or advertising trackers, and we do not set
+					tracking cookies.
+				</P>
+				<P class='text-gray-600 dark:text-gray-400 mb-4'>
+					<strong>Theme preference.</strong> If you switch between light and dark mode,
+					that choice is saved in your browser's local storage. It stays on your device,
+					is not transmitted to us, and you can clear it at any time through your
+					browser settings.
+				</P>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					<strong>Hosting logs.</strong> Our hosting provider (Vercel Inc.) records
+					standard technical server logs — such as IP address, browser type and pages
+					requested — to serve the site and protect it from abuse. These logs are
+					processed under Vercel's own
+					<a href='https://vercel.com/legal/privacy-policy' rel='noopener' target='_blank' class='underline hover:text-primary-600 dark:hover:text-primary-400'>privacy policy</a>.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Casino links and third parties</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-4'>
+					Links to casinos on this site are affiliate links. If you follow one, the
+					casino operator (and its tracking platform) may set cookies and collect data
+					on their own sites under their own privacy policies — we encourage you to read
+					them before registering. We receive aggregate referral statistics from these
+					programmes, not your personal details.
+				</P>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					Outbound links are sent with a no-referrer policy, meaning your browser does
+					not tell the destination site which of our pages you came from.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Your rights</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					Depending on where you live (for example under the GDPR or UK GDPR), you may
+					have rights to access, correct or delete personal data held about you. Since
+					we hold essentially none, requests will usually be a short conversation — but
+					email us and we will help, including passing requests to our hosting provider
+					where relevant.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Age restriction</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					This site is intended for adults aged 18 and over. We do not knowingly collect
+					any information from minors, and our content is not directed at them.
+				</P>
+			</section>
+
+			<section class='mb-0'>
+				<H2 size='sm' class='mb-3'>Changes to this policy</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					If we add features that change how data is handled (for example privacy-first
+					analytics or embedded game demos), this policy will be updated first and the
+					date above revised.
+				</P>
+			</section>
+		</article>
+	</Container>
+
+	<Footer slot='footer' />
+</PageLayout>

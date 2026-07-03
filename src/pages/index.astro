@@ -1,113 +1,445 @@
 ---
+import { getCollection } from 'astro:content';
 import PageLayout from '../layouts/PageLayout.astro';
 import Container from '../components/layout/Container.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import Button from '../components/ui/Button.astro';
-import Badge from '../components/ui/Badge.astro';
-import Link from '../components/ui/Link.astro';
-import Image from '../components/ui/Image.astro';
 import H1 from '../components/typography/H1.astro';
 import H2 from '../components/typography/H2.astro';
 import H3 from '../components/typography/H3.astro';
-import H4 from '../components/typography/H4.astro';
-import H5 from '../components/typography/H5.astro';
-import H6 from '../components/typography/H6.astro';
 import P from '../components/typography/P.astro';
-import Card from '../components/ui/Card.astro';
-import Icon from '../components/ui/Icon.astro';
+import SlotCard from '../components/slots/SlotCard.astro';
+import CasinoCard from '../components/casino/CasinoCard.astro';
+import OrganizationSchema from '../components/seo/OrganizationSchema.astro';
+import WebsiteSchema from '../components/seo/WebsiteSchema.astro';
+import FAQSchema from '../components/seo/FAQSchema.astro';
+import { Icon } from 'astro-icon/components';
+
+const [allSlots, allCasinos, allMechanics, allProviders] = await Promise.all([
+	getCollection('slots'),
+	getCollection('casinos'),
+	getCollection('mechanics'),
+	getCollection('providers'),
+]);
+
+// Top-rated, capped at 2 games per provider so the rail isn't one studio
+const topRated = allSlots
+	.filter((s) => s.data.rating)
+	.sort(
+		(a, b) =>
+			(b.data.rating ?? 0) - (a.data.rating ?? 0) ||
+			a.data.name.localeCompare(b.data.name),
+	);
+const providerCounts = new Map();
+const popularSlots = [];
+for (const slot of topRated) {
+	const key = (slot.data.provider ?? '').toLowerCase().replace(/\s+/g, '-');
+	const count = providerCounts.get(key) ?? 0;
+	if (count < 2) {
+		providerCounts.set(key, count + 1);
+		popularSlots.push(slot);
+	}
+	if (popularSlots.length === 8) break;
+}
+
+const latestReviews = allSlots
+	.filter((s) => s.data.publishedDate)
+	.sort(
+		(a, b) =>
+			(b.data.publishedDate?.valueOf() ?? 0) - (a.data.publishedDate?.valueOf() ?? 0) ||
+			a.data.name.localeCompare(b.data.name),
+	)
+	.slice(0, 4);
+
+const featuredCasinos = allCasinos
+	.filter((c) => c.data.featured)
+	.sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0))
+	.slice(0, 4);
+
+// Mechanic hubs in canonical order, with a lucide icon each
+const mechanicIcons: Record<string, string> = {
+	megaways: 'lucide:grid-3x3',
+	megaclusters: 'lucide:hexagon',
+	megapays: 'lucide:trophy',
+	megaquads: 'lucide:layers',
+	megadrop: 'lucide:timer',
+	xtraways: 'lucide:shuffle',
+};
+const mechanicOrder = ['megaways', 'megaclusters', 'megapays', 'megaquads', 'megadrop', 'xtraways'];
+const mechanicCards = mechanicOrder
+	.map((slug) => allMechanics.find((m) => m.data.slug === slug))
+	.filter((m) => m !== undefined);
+
+const providerChips = [...allProviders].sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+// Single source for visible FAQ and FAQPage JSON-LD — text must stay identical
+const faqs = [
+	{
+		question: 'What is a Megaways slot?',
+		answer:
+			'A Megaways slot is a game built on Big Time Gaming’s variable-reel engine. Each reel shows a different number of symbols on every spin — typically two to seven — so the number of ways to win changes constantly, reaching up to 117,649 ways on most titles.',
+	},
+	{
+		question: 'How many ways to win can a Megaways slot have?',
+		answer:
+			'Most Megaways slots max out at 117,649 ways — six reels with up to seven symbols each. Some go further: NFT Megaways reaches 200,704 ways with an extra top reel, and Wheel of Fortune Megaways can reach 1,000,000 ways during free spins.',
+	},
+	{
+		question: 'Can I play Megaways slots for free?',
+		answer:
+			'Yes. Most Megaways slots offer a free demo version, and our reviews break down every feature so you can try a game risk-free before playing for real money at a casino.',
+	},
+	{
+		question: 'What is the RTP of Megaways slots?',
+		answer:
+			'Most Megaways slots return between 95% and 96.5% to players over time. Providers increasingly publish several RTP configurations, so the figure at a specific casino can be lower — our reviews list the default RTP and flag known variants.',
+	},
+	{
+		question: 'Is it worth taking a casino bonus?',
+		answer:
+			'It can be, if you read the terms first. A bonus extends your playtime, but wagering requirements decide its real value — check the wagering multiplier, game weighting and maximum bet rules before opting in.',
+	},
+	{
+		question: 'Is it safe to claim a casino bonus?',
+		answer:
+			'Claiming a bonus is safe at a licensed casino. Stick to licensed sites, read the bonus terms and conditions carefully, and never deposit more than you can afford to lose.',
+	},
+	{
+		question: 'Which providers make Megaways slots?',
+		answer:
+			'Big Time Gaming invented the Megaways engine and licenses it to studios including Blueprint Gaming, Pragmatic Play, Red Tiger, iSoftBet and Relax Gaming. Our provider pages list every studio’s Megaways games.',
+	},
+];
 
 const metadata = {
-	title: 'Megaways Home',
-	description: 'The home of Megaways Slot Demos and Information',
+	title: `Megaways Slots & Casino Reviews ${new Date().getFullYear()} | Megaways Online`,
+	description:
+		'Independent Megaways slot reviews with verified RTP and max-win stats, trusted casino reviews, and free demo play — the home of Megaways online slots.',
 };
+
+const dateFormat = new Intl.DateTimeFormat('en-GB', {
+	day: 'numeric',
+	month: 'short',
+	year: 'numeric',
+});
 ---
 
 <PageLayout title={metadata.title} description={metadata.description}>
 	<Header slot='header' />
 
-	<Container>
-		<H2>UI Component Showcase</H2>
-		<hr class='my-8' />
-		<H4>Button Components</H4>
-		<Button variant='primary' size='sm'>Small (Primary)</Button>
-		<Button variant='primary' size='md'>Medium (Primary)</Button>
-		<Button variant='secondary' size='md'>Medium (Secondary)</Button>
-		<Button variant='ghost' size='lg'>Ghost</Button>
-		<hr class='my-8' />
-		<H4>Badge Components</H4>
-		<Badge variant='primary'>Primary</Badge>
-		<Badge variant='secondary'>Secondary</Badge>
-		<Badge variant='success'>Success</Badge>
-		<Badge variant='warning'>Warning</Badge>
-		<Badge variant='danger'>Danger</Badge>
-		<hr class='my-8' />
-		<H4>Heading Components</H4>
-		<H1>Heading 1</H1>
-		<H2>Heading 2</H2>
-		<H3>Heading 3</H3>
-		<H4>Heading 4</H4>
-		<H5>Heading 5</H5>
-		<H6>Heading 6</H6>
-		<hr class='my-8' />
-		<H4>Paragraph Components</H4>
-		<P size='sm' variant='small'>Small Body Text</P>
-		<P size='md' variant='body'>Medium Body Text</P>
-		<P size='lg' variant='lead'>Large Lead Text</P>
-		<P size='xl' variant='body'>Extra Large Body Text</P>
-		<hr class='my-8' />
-		<H4>Link Components</H4>
-		<Link href='/about/' variant='primary' underline={true} external={false}
-			>About Us</Link
-		>
-		<Link href='/about/' variant='muted' underline={true} external={false}
-			>About Us</Link
-		>
-		<Link href='/about/' variant='default' underline={true} external={false}
-			>About Us</Link
-		>
-		<hr class='my-8' />
-		<H4>Image Component </H4>
-		<Image
-			src='/images/megaways.png'
-			alt='Sample Image'
-			width={400}
-			height={200}
-		/>
-		<hr class='my-8' />
-		<H4>Card Component</H4>
-		<div class='grid grid-cols-1 gap-4'>
-			<Card>
-				<p>This is a card component with default styling.</p>
-			</Card>
-			<Card variant='outlined'>
-				<p>This is a card component with outlined styling.</p>
-			</Card>
-			<Card variant='elevated'>
-				<p>This is a card component with elevated styling.</p>
-			</Card>
-		</div>
+	<!-- Home-only structured data: Organization (publisher) + WebSite/SearchAction + FAQ -->
+	<OrganizationSchema />
+	<WebsiteSchema />
+	<FAQSchema questions={faqs} />
 
-		<hr class='my-8' />
-		<H4>Icon Component</H4>
-		<div class='flex gap-4 items-center'>
-			<Icon name='lucide:heart' size={24} class='text-red-500' />
-			<Icon name='lucide:star' size={24} class='text-yellow-500' />
-			<Icon name='lucide:home' size={24} class='text-primary-600' />
-			<Icon name='mdi:casino' size={28} class='text-primary-600' />
-			<Icon name='ph:coin' size={32} class='text-gray-700 dark:text-gray-300' />
-			<Icon
-				name='lucide:arrow-right'
-				size={20}
-				class='text-gray-600 dark:text-gray-400'
-			/>
-		</div>
-		<P size='sm' variant='small'
-			>Various icon sets: Lucide, Material Design Icons, Phosphor</P
-		>
+	<!-- ============ HERO ============ -->
+	<section
+		aria-labelledby='hero-heading'
+		class='bg-linear-to-b from-primary-50 via-white to-white dark:from-primary-950/40 dark:via-gray-950 dark:to-gray-950'
+	>
+		<Container>
+			<div class='py-16 md:py-24 max-w-3xl'>
+				<p
+					class='inline-flex items-center gap-2 rounded-full border border-primary-200 dark:border-primary-800 bg-white/60 dark:bg-gray-900/60 px-4 py-1.5 text-sm font-medium text-primary-700 dark:text-primary-300 mb-6'
+				>
+					<Icon name='lucide:badge-check' class='size-4' aria-hidden='true' />
+					Independent, fact-checked reviews
+				</p>
 
-		<hr class='my-8' />
-	</Container>
+				<H1 id='hero-heading' size='lg'>Megaways Slots, Reviews &amp; Casinos</H1>
+
+				<P variant='lead' size='lg' class='mb-8'>
+					Megaways Online brings the latest and greatest Megaways online slots together in
+					one place. Megaways is Big Time Gaming's variable-reel mechanic with up to
+					117,649 ways to win — browse our database of trusted, fact-checked reviews,
+					play demo versions of the newest games, and find the best Megaways casinos.
+				</P>
+
+				<div class='flex flex-wrap gap-3 mb-10'>
+					<Button href='/online-slots/' variant='primary' size='lg'>Browse Slot Reviews</Button>
+					<Button href='/online-casinos/top-casinos/' variant='secondary' size='lg'>
+						See Top Casinos
+					</Button>
+				</div>
+
+				<dl class='flex flex-wrap gap-x-10 gap-y-4'>
+					<div>
+						<dt class='text-sm text-gray-500 dark:text-gray-400'>Slot reviews</dt>
+						<dd class='text-2xl font-bold text-gray-900 dark:text-white'>
+							{allSlots.length}+
+						</dd>
+					</div>
+					<div>
+						<dt class='text-sm text-gray-500 dark:text-gray-400'>Providers covered</dt>
+						<dd class='text-2xl font-bold text-gray-900 dark:text-white'>
+							{allProviders.length}
+						</dd>
+					</div>
+					<div>
+						<dt class='text-sm text-gray-500 dark:text-gray-400'>Casinos tested</dt>
+						<dd class='text-2xl font-bold text-gray-900 dark:text-white'>
+							{allCasinos.length}
+						</dd>
+					</div>
+				</dl>
+			</div>
+		</Container>
+	</section>
+
+	<!-- ============ TOP CASINOS ============ -->
+	<section aria-labelledby='casinos-heading' class='py-14 md:py-20'>
+		<Container>
+			<div class='flex items-end justify-between gap-4 mb-8'>
+				<div>
+					<H2 id='casinos-heading' size='md' class='mb-2'>Top Casinos for Megaways Slots</H2>
+					<P class='text-gray-600 dark:text-gray-400 mb-0'>
+						Our highest-rated casinos, tested hands-on and ranked by review score.
+					</P>
+				</div>
+				<a
+					href='/online-casinos/top-casinos/'
+					class='shrink-0 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300'
+				>
+					View all &rarr;
+				</a>
+			</div>
+
+			<div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+				{featuredCasinos.map((casinoEntry, index) => (
+					<CasinoCard casinoEntry={casinoEntry} eager={index < 4} />
+				))}
+			</div>
+
+			<P size='sm' class='mt-6 text-gray-500 dark:text-gray-400 mb-0'>
+				18+ only. We may earn a commission if you sign up through links on this page — it
+				never affects our ratings. Please <a
+					href='/responsible-gambling/'
+					class='underline hover:text-primary-600 dark:hover:text-primary-400'
+					>gamble responsibly</a
+				>.
+			</P>
+		</Container>
+	</section>
+
+	<!-- ============ POPULAR MEGAWAYS SLOTS ============ -->
+	<section
+		aria-labelledby='popular-heading'
+		class='py-14 md:py-20 bg-gray-50 dark:bg-gray-900/50'
+	>
+		<Container>
+			<div class='flex items-end justify-between gap-4 mb-8'>
+				<div>
+					<H2 id='popular-heading' size='md' class='mb-2'>Popular Megaways Slots</H2>
+					<P class='text-gray-600 dark:text-gray-400 mb-0'>
+						The top-rated games in our database — swipe through or browse them all.
+					</P>
+				</div>
+				<a
+					href='/online-slots/'
+					class='shrink-0 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300'
+				>
+					View all &rarr;
+				</a>
+			</div>
+
+			<!-- Horizontal snap rail on mobile; grid from md up. CSS-only. -->
+			<ul
+				class='flex gap-4 overflow-x-auto snap-x snap-mandatory -mx-4 px-4 pb-4 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:overflow-visible list-none m-0'
+			>
+				{popularSlots.map((slotEntry) => (
+					<li class='snap-start shrink-0 w-[78%] sm:w-[46%] md:w-auto'>
+						<SlotCard slotEntry={slotEntry} class='h-full' />
+					</li>
+				))}
+			</ul>
+		</Container>
+	</section>
+
+	<!-- ============ EXPLORE BY MECHANIC ============ -->
+	<section aria-labelledby='mechanics-heading' class='py-14 md:py-20'>
+		<Container>
+			<H2 id='mechanics-heading' size='md' class='mb-2'>Explore Slots by Mechanic</H2>
+			<P class='text-gray-600 dark:text-gray-400 mb-8'>
+				Megaways started a family of innovative reel mechanics. Pick one to learn how it
+				works and see every game that uses it.
+			</P>
+
+			<div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+				{mechanicCards.map((mechanic) => (
+					<a
+						href={`/${mechanic.data.slug}/`}
+						class='group block rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 no-underline transition hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-lg active:scale-[0.98] motion-reduce:transition-none motion-reduce:transform-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600'
+					>
+						<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4'>
+							<Icon
+								name={mechanicIcons[mechanic.data.slug] ?? 'lucide:sparkles'}
+								class='size-5'
+								aria-hidden='true'
+							/>
+						</span>
+						<H3
+							size='sm'
+							class='mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors'
+						>
+							{mechanic.data.name}
+						</H3>
+						<P size='sm' class='text-gray-600 dark:text-gray-400 mb-0'>
+							{mechanic.data.description}
+						</P>
+					</a>
+				))}
+			</div>
+		</Container>
+	</section>
+
+	<!-- ============ LATEST REVIEWS + PROVIDERS ============ -->
+	<section
+		aria-labelledby='latest-heading'
+		class='py-14 md:py-20 bg-gray-50 dark:bg-gray-900/50'
+	>
+		<Container>
+			<div class='grid grid-cols-1 lg:grid-cols-2 gap-12'>
+				<div>
+					<H2 id='latest-heading' size='md' class='mb-6'>Latest Reviews</H2>
+					<ul class='divide-y divide-gray-200 dark:divide-gray-800 list-none m-0 p-0'>
+						{latestReviews.map((slotEntry) => (
+							<li>
+								<a
+									href={`/online-slots/${slotEntry.data.slug}/`}
+									class='flex items-center justify-between gap-4 py-4 no-underline group'
+								>
+									<span class='min-w-0'>
+										<span class='block font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate'>
+											{slotEntry.data.name}
+										</span>
+										<span class='block text-sm text-gray-500 dark:text-gray-400'>
+											{slotEntry.data.provider}
+										</span>
+									</span>
+									<span class='shrink-0 flex items-center gap-4 text-sm'>
+										{slotEntry.data.rating && (
+											<span class='flex items-center gap-1 font-semibold text-gray-900 dark:text-white'>
+												<Icon
+													name='lucide:star'
+													class='size-4 text-yellow-500'
+													aria-hidden='true'
+												/>
+												{slotEntry.data.rating}
+											</span>
+										)}
+										{slotEntry.data.publishedDate && (
+											<time
+												datetime={slotEntry.data.publishedDate.toISOString().slice(0, 10)}
+												class='text-gray-500 dark:text-gray-400'
+											>
+												{dateFormat.format(slotEntry.data.publishedDate)}
+											</time>
+										)}
+									</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+
+				<div>
+					<H2 size='md' class='mb-6'>Browse by Provider</H2>
+					<nav aria-label='Slot providers'>
+						<ul class='flex flex-wrap gap-3 list-none m-0 p-0'>
+							{providerChips.map((provider) => (
+								<li>
+									<a
+										href={`/online-slots/${provider.data.slug}/`}
+										class='inline-block rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 no-underline transition hover:border-primary-400 hover:text-primary-700 dark:hover:border-primary-600 dark:hover:text-primary-300 active:scale-[0.98] motion-reduce:transition-none motion-reduce:transform-none'
+									>
+										{provider.data.name}
+									</a>
+								</li>
+							))}
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</Container>
+	</section>
+
+	<!-- ============ WHY TRUST US ============ -->
+	<section aria-labelledby='trust-heading' class='py-14 md:py-20'>
+		<Container>
+			<H2 id='trust-heading' size='md' class='mb-8'>Why Trust Megaways Online</H2>
+			<div class='grid grid-cols-1 md:grid-cols-3 gap-6'>
+				<div class='rounded-2xl border border-gray-200 dark:border-gray-800 p-6'>
+					<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4'>
+						<Icon name='lucide:search-check' class='size-5' aria-hidden='true' />
+					</span>
+					<H3 size='sm' class='mb-2'>Stats verified at the source</H3>
+					<P size='sm' class='text-gray-600 dark:text-gray-400 mb-0'>
+						Every RTP, max win and volatility figure is checked against the provider's
+						official data before we publish — and corrected when other sites get it
+						wrong.
+					</P>
+				</div>
+				<div class='rounded-2xl border border-gray-200 dark:border-gray-800 p-6'>
+					<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4'>
+						<Icon name='lucide:user-check' class='size-5' aria-hidden='true' />
+					</span>
+					<H3 size='sm' class='mb-2'>Written by real reviewers</H3>
+					<P size='sm' class='text-gray-600 dark:text-gray-400 mb-0'>
+						Reviews are researched and written by our team, with a named author on every
+						page. Read more <a
+							href='/about/'
+							class='underline hover:text-primary-600 dark:hover:text-primary-400'
+							>about how we work</a
+						>.
+					</P>
+				</div>
+				<div class='rounded-2xl border border-gray-200 dark:border-gray-800 p-6'>
+					<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4'>
+						<Icon name='lucide:heart-handshake' class='size-5' aria-hidden='true' />
+					</span>
+					<H3 size='sm' class='mb-2'>Responsible gambling first</H3>
+					<P size='sm' class='text-gray-600 dark:text-gray-400 mb-0'>
+						Slots are entertainment, not income. We flag volatility honestly and link
+						to <a
+							href='/responsible-gambling/'
+							class='underline hover:text-primary-600 dark:hover:text-primary-400'
+							>responsible gambling support</a
+						> on every casino page. 18+.
+					</P>
+				</div>
+			</div>
+		</Container>
+	</section>
+
+	<!-- ============ FAQ ============ -->
+	<section
+		aria-labelledby='faq-heading'
+		class='py-14 md:py-20 bg-gray-50 dark:bg-gray-900/50'
+	>
+		<Container>
+			<div class='max-w-3xl'>
+				<H2 id='faq-heading' size='md' class='mb-8'>Megaways Slots FAQs</H2>
+				<div class='space-y-3'>
+					{faqs.map((faq) => (
+						<details class='group rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900'>
+							<summary class='flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-gray-900 dark:text-white list-none [&::-webkit-details-marker]:hidden'>
+								{faq.question}
+								<Icon
+									name='lucide:chevron-down'
+									class='size-5 shrink-0 text-gray-400 transition-transform group-open:rotate-180 motion-reduce:transition-none'
+									aria-hidden='true'
+								/>
+							</summary>
+							<P size='sm' class='px-5 pb-5 text-gray-600 dark:text-gray-400 mb-0'>
+								{faq.answer}
+							</P>
+						</details>
+					))}
+				</div>
+			</div>
+		</Container>
+	</section>
 
 	<Footer slot='footer' />
 </PageLayout>

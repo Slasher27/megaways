@@ -58,9 +58,12 @@ const breadcrumbItems = [
 const pageTitle = page.currentPage === 1
 	? `${provider.data.name} Megaways Slots ${new Date().getFullYear()} | Best ${provider.data.name} Games`
 	: `${provider.data.name} Megaways Slots | Page ${page.currentPage}`;
-const pageDescription =
+const baseDescription =
 	provider.data.description ||
 	`Explore all ${provider.data.name} Megaways slots. Read detailed reviews with RTP, features, and where to play.`;
+const pageDescription = page.currentPage === 1
+	? baseDescription
+	: `${baseDescription} Page ${page.currentPage}.`;
 ---
 
 <BreadcrumbSchema items={breadcrumbItems} />

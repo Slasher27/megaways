@@ -6,6 +6,8 @@
 
 import PageLayout from '../../layouts/PageLayout.astro';
 import Container from '../../components/layout/Container.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
 import H1 from '../../components/typography/H1.astro';
 import H2 from '../../components/typography/H2.astro';
 import H3 from '../../components/typography/H3.astro';
@@ -13,17 +15,16 @@ import P from '../../components/typography/P.astro';
 import Card from '../../components/ui/Card.astro';
 import Button from '../../components/ui/Button.astro';
 import Divider from '../../components/ui/Divider.astro';
-import OrganizationSchema from '../../components/seo/OrganizationSchema.astro';
 import { Icon } from 'astro-icon/components';
 
 const pageTitle = 'About Megaways Online | Expert Slot & Casino Reviews';
 const pageDescription =
 	'Learn about Megaways Online, our team of experts, and our commitment to providing honest, in-depth reviews of Megaways slots and online casinos.';
+// OrganizationSchema is emitted once site-wide, on the homepage (see src/pages/index.astro).
 ---
 
-<OrganizationSchema />
-
 <PageLayout title={pageTitle} description={pageDescription}>
+	<Header slot='header' />
 	<Container>
 		<!-- Hero Section -->
 		<header class='mb-12 text-center'>
@@ -317,4 +318,5 @@ const pageDescription =
 			</div>
 		</section>
 	</Container>
+	<Footer slot='footer' />
 </PageLayout>

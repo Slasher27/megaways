@@ -1,0 +1,32 @@
+---
+/**
+ * WebsiteSchema Component
+ *
+ * Emits WebSite JSON-LD with a SearchAction (sitelinks search box).
+ * Homepage only — Google scopes the sitelinks search box to the site root.
+ * The SearchAction target must resolve to a real results page: /search/?q=
+ *
+ * Usage (home only):
+ * <WebsiteSchema />
+ */
+
+const siteUrl = Astro.site?.href || 'https://megawaysonline.com';
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'WebSite',
+	name: 'Megaways Online',
+	alternateName: 'megawaysonline.com',
+	url: siteUrl,
+	potentialAction: {
+		'@type': 'SearchAction',
+		target: {
+			'@type': 'EntryPoint',
+			urlTemplate: new URL('/search/?q={search_term_string}', siteUrl).href,
+		},
+		'query-input': 'required name=search_term_string',
+	},
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

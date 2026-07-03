@@ -29,7 +29,9 @@ const metadata = {
 	title: page.currentPage === 1
 		? 'Online Slots Reviews | Megaways & More'
 		: `Online Slots Reviews | Page ${page.currentPage}`,
-	description: 'Comprehensive reviews of online slots including Megaways, features, RTP, volatility, and where to play. Expert analysis and ratings.',
+	description: page.currentPage === 1
+		? 'Comprehensive reviews of online slots including Megaways, features, RTP, volatility, and where to play. Expert analysis and ratings.'
+		: `Online slot reviews, page ${page.currentPage} — Megaways and more with RTP, volatility, features, and where to play. Expert analysis and ratings.`,
 };
 
 // Build breadcrumb items

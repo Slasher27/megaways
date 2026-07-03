@@ -16,7 +16,9 @@ const slots = defineCollection({
 			// Basic Info
 			name: z.string(),
 			slug: z.string(), // URL slug → /online-slots/[slug]/
-			thumbnail: image(), // Slot thumbnail - optimized at build time
+			// Optional: when omitted, SlotThumbnail resolves art by convention
+			// (images/thumbnails/<slug>.jpg) and falls back to a name-based SVG.
+			thumbnail: image().optional(), // Slot thumbnail - optimized at build time
 			logo: image().optional(), // Optional slot logo
 			provider: z.string(), // Provider slug for filtering (btg, red-tiger, etc.)
 

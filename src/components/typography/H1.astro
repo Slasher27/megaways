@@ -2,9 +2,10 @@
 interface Props {
 	class?: string;
 	size?: 'sm' | 'md' | 'lg' | 'xl';
+	id?: string;
 }
 
-const { class: className = '', size = 'lg' } = Astro.props;
+const { class: className = '', size = 'lg', id } = Astro.props;
 
 const sizeClasses = {
 	sm: 'text-2xl md:text-3xl',
@@ -15,6 +16,7 @@ const sizeClasses = {
 ---
 
 <h1
+	id={id}
 	class:list={[
 		'font-bold',
 		'text-gray-900 dark:text-white mb-8',

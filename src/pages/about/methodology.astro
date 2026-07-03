@@ -6,6 +6,8 @@
 
 import PageLayout from '../../layouts/PageLayout.astro';
 import Container from '../../components/layout/Container.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
 import H1 from '../../components/typography/H1.astro';
 import H2 from '../../components/typography/H2.astro';
 import H3 from '../../components/typography/H3.astro';
@@ -20,6 +22,7 @@ const pageDescription =
 ---
 
 <PageLayout title={pageTitle} description={pageDescription}>
+	<Header slot='header' />
 	<Container>
 		<!-- Hero Section -->
 		<header class='mb-12'>
@@ -382,4 +385,5 @@ const pageDescription =
 			</Card>
 		</section>
 	</Container>
+	<Footer slot='footer' />
 </PageLayout>

@@ -1,0 +1,209 @@
+---
+// Dynamic provider listing route.
+// Serves /online-slots/<provider>/ for any provider in the `providers` collection
+// that does NOT have a hardcoded directory route (those win by static precedence).
+// Covers newer providers (isoftbet, stakelogic, poggiplay, inspired, barcrest,
+// reelplay, …) without duplicating the per-provider boilerplate. Phase 4 will
+// fold the hardcoded provider dirs into this route for full DRY.
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import PageLayout from '../../../layouts/PageLayout.astro';
+import Container from '../../../components/layout/Container.astro';
+import Header from '../../../components/layout/Header.astro';
+import Footer from '../../../components/layout/Footer.astro';
+import Breadcrumb from '../../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../../components/seo/BreadcrumbSchema.astro';
+import H1 from '../../../components/typography/H1.astro';
+import H2 from '../../../components/typography/H2.astro';
+import H3 from '../../../components/typography/H3.astro';
+import P from '../../../components/typography/P.astro';
+import SlotCard from '../../../components/slots/SlotCard.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+	// Providers that already have a dedicated directory route under online-slots/
+	// (these win by static precedence; this dynamic route handles the rest).
+	// Declared inside getStaticPaths because Astro bundles it as an isolated chunk.
+	const STATIC_PROVIDER_DIRS = new Set([
+		'btg',
+		'red-tiger',
+		'iron-dog',
+		'pragmatic-play',
+		'yggdrasil',
+		'scientific-games',
+		'netent',
+		'jelly',
+		'microgaming',
+		'blueprint',
+	]);
+	const providerSlugOf = (name: string) =>
+		name.toLowerCase().replace(/\s+/g, '-');
+
+	const providers = await getCollection('providers');
+	const allSlots = await getCollection('slots');
+
+	return providers
+		.filter((p) => !STATIC_PROVIDER_DIRS.has(p.data.slug))
+		.flatMap((provider) => {
+			const slug = provider.data.slug;
+			const slots = allSlots
+				.filter((s) => providerSlugOf(s.data.provider) === slug)
+				.sort(
+					(a, b) =>
+						(b.data.rating ?? 0) - (a.data.rating ?? 0) ||
+						a.data.name.localeCompare(b.data.name),
+				);
+			return paginate(slots, {
+				params: { provider: slug },
+				pageSize: 12,
+			});
+		});
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const providerSlug = Astro.params.provider!;
+
+const providers = await getCollection('providers');
+const provider = providers.find((p) => p.data.slug === providerSlug)!;
+const { Content } = await render(provider);
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Online Slots', href: '/online-slots/' },
+	{ label: provider.data.name, href: `/online-slots/${providerSlug}/` },
+];
+
+const pageTitle =
+	page.currentPage === 1
+		? `${provider.data.name} Megaways Slots ${new Date().getFullYear()} | Best ${provider.data.name} Games`
+		: `${provider.data.name} Megaways Slots | Page ${page.currentPage}`;
+const baseDescription =
+	provider.data.description ||
+	`Explore all ${provider.data.name} Megaways slots. Read detailed reviews with RTP, features, and where to play.`;
+const pageDescription = page.currentPage === 1
+	? baseDescription
+	: `${baseDescription} Page ${page.currentPage}.`;
+---
+
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<PageLayout title={pageTitle} description={pageDescription}>
+	<Header slot='header' />
+
+	<Container>
+		<Breadcrumb items={breadcrumbItems} class='mb-6' />
+
+		<!-- Provider Header -->
+		<header class='mb-12'>
+			<H1 size='lg'>{provider.data.name} Megaways Slots</H1>
+			<P variant='lead' class='mb-6'>
+				{provider.data.description}
+			</P>
+
+			<div class='text-gray-600 dark:text-gray-400'>
+				<strong>{page.total}</strong>{' '}
+				{page.total === 1 ? 'slot' : 'slots'} available
+			</div>
+		</header>
+
+		<!-- Slots Section -->
+		<section aria-labelledby='slots-heading'>
+			<H2 id='slots-heading' size='md' class='mb-4'>
+				{provider.data.name} Slots
+			</H2>
+
+			<div class='mb-8'>
+				<P class='text-gray-600 dark:text-gray-400'>
+					Showing {page.start + 1}-{page.end + 1} of {page.total} {
+						page.total === 1 ? 'slot' : 'slots'
+					}
+				</P>
+			</div>
+
+			{
+				page.data.length > 0 ? (
+					<div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
+						{page.data.map((slotEntry, index) => (
+							<SlotCard
+								slotEntry={slotEntry}
+								eager={page.currentPage === 1 && index < 6}
+							/>
+						))}
+					</div>
+				) : (
+					<div class='text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl'>
+						<P class='text-gray-600 dark:text-gray-400'>
+							No slots available yet. Check back soon!
+						</P>
+					</div>
+				)
+			}
+
+			<!-- Pagination Controls -->
+			{
+				page.lastPage > 1 && (
+					<div class='mt-12 flex items-center justify-center gap-2'>
+						{page.url.prev ? (
+							<a
+								href={page.url.prev}
+								class='px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+							>
+								← Previous
+							</a>
+						) : (
+							<span class='px-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-400 dark:text-gray-600 cursor-not-allowed'>
+								← Previous
+							</span>
+						)}
+
+						<div class='flex gap-1'>
+							{Array.from({ length: page.lastPage }, (_, i) => i + 1).map(
+								(pageNum) => {
+									const pageUrl =
+										pageNum === 1
+											? `/online-slots/${providerSlug}/`
+											: `/online-slots/${providerSlug}/${pageNum}/`;
+									return pageNum === page.currentPage ? (
+										<span class='px-4 py-2 bg-primary-600 text-white rounded-lg font-semibold'>
+											{pageNum}
+										</span>
+									) : (
+										<a
+											href={pageUrl}
+											class='px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+										>
+											{pageNum}
+										</a>
+									);
+								},
+							)}
+						</div>
+
+						{page.url.next ? (
+							<a
+								href={page.url.next}
+								class='px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+							>
+								Next →
+							</a>
+						) : (
+							<span class='px-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-400 dark:text-gray-600 cursor-not-allowed'>
+								Next →
+							</span>
+						)}
+					</div>
+				)
+			}
+		</section>
+
+		<!-- Provider Description (only on page 1) -->
+		{
+			page.currentPage === 1 && (
+				<article class='prose prose-lg dark:prose-invert max-w-none mb-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-8 mt-12'>
+					<Content />
+				</article>
+			)
+		}
+	</Container>
+
+	<Footer slot='footer' />
+</PageLayout>

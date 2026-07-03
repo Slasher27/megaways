@@ -1,0 +1,131 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Container from '../../components/layout/Container.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import H1 from '../../components/typography/H1.astro';
+import H2 from '../../components/typography/H2.astro';
+import P from '../../components/typography/P.astro';
+import Breadcrumb from '../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
+
+const pageTitle = 'Terms of Use | Megaways Online';
+const pageDescription =
+	'The terms for using megawaysonline.com: an 18+ informational review site, not a gambling operator. Accuracy, affiliate links and liability explained.';
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Terms of Use', href: '/terms/' },
+];
+
+const lastUpdated = '2026-07-03';
+---
+
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<PageLayout title={pageTitle} description={pageDescription}>
+	<Header slot='header' />
+
+	<Container>
+		<Breadcrumb items={breadcrumbItems} class='mb-6' />
+
+		<article class='max-w-3xl mb-16'>
+			<header class='mb-10'>
+				<H1 size='lg'>Terms of Use</H1>
+				<P class='text-gray-500 dark:text-gray-400 mb-0'>
+					Last updated: <time datetime={lastUpdated}>3 July 2026</time>
+				</P>
+			</header>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>What this site is</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					Megaways Online (megawaysonline.com) publishes reviews, guides and information
+					about online slot games and casinos. We are an independent publisher — we are
+					<strong>not</strong> a casino, we do not offer gambling, accept wagers or hold
+					player funds. By using this site you accept these terms; if you do not accept
+					them, please do not use the site.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Age and jurisdiction</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					This site is for adults aged <strong>18 or over</strong> (or the higher legal
+					gambling age where you live). Online gambling is regulated differently in every
+					country and is illegal in some. It is your responsibility to check that any
+					casino you visit is lawful and licensed for your jurisdiction before you
+					register or deposit.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Accuracy of information</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					We verify game statistics such as RTP, volatility and maximum win against
+					official provider data before publishing, and we date every review. However,
+					providers change RTP configurations, casinos change bonus terms, and games are
+					withdrawn — so all content is provided &ldquo;as is&rdquo; for general
+					information only, without warranty of completeness or current accuracy, and
+					does not constitute financial or legal advice. Always confirm the figures in
+					the game's own paytable and the casino's own terms before playing.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Affiliate links</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					Some outbound casino links are affiliate links: if you sign up through them we
+					may earn a commission at no cost to you. This funds the site and never
+					influences ratings or editorial content — see our
+					<a href='/about/methodology/' class='underline hover:text-primary-600 dark:hover:text-primary-400'>methodology</a>
+					for how reviews are produced.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Third-party sites</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					Casinos and other external sites we link to are operated by third parties
+					under their own terms and privacy policies. We are not responsible for their
+					content, offers, payouts or conduct. Any dispute with a casino is between you
+					and that operator and its regulator.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Intellectual property</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					The reviews, guides and original content on this site are ours and may not be
+					republished without permission. Game names, artwork and trademarks (including
+					Megaways&trade;, a trademark of Big Time Gaming) belong to their respective
+					owners and are referenced for identification and review purposes only.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Limitation of liability</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					To the maximum extent permitted by law, Megaways Online is not liable for any
+					loss arising from use of this site or reliance on its content — including
+					gambling losses, casino disputes, or decisions made on the basis of published
+					statistics. Gambling involves risk: never stake more than you can afford to
+					lose, and see our
+					<a href='/responsible-gambling/' class='underline hover:text-primary-600 dark:hover:text-primary-400'>responsible gambling resources</a>
+					if play stops being fun.
+				</P>
+			</section>
+
+			<section class='mb-0'>
+				<H2 size='sm' class='mb-3'>Changes and contact</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					We may update these terms from time to time; the date above shows the current
+					version. Questions? Email
+					<a href='mailto:hello@megawaysonline.com' class='underline hover:text-primary-600 dark:hover:text-primary-400'>hello@megawaysonline.com</a>.
+				</P>
+			</section>
+		</article>
+	</Container>
+
+	<Footer slot='footer' />
+</PageLayout>

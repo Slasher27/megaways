@@ -11,8 +11,6 @@ socials:
   twitter: "https://twitter.com/duwaynereviews"
 ---
 
-# Duwayne Cowney
-
 ## About Me
 
 With over a decade of experience in the online slots industry, I've dedicated my career to helping players understand the games they love. My passion for Megaways slots began when Big Time Gaming revolutionized the industry, and I've been closely following every innovation since.

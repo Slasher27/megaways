@@ -9,8 +9,8 @@ import {
 	type CollectionEntry,
 	getEntry,
 } from 'astro:content';
-import { Image } from 'astro:assets';
 import SlotReviewLayout from '../../layouts/SlotReviewLayout.astro';
+import SlotThumbnail from '../../components/slots/SlotThumbnail.astro';
 import H1 from '../../components/typography/H1.astro';
 import H2 from '../../components/typography/H2.astro';
 import P from '../../components/typography/P.astro';
@@ -83,14 +83,12 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 			<!-- Thumbnail -->
 			<div class='flex flex-col gap-4 lg:gap-6'>
 				<div class='lg:w-100 shrink-0 rounded-xl overflow-hidden'>
-					<Image
-						src={slot.data.thumbnail}
-						alt={slot.data.name}
+					<SlotThumbnail
+						slot={slot.data}
 						width={400}
 						height={225}
-						class='w-full h-auto block'
-						loading='eager'
-						format='webp'
+						eager={true}
+						class='h-auto'
 					/>
 				</div>
 				<div class='flex flex-row items-center justify-center gap-4'>

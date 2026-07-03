@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../../layouts/PageLayout.astro';
+import Container from '../../../components/layout/Container.astro';
+import Header from '../../../components/layout/Header.astro';
+import Footer from '../../../components/layout/Footer.astro';
+import H1 from '../../../components/typography/H1.astro';
+import H2 from '../../../components/typography/H2.astro';
+import P from '../../../components/typography/P.astro';
+import Breadcrumb from '../../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../../components/seo/BreadcrumbSchema.astro';
+import CasinoCard from '../../../components/casino/CasinoCard.astro';
+
+const allCasinos = await getCollection('casinos');
+const cryptoCasinos = allCasinos
+	.filter((casino) => casino.data.cryptoAccepted)
+	.sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0));
+
+const metadata = {
+	title: 'Crypto Casinos | Best Bitcoin Casinos with Megaways Slots',
+	description:
+		'Compare the best crypto casinos for Megaways slots. Expert reviews covering Bitcoin and altcoin deposits, fast withdrawals, bonuses and game selection.',
+};
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Online Casinos', href: '/online-casinos/' },
+	{ label: 'Crypto Casinos', href: '/online-casinos/crypto-casinos/' },
+];
+---
+
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<PageLayout title={metadata.title} description={metadata.description}>
+	<Header slot="header" />
+
+	<Container>
+		<Breadcrumb items={breadcrumbItems} class="mb-6" />
+
+		<div class="mb-12">
+			<H1 size="lg">Crypto Casinos</H1>
+			<P variant="lead" size="lg" class="mt-4">
+				Crypto casinos let you deposit and withdraw with Bitcoin, Ethereum and other
+				cryptocurrencies — usually with faster payouts and fewer payment restrictions than
+				card-based sites. Every casino below accepts crypto, carries a full Megaways slot
+				library, and has been reviewed in depth by our team.
+			</P>
+		</div>
+
+		<section aria-labelledby="crypto-casinos-heading">
+			<H2 id="crypto-casinos-heading" size="md" class="mb-4">All Crypto Casino Reviews</H2>
+
+			<div class="mb-8">
+				<P class="text-gray-600 dark:text-gray-400">
+					Showing {cryptoCasinos.length}
+					{cryptoCasinos.length === 1 ? 'crypto casino' : 'crypto casinos'}, ranked by our
+					rating
+				</P>
+			</div>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+				{cryptoCasinos.map((casinoEntry, index) => (
+					<CasinoCard casinoEntry={casinoEntry} eager={index < 8} />
+				))}
+			</div>
+		</section>
+
+		<section aria-labelledby="crypto-guide-heading" class="mt-16 max-w-3xl">
+			<H2 id="crypto-guide-heading" size="md" class="mb-4">Why Play Megaways Slots at a Crypto Casino?</H2>
+			<P class="mb-4">
+				Cryptocurrency payments suit slot players for three practical reasons: withdrawals
+				are typically processed in minutes rather than days, deposits rarely attract the
+				card fees or bank blocks that gambling transactions can trigger, and account
+				verification is often lighter. All of the casinos listed here pair crypto banking
+				with libraries from the major Megaways providers, including Big Time Gaming,
+				Pragmatic Play and Red Tiger.
+			</P>
+			<P>
+				As with any casino, check the licence, read the bonus wagering terms before
+				depositing, and remember that cryptocurrency values fluctuate — a win held in
+				crypto can change in real-money value after you cash out. Play responsibly and
+				only stake what you can afford to lose.
+			</P>
+		</section>
+	</Container>
+
+	<Footer slot="footer" />
+</PageLayout>

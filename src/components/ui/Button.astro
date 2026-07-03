@@ -51,10 +51,11 @@ if (external) {
 	linkAttrs.rel = 'noopener noreferrer';
 }
 
-// Affiliate links (according to CLAUDE.md)
+// Affiliate links (locked policy, CLAUDE.md rule 8)
 if (affiliate) {
 	linkAttrs.target = '_blank';
-	linkAttrs.rel = 'noopener noreferrer nofollow';
+	linkAttrs.rel = 'sponsored nofollow noopener';
+	linkAttrs.referrerpolicy = 'no-referrer';
 }
 
 // Disabled state

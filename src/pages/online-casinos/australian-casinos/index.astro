@@ -1,0 +1,85 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../../layouts/PageLayout.astro';
+import Container from '../../../components/layout/Container.astro';
+import Header from '../../../components/layout/Header.astro';
+import Footer from '../../../components/layout/Footer.astro';
+import H1 from '../../../components/typography/H1.astro';
+import H2 from '../../../components/typography/H2.astro';
+import P from '../../../components/typography/P.astro';
+import Breadcrumb from '../../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../../components/seo/BreadcrumbSchema.astro';
+import CasinoCard from '../../../components/casino/CasinoCard.astro';
+
+const allCasinos = await getCollection('casinos');
+const australianCasinos = allCasinos
+	.filter((casino) => casino.data.markets?.includes('australia'))
+	.sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0));
+
+const metadata = {
+	title: 'Australian Casinos | Best Aussie Casinos for Megaways Slots',
+	description:
+		'The best online casinos accepting Australian players, ranked by expert review. Compare Megaways slot libraries, bonuses, payments and payout speed.',
+};
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Online Casinos', href: '/online-casinos/' },
+	{ label: 'Australian Casinos', href: '/online-casinos/australian-casinos/' },
+];
+---
+
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<PageLayout title={metadata.title} description={metadata.description}>
+	<Header slot="header" />
+
+	<Container>
+		<Breadcrumb items={breadcrumbItems} class="mb-6" />
+
+		<div class="mb-12">
+			<H1 size="lg">Australian Casinos</H1>
+			<P variant="lead" size="lg" class="mt-4">
+				These online casinos accept players from Australia and carry full Megaways slot
+				libraries from providers like Big Time Gaming, Pragmatic Play and Red Tiger. Each
+				site below has been reviewed in depth and is ranked by our rating.
+			</P>
+		</div>
+
+		<section aria-labelledby="australian-casinos-heading">
+			<H2 id="australian-casinos-heading" size="md" class="mb-4">Australian Casino Reviews</H2>
+
+			<div class="mb-8">
+				<P class="text-gray-600 dark:text-gray-400">
+					Showing {australianCasinos.length}
+					{australianCasinos.length === 1 ? 'casino' : 'casinos'} accepting Australian
+					players, ranked by our rating
+				</P>
+			</div>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+				{australianCasinos.map((casinoEntry, index) => (
+					<CasinoCard casinoEntry={casinoEntry} eager={index < 8} />
+				))}
+			</div>
+		</section>
+
+		<section aria-labelledby="aussie-guide-heading" class="mt-16 max-w-3xl">
+			<H2 id="aussie-guide-heading" size="md" class="mb-4">Playing Megaways Slots from Australia</H2>
+			<P class="mb-4">
+				The casinos listed here are offshore sites that welcome Australian players. Most
+				support cryptocurrency alongside traditional payment methods, which typically means
+				faster withdrawals and fewer transaction blocks. Before signing up, check the
+				licence, the bonus wagering requirements, and whether your preferred deposit
+				method is supported.
+			</P>
+			<P>
+				Gamble responsibly: set deposit limits before you play, treat pokies as
+				entertainment rather than income, and seek help from support services such as
+				Gambling Help Online if play stops being fun.
+			</P>
+		</section>
+	</Container>
+
+	<Footer slot="footer" />
+</PageLayout>

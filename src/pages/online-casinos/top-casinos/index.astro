@@ -1,0 +1,83 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../../layouts/PageLayout.astro';
+import Container from '../../../components/layout/Container.astro';
+import Header from '../../../components/layout/Header.astro';
+import Footer from '../../../components/layout/Footer.astro';
+import H1 from '../../../components/typography/H1.astro';
+import H2 from '../../../components/typography/H2.astro';
+import P from '../../../components/typography/P.astro';
+import Breadcrumb from '../../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../../components/seo/BreadcrumbSchema.astro';
+import CasinoCard from '../../../components/casino/CasinoCard.astro';
+
+const allCasinos = await getCollection('casinos');
+const topCasinos = allCasinos.sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0));
+
+const metadata = {
+	title: 'Top Casinos | Highest-Rated Online Casinos for Megaways',
+	description:
+		'Our highest-rated online casinos for Megaways slots, ranked by expert review. Compare welcome bonuses, payment options, licensing and game libraries.',
+};
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Online Casinos', href: '/online-casinos/' },
+	{ label: 'Top Casinos', href: '/online-casinos/top-casinos/' },
+];
+---
+
+<BreadcrumbSchema items={breadcrumbItems} />
+
+<PageLayout title={metadata.title} description={metadata.description}>
+	<Header slot="header" />
+
+	<Container>
+		<Breadcrumb items={breadcrumbItems} class="mb-6" />
+
+		<div class="mb-12">
+			<H1 size="lg">Top Casinos</H1>
+			<P variant="lead" size="lg" class="mt-4">
+				These are the top casinos on Megaways Online — every site below has been played,
+				tested and scored by our reviewers, then ranked by rating. Each offers a strong
+				Megaways slot library alongside fair bonus terms, reliable payouts and recognised
+				licensing.
+			</P>
+		</div>
+
+		<section aria-labelledby="top-casinos-heading">
+			<H2 id="top-casinos-heading" size="md" class="mb-4">Highest-Rated Casino Reviews</H2>
+
+			<div class="mb-8">
+				<P class="text-gray-600 dark:text-gray-400">
+					Showing {topCasinos.length}
+					{topCasinos.length === 1 ? 'casino' : 'casinos'}, ranked by our rating
+				</P>
+			</div>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+				{topCasinos.map((casinoEntry, index) => (
+					<CasinoCard casinoEntry={casinoEntry} eager={index < 8} />
+				))}
+			</div>
+		</section>
+
+		<section aria-labelledby="ranking-heading" class="mt-16 max-w-3xl">
+			<H2 id="ranking-heading" size="md" class="mb-4">How We Rank the Top Casinos</H2>
+			<P class="mb-4">
+				Every rating on this page comes from hands-on review. We weigh the size and quality
+				of the Megaways game library, welcome bonus value after wagering requirements,
+				deposit and withdrawal speed, licensing and player-protection measures, and the
+				responsiveness of customer support. Scores are updated when a casino materially
+				changes its offer.
+			</P>
+			<P>
+				A high rating is not a guarantee of winning — all casino games carry a house edge.
+				Set a budget before you play, use the responsible-gambling tools each site
+				provides, and treat gambling as entertainment rather than income.
+			</P>
+		</section>
+	</Container>
+
+	<Footer slot="footer" />
+</PageLayout>

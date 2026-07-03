@@ -6,6 +6,7 @@
  * Includes CTA buttons with affiliate links
  */
 
+import { getCollection } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import Button from '../ui/Button.astro';
 import Badge from '../ui/Badge.astro';
@@ -18,6 +19,7 @@ interface Casino {
 	bonus?: string;
 	rating?: number;
 	affiliateLink: string;
+	reviewUrl?: string;
 	featured?: boolean;
 }
 
@@ -33,24 +35,25 @@ const {
 	class: className = '',
 } = Astro.props;
 
-// Default casinos if none provided (you can customize this)
-const defaultCasinos: Casino[] = [
-	{
-		name: 'BitStarz Casino',
-		bonus: '5 BTC + 200 Free Spins',
-		rating: 4.5,
-		affiliateLink: '/go/bitstarz/',
-		featured: true,
-	},
-	{
-		name: 'Casino Joy',
-		bonus: '100% up to $2000',
-		rating: 4.3,
-		affiliateLink: '/go/casinojoy/',
-	},
-];
-
-const displayCasinos = casinos.length > 0 ? casinos : defaultCasinos;
+// Default: the top-rated featured casinos from the collection (real data,
+// real affiliate links) — never hardcoded placeholders.
+let displayCasinos = casinos;
+if (displayCasinos.length === 0) {
+	const featured = await getCollection('casinos', (entry) =>
+		Boolean(entry.data.featured && entry.data.affiliateLink),
+	);
+	displayCasinos = featured
+		.sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0))
+		.slice(0, 2)
+		.map((entry, index) => ({
+			name: entry.data.name,
+			bonus: entry.data.welcomeBonus?.amount,
+			rating: entry.data.rating,
+			affiliateLink: entry.data.affiliateLink ?? '',
+			reviewUrl: `/online-casinos/${entry.data.slug}-casino-review/`,
+			featured: index === 0,
+		}));
+}
 ---
 
 <section class={`bg-linear-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 rounded-xl p-8 border border-primary-200 dark:border-primary-800 ${className}`}>
@@ -135,6 +138,18 @@ const displayCasinos = casinos.length > 0 ? casinos : defaultCasinos;
 					Play Now
 					<Icon name="lucide:arrow-right" size={18} class="ml-2" />
 				</Button>
+
+				{/* Internal review link */}
+				{casino.reviewUrl && (
+					<p class="text-center mt-3 mb-0">
+						<a
+							href={casino.reviewUrl}
+							class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+						>
+							Read our {casino.name} review &rarr;
+						</a>
+					</p>
+				)}
 
 				{/* Disclaimer */}
 				<p class="text-xs text-gray-500 dark:text-gray-500 text-center mt-3">
