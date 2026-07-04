@@ -1,5 +1,0 @@
-# megawaysonline.com — allow all crawlers
-User-agent: *
-Allow: /
-
-Sitemap: https://megawaysonline.com/sitemap-index.xml
