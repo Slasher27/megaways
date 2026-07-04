@@ -41,10 +41,9 @@ const breadcrumbItems = [
 ];
 ---
 
-<!-- Breadcrumb Schema for SEO -->
-<BreadcrumbSchema items={breadcrumbItems} />
-
 <PageLayout title={metadata.title} description={metadata.description}>
+	<!-- Breadcrumb Schema for SEO -->
+	<BreadcrumbSchema items={breadcrumbItems} />
 	<Header slot='header' />
 
 	<Container>

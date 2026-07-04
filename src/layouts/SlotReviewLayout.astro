@@ -49,10 +49,6 @@ const breadcrumbItems = [
 ];
 ---
 
-<!-- Schema Markup for SEO -->
-<BreadcrumbSchema items={breadcrumbItems} />
-<SlotSchema slot={slotEntry.data} author={author?.data} url={Astro.url.href} />
-
 <BaseLayout
 	title={pageTitle}
 	description={pageDescription}
@@ -61,6 +57,9 @@ const breadcrumbItems = [
 	publishedTime={publishedTime}
 	modifiedTime={modifiedTime}
 >
+	<!-- Schema Markup for SEO -->
+	<BreadcrumbSchema items={breadcrumbItems} />
+	<SlotSchema slotData={slotEntry.data} author={author?.data} url={Astro.url.href} />
 	<div class="flex min-h-screen flex-col">
 		<!-- Header -->
 		<Header />

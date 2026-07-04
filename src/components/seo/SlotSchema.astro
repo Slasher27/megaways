@@ -6,18 +6,22 @@
  * Implements schema.org Review and VideoGame types
  *
  * Usage:
- * <SlotSchema slot={slot.data} author={author} />
+ * <SlotSchema slotData={slot.data} author={author} />
+ *
+ * NOTE: the prop is named `slotData`, not `slot` — a `slot` attribute on a
+ * component rendered as a direct child of another component is interpreted
+ * by Astro as a named-slot assignment and the element is silently dropped.
  */
 
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-	slot: CollectionEntry<'slots'>['data'];
+	slotData: CollectionEntry<'slots'>['data'];
 	author?: CollectionEntry<'authors'>['data'];
 	url?: string;
 }
 
-const { slot, author, url } = Astro.props;
+const { slotData: slot, author, url } = Astro.props;
 
 // Get absolute URL
 const siteUrl = Astro.site?.href || 'https://megawaysonline.com';

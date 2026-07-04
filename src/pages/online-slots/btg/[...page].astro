@@ -66,9 +66,8 @@ const pageDescription = page.currentPage === 1
 	: `${baseDescription} Page ${page.currentPage}.`;
 ---
 
-<BreadcrumbSchema items={breadcrumbItems} />
-
 <PageLayout title={pageTitle} description={pageDescription}>
+	<BreadcrumbSchema items={breadcrumbItems} />
 	<Header slot='header' />
 
 	<Container>

@@ -27,9 +27,8 @@ const pageTitle = `${mechanic.data.name} Slots ${new Date().getFullYear()} | How
 const pageDescription = mechanic.data.description || `Learn about ${mechanic.data.name} slot mechanic, how it works, and the best games to play.`;
 ---
 
-<BreadcrumbSchema items={breadcrumbItems} />
-
 <BaseLayout title={pageTitle} description={pageDescription}>
+	<BreadcrumbSchema items={breadcrumbItems} />
 	<div class="flex min-h-screen flex-col">
 		<Header />
 

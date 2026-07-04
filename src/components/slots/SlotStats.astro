@@ -85,18 +85,18 @@ const stats = [
 							<Icon
 								name={stat.icon}
 								size={20}
-								class='text-primary-600 dark:text-primary-400'
+								class='text-primary-700 dark:text-primary-400'
 							/>
 						</div>
 						<div class='min-w-0'>
-							<dt class='text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1'>
+							<span class='block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1'>
 								{stat.label}
-							</dt>
-							<dd
-								class={`text-md font-semibold text-gray-900 dark:text-white capitalize ${stat.colorClass || ''}`}
+							</span>
+							<span
+								class={`block text-md font-semibold text-gray-900 dark:text-white capitalize ${stat.colorClass || ''}`}
 							>
 								{stat.value}
-							</dd>
+							</span>
 						</div>
 					</div>
 				))}

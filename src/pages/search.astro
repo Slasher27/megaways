@@ -107,7 +107,7 @@ import { Icon } from 'astro-icon/components';
 			</ul>
 
 			<template x-if="loaded && query.length >= 2 && results.length === 0">
-				<P>No results found. Try a different term, or browse <a href="/online-slots/" class="text-primary-600 underline">all slots</a>.</P>
+				<P>No results found. Try a different term, or browse <a href="/online-slots/" class="text-primary-700 dark:text-primary-400 underline">all slots</a>.</P>
 			</template>
 
 			<template x-if="query.length < 2 && !loading">
@@ -115,7 +115,7 @@ import { Icon } from 'astro-icon/components';
 			</template>
 
 			<noscript>
-				<P>Search requires JavaScript. Browse <a href="/online-slots/" class="text-primary-600 underline">all slots</a> or <a href="/online-casinos/" class="text-primary-600 underline">all casinos</a>.</P>
+				<P>Search requires JavaScript. Browse <a href="/online-slots/" class="text-primary-700 dark:text-primary-400 underline">all slots</a> or <a href="/online-casinos/" class="text-primary-700 dark:text-primary-400 underline">all casinos</a>.</P>
 			</noscript>
 		</div>
 	</Container>

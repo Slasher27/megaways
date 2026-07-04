@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # documentation (development only)
 docs/
+
+# vercel build output
+.vercel/

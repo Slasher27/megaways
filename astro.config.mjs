@@ -28,6 +28,11 @@ export default defineConfig({
         formats: ['webp'],
         quality: 80,
     },
+    build: {
+        // Inline all CSS: removes the render-blocking stylesheet request,
+        // which is worth ~700ms of simulated mobile LCP (Phase 3 perf gate).
+        inlineStylesheets: 'always',
+    },
     vite: {
         plugins: [tailwindcss()],
     },

@@ -136,10 +136,10 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 	<!-- ============ HERO ============ -->
 	<section
 		aria-labelledby='hero-heading'
-		class='bg-linear-to-b from-primary-50 via-white to-white dark:from-primary-950/40 dark:via-gray-950 dark:to-gray-950'
+		class='bg-linear-to-b from-primary-50 via-white to-white dark:from-primary-950/40 dark:via-gray-900 dark:to-gray-900'
 	>
 		<Container>
-			<div class='py-16 md:py-24 max-w-3xl'>
+			<div class='pt-16 pb-12 md:pt-24 md:pb-16 max-w-3xl mx-auto text-center'>
 				<p
 					class='inline-flex items-center gap-2 rounded-full border border-primary-200 dark:border-primary-800 bg-white/60 dark:bg-gray-900/60 px-4 py-1.5 text-sm font-medium text-primary-700 dark:text-primary-300 mb-6'
 				>
@@ -156,14 +156,14 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 					play demo versions of the newest games, and find the best Megaways casinos.
 				</P>
 
-				<div class='flex flex-wrap gap-3 mb-10'>
+				<div class='flex flex-wrap justify-center gap-3 mb-10'>
 					<Button href='/online-slots/' variant='primary' size='lg'>Browse Slot Reviews</Button>
 					<Button href='/online-casinos/top-casinos/' variant='secondary' size='lg'>
 						See Top Casinos
 					</Button>
 				</div>
 
-				<dl class='flex flex-wrap gap-x-10 gap-y-4'>
+				<dl class='flex flex-wrap justify-center gap-x-10 gap-y-4'>
 					<div>
 						<dt class='text-sm text-gray-500 dark:text-gray-400'>Slot reviews</dt>
 						<dd class='text-2xl font-bold text-gray-900 dark:text-white'>
@@ -199,15 +199,15 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 				</div>
 				<a
 					href='/online-casinos/top-casinos/'
-					class='shrink-0 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300'
+					class='shrink-0 text-sm font-semibold text-primary-700 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300'
 				>
 					View all &rarr;
 				</a>
 			</div>
 
 			<div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
-				{featuredCasinos.map((casinoEntry, index) => (
-					<CasinoCard casinoEntry={casinoEntry} eager={index < 4} />
+				{featuredCasinos.map((casinoEntry) => (
+					<CasinoCard casinoEntry={casinoEntry} />
 				))}
 			</div>
 
@@ -225,7 +225,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 	<!-- ============ POPULAR MEGAWAYS SLOTS ============ -->
 	<section
 		aria-labelledby='popular-heading'
-		class='py-14 md:py-20 bg-gray-50 dark:bg-gray-900/50'
+		class='py-14 md:py-20 bg-gray-50 dark:bg-gray-950/40'
 	>
 		<Container>
 			<div class='flex items-end justify-between gap-4 mb-8'>
@@ -237,7 +237,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 				</div>
 				<a
 					href='/online-slots/'
-					class='shrink-0 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300'
+					class='shrink-0 text-sm font-semibold text-primary-700 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300'
 				>
 					View all &rarr;
 				</a>
@@ -271,7 +271,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 						href={`/${mechanic.data.slug}/`}
 						class='group block rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 no-underline transition hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-lg active:scale-[0.98] motion-reduce:transition-none motion-reduce:transform-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600'
 					>
-						<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4'>
+						<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-400 mb-4'>
 							<Icon
 								name={mechanicIcons[mechanic.data.slug] ?? 'lucide:sparkles'}
 								class='size-5'
@@ -296,7 +296,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 	<!-- ============ LATEST REVIEWS + PROVIDERS ============ -->
 	<section
 		aria-labelledby='latest-heading'
-		class='py-14 md:py-20 bg-gray-50 dark:bg-gray-900/50'
+		class='py-14 md:py-20 bg-gray-50 dark:bg-gray-950/40'
 	>
 		<Container>
 			<div class='grid grid-cols-1 lg:grid-cols-2 gap-12'>
@@ -370,7 +370,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 			<H2 id='trust-heading' size='md' class='mb-8'>Why Trust Megaways Online</H2>
 			<div class='grid grid-cols-1 md:grid-cols-3 gap-6'>
 				<div class='rounded-2xl border border-gray-200 dark:border-gray-800 p-6'>
-					<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4'>
+					<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-400 mb-4'>
 						<Icon name='lucide:search-check' class='size-5' aria-hidden='true' />
 					</span>
 					<H3 size='sm' class='mb-2'>Stats verified at the source</H3>
@@ -381,7 +381,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 					</P>
 				</div>
 				<div class='rounded-2xl border border-gray-200 dark:border-gray-800 p-6'>
-					<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4'>
+					<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-400 mb-4'>
 						<Icon name='lucide:user-check' class='size-5' aria-hidden='true' />
 					</span>
 					<H3 size='sm' class='mb-2'>Written by real reviewers</H3>
@@ -395,7 +395,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 					</P>
 				</div>
 				<div class='rounded-2xl border border-gray-200 dark:border-gray-800 p-6'>
-					<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4'>
+					<span class='inline-flex size-11 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-400 mb-4'>
 						<Icon name='lucide:heart-handshake' class='size-5' aria-hidden='true' />
 					</span>
 					<H3 size='sm' class='mb-2'>Responsible gambling first</H3>
@@ -415,7 +415,7 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
 	<!-- ============ FAQ ============ -->
 	<section
 		aria-labelledby='faq-heading'
-		class='py-14 md:py-20 bg-gray-50 dark:bg-gray-900/50'
+		class='py-14 md:py-20 bg-gray-50 dark:bg-gray-950/40'
 	>
 		<Container>
 			<div class='max-w-3xl'>
