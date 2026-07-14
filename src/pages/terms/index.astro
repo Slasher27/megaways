@@ -11,14 +11,16 @@ import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
 
 const pageTitle = 'Terms of Use | Megaways Online';
 const pageDescription =
-	'The terms for using megawaysonline.com: an 18+ informational review site, not a gambling operator. Accuracy, affiliate links and liability explained.';
+	'The terms for using megawaysonline.com: an 18+ informational review site, not a gambling operator. Accuracy, demo games, affiliate links and liability explained.';
 
 const breadcrumbItems = [
 	{ label: 'Home', href: '/' },
 	{ label: 'Terms of Use', href: '/terms/' },
 ];
 
-const lastUpdated = '2026-07-03';
+const lastUpdated = '2026-07-14';
+
+const linkClass = 'underline hover:text-primary-600 dark:hover:text-primary-400';
 ---
 
 <PageLayout title={pageTitle} description={pageDescription}>
@@ -32,7 +34,7 @@ const lastUpdated = '2026-07-03';
 			<header class='mb-10'>
 				<H1 size='lg'>Terms of Use</H1>
 				<P class='text-gray-500 dark:text-gray-400 mb-0'>
-					Last updated: <time datetime={lastUpdated}>3 July 2026</time>
+					Last updated: <time datetime={lastUpdated}>14 July 2026</time>
 				</P>
 			</header>
 
@@ -40,10 +42,10 @@ const lastUpdated = '2026-07-03';
 				<H2 size='sm' class='mb-3'>What this site is</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
 					Megaways Online (megawaysonline.com) publishes reviews, guides and information
-					about online slot games and casinos. We are an independent publisher — we are
-					<strong>not</strong> a casino, we do not offer gambling, accept wagers or hold
-					player funds. By using this site you accept these terms; if you do not accept
-					them, please do not use the site.
+					about online slot games and casinos. It is operated by Duwayne Cowney as an
+					independent publisher — we are <strong>not</strong> a casino, we do not offer
+					real-money gambling, accept wagers or hold player funds. By using this site you
+					accept these terms; if you do not accept them, please do not use the site.
 				</P>
 			</section>
 
@@ -52,9 +54,10 @@ const lastUpdated = '2026-07-03';
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
 					This site is for adults aged <strong>18 or over</strong> (or the higher legal
 					gambling age where you live). Online gambling is regulated differently in every
-					country and is illegal in some. It is your responsibility to check that any
-					casino you visit is lawful and licensed for your jurisdiction before you
-					register or deposit.
+					country and is illegal in some. Nothing on this site is an invitation to gamble
+					where it is unlawful. It is your responsibility to check that any casino you
+					visit is lawful and licensed for your jurisdiction before you register or
+					deposit.
 				</P>
 			</section>
 
@@ -65,19 +68,39 @@ const lastUpdated = '2026-07-03';
 					official provider data before publishing, and we date every review. However,
 					providers change RTP configurations, casinos change bonus terms, and games are
 					withdrawn — so all content is provided &ldquo;as is&rdquo; for general
-					information only, without warranty of completeness or current accuracy, and
-					does not constitute financial or legal advice. Always confirm the figures in
-					the game's own paytable and the casino's own terms before playing.
+					information only, without warranty of completeness or current accuracy, and does
+					not constitute financial, legal or gambling advice. Always confirm the figures
+					in the game's own paytable and the casino's own terms before playing.
 				</P>
 			</section>
 
 			<section class='mb-10'>
-				<H2 size='sm' class='mb-3'>Affiliate links</H2>
+				<H2 size='sm' class='mb-3'>Free demo games</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-4'>
+					Demo games on this site are free, play-money versions hosted and operated by the
+					game providers, embedded for evaluation only. No real money can be staked or won
+					in them, and no purchase is possible through this site. Demos are provided by
+					third parties: we cannot guarantee their availability, and they may be
+					restricted in some regions.
+				</P>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					Demo results are randomised play-money outcomes — they do not predict or
+					guarantee real-money results, and the RTP configuration of a real-money game at
+					a specific casino may differ from the demo. The 18+ age restriction applies to
+					demo play as it does to the rest of the site. See also how demos are handled in
+					our <a href='/privacy/' class={linkClass}>privacy policy</a>.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Affiliate links and editorial independence</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
 					Some outbound casino links are affiliate links: if you sign up through them we
-					may earn a commission at no cost to you. This funds the site and never
-					influences ratings or editorial content — see our
-					<a href='/about/methodology/' class='underline hover:text-primary-600 dark:hover:text-primary-400'>methodology</a>
+					may earn a commission at no cost to you. This is how the site is funded, and it
+					is disclosed on the pages where such links appear. Commercial relationships
+					never influence ratings or editorial content — reviews are researched and scored
+					the same way whether or not an affiliate programme exists. See our
+					<a href='/about/methodology/' class={linkClass}>methodology</a>
 					for how reviews are produced.
 				</P>
 			</section>
@@ -85,42 +108,49 @@ const lastUpdated = '2026-07-03';
 			<section class='mb-10'>
 				<H2 size='sm' class='mb-3'>Third-party sites</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
-					Casinos and other external sites we link to are operated by third parties
-					under their own terms and privacy policies. We are not responsible for their
-					content, offers, payouts or conduct. Any dispute with a casino is between you
-					and that operator and its regulator.
+					Casinos and other external sites we link to are operated by third parties under
+					their own terms and privacy policies. We are not responsible for their content,
+					offers, payouts or conduct. Any dispute with a casino is between you and that
+					operator and its regulator.
 				</P>
 			</section>
 
 			<section class='mb-10'>
-				<H2 size='sm' class='mb-3'>Intellectual property</H2>
+				<H2 size='sm' class='mb-3'>Intellectual property and acceptable use</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
 					The reviews, guides and original content on this site are ours and may not be
-					republished without permission. Game names, artwork and trademarks (including
+					republished, scraped or redistributed without permission, beyond brief quotation
+					with attribution. Game names, artwork and trademarks (including
 					Megaways&trade;, a trademark of Big Time Gaming) belong to their respective
-					owners and are referenced for identification and review purposes only.
+					owners and are referenced for identification and review purposes only. You agree
+					not to use the site in any way that disrupts it or circumvents its security.
 				</P>
 			</section>
 
 			<section class='mb-10'>
 				<H2 size='sm' class='mb-3'>Limitation of liability</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
-					To the maximum extent permitted by law, Megaways Online is not liable for any
-					loss arising from use of this site or reliance on its content — including
-					gambling losses, casino disputes, or decisions made on the basis of published
-					statistics. Gambling involves risk: never stake more than you can afford to
-					lose, and see our
-					<a href='/responsible-gambling/' class='underline hover:text-primary-600 dark:hover:text-primary-400'>responsible gambling resources</a>
+					To the maximum extent permitted by law, Megaways Online and its operator are not
+					liable for any loss arising from use of this site or reliance on its content —
+					including gambling losses, casino disputes, demo-game availability, or decisions
+					made on the basis of published statistics. Nothing in these terms excludes
+					liability that cannot be excluded by law. Gambling involves risk: never stake
+					more than you can afford to lose, and see our
+					<a href='/responsible-gambling/' class={linkClass}>responsible gambling resources</a>
 					if play stops being fun.
 				</P>
 			</section>
 
 			<section class='mb-0'>
-				<H2 size='sm' class='mb-3'>Changes and contact</H2>
+				<H2 size='sm' class='mb-3'>General</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
-					We may update these terms from time to time; the date above shows the current
-					version. Questions? Email
-					<a href='mailto:hello@megawaysonline.com' class='underline hover:text-primary-600 dark:hover:text-primary-400'>hello@megawaysonline.com</a>.
+					These terms are governed by the laws of the Republic of South Africa, without
+					affecting any consumer protections you are entitled to under the laws of the
+					country where you live. If any part of these terms is found unenforceable, the
+					rest remains in effect. We may update these terms from time to time; the date
+					above shows the current version, and continued use of the site after an update
+					constitutes acceptance. Questions? Email
+					<a href='mailto:hello@megawaysonline.com' class={linkClass}>hello@megawaysonline.com</a>.
 				</P>
 			</section>
 		</article>

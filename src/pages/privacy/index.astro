@@ -11,14 +11,16 @@ import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
 
 const pageTitle = 'Privacy Policy | Megaways Online';
 const pageDescription =
-	'How Megaways Online handles your data: no accounts, no tracking cookies set by us, a theme preference stored on your device, and standard hosting logs.';
+	'How Megaways Online handles your data: no accounts, no tracking cookies set by us, a theme preference stored on your device, standard hosting logs, and third-party demo games that load only when you choose to play them.';
 
 const breadcrumbItems = [
 	{ label: 'Home', href: '/' },
 	{ label: 'Privacy Policy', href: '/privacy/' },
 ];
 
-const lastUpdated = '2026-07-03';
+const lastUpdated = '2026-07-14';
+
+const linkClass = 'underline hover:text-primary-600 dark:hover:text-primary-400';
 ---
 
 <PageLayout title={pageTitle} description={pageDescription}>
@@ -32,65 +34,129 @@ const lastUpdated = '2026-07-03';
 			<header class='mb-10'>
 				<H1 size='lg'>Privacy Policy</H1>
 				<P class='text-gray-500 dark:text-gray-400 mb-0'>
-					Last updated: <time datetime={lastUpdated}>3 July 2026</time>
+					Last updated: <time datetime={lastUpdated}>14 July 2026</time>
 				</P>
 			</header>
+
+			<!-- Layered summary (at a glance) -->
+			<section class='mb-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-6'>
+				<H2 size='sm' class='mb-3'>This policy at a glance</H2>
+				<ul class='list-disc pl-5 space-y-2 text-gray-600 dark:text-gray-400'>
+					<li>We have no accounts, forms, newsletters, analytics or advertising trackers.</li>
+					<li>We set <strong>no cookies</strong>. Your light/dark theme choice is saved on your own device and never sent to us.</li>
+					<li>Our host (Vercel) keeps standard, short-lived server logs to run and protect the site.</li>
+					<li>Free demo games are hosted by the game providers and load <strong>only if you click play</strong> — at that point the provider receives the technical data any website visit involves.</li>
+					<li>Casino links are affiliate links; the casino's own privacy policy applies on their site. We never receive your personal details from them.</li>
+				</ul>
+			</section>
 
 			<section class='mb-10'>
 				<H2 size='sm' class='mb-3'>Who we are</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
-					Megaways Online (megawaysonline.com) is an informational website publishing
-					reviews of online slot games and casinos. We do not operate gambling services
-					and we do not process payments or wagers. For anything in this policy, contact
-					<a href='mailto:hello@megawaysonline.com' class='underline hover:text-primary-600 dark:hover:text-primary-400'>hello@megawaysonline.com</a>.
+					Megaways Online (megawaysonline.com) is an independent informational website
+					publishing reviews of online slot games and casinos, operated by Duwayne Cowney,
+					who is the data controller for any personal data processed through this site. We
+					do not operate gambling services and we do not process payments or wagers. For
+					anything in this policy, contact
+					<a href='mailto:hello@megawaysonline.com' class={linkClass}>hello@megawaysonline.com</a>.
 				</P>
 			</section>
 
 			<section class='mb-10'>
-				<H2 size='sm' class='mb-3'>What we collect</H2>
+				<H2 size='sm' class='mb-3'>What we collect, why, and for how long</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-4'>
-					Very little. This site has no user accounts, no comment forms and no
-					newsletter. We do not run analytics or advertising trackers, and we do not set
-					tracking cookies.
+					Very little. This site has no user accounts, no comment forms and no newsletter.
+					We do not run analytics or advertising trackers, and we do not set cookies of any
+					kind.
 				</P>
 				<P class='text-gray-600 dark:text-gray-400 mb-4'>
 					<strong>Theme preference.</strong> If you switch between light and dark mode,
-					that choice is saved in your browser's local storage. It stays on your device,
-					is not transmitted to us, and you can clear it at any time through your
-					browser settings.
+					that choice is saved in your browser's local storage. It stays on your device, is
+					not transmitted to us, and you can remove it at any time by clearing site data in
+					your browser.
+				</P>
+				<P class='text-gray-600 dark:text-gray-400 mb-4'>
+					<strong>Search.</strong> The site search runs entirely in your browser: it
+					downloads a static index of our page titles and matches your query locally. What
+					you type is never sent to us or to anyone else.
 				</P>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
 					<strong>Hosting logs.</strong> Our hosting provider (Vercel Inc.) records
 					standard technical server logs — such as IP address, browser type and pages
-					requested — to serve the site and protect it from abuse. These logs are
-					processed under Vercel's own
-					<a href='https://vercel.com/legal/privacy-policy' rel='noopener' target='_blank' class='underline hover:text-primary-600 dark:hover:text-primary-400'>privacy policy</a>.
+					requested — which are needed to deliver the site and protect it from abuse. Our
+					legal basis for this is legitimate interest (running a secure website). These
+					logs are retained only briefly and are processed under Vercel's own
+					<a href='https://vercel.com/legal/privacy-policy' rel='noopener' target='_blank' class={linkClass}>privacy policy</a>.
+					We do not use them to identify or profile visitors.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Free demo games</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-4'>
+					Slot review pages offer free play-money demos. <strong>No demo content loads
+					when you open the page.</strong> If you press &ldquo;Play Free Demo&rdquo;, your
+					browser loads the game directly from the game provider's servers (for example
+					Pragmatic Play, Red Tiger or Big Time Gaming). From that moment the provider
+					receives the technical data involved in any web request — such as your IP
+					address and device type — and may use cookies or similar technology
+					<em>inside the game frame</em>, under that provider's own privacy policy.
+				</P>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					We configure these embeds so that your browser does not tell the provider which
+					of our pages you came from, and we receive no data about your demo play. If you
+					prefer not to share anything with game providers, simply don't start a demo —
+					every review is fully readable without one.
 				</P>
 			</section>
 
 			<section class='mb-10'>
 				<H2 size='sm' class='mb-3'>Casino links and third parties</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-4'>
-					Links to casinos on this site are affiliate links. If you follow one, the
-					casino operator (and its tracking platform) may set cookies and collect data
-					on their own sites under their own privacy policies — we encourage you to read
-					them before registering. We receive aggregate referral statistics from these
+					Links to casinos on this site are affiliate links. If you follow one, the casino
+					operator (and its tracking platform) may set cookies and collect data on their
+					own sites under their own privacy policies — we encourage you to read them
+					before registering. We receive aggregate referral statistics from these
 					programmes, not your personal details.
 				</P>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
-					Outbound links are sent with a no-referrer policy, meaning your browser does
+					All outbound links are sent with a no-referrer policy, meaning your browser does
 					not tell the destination site which of our pages you came from.
 				</P>
 			</section>
 
 			<section class='mb-10'>
-				<H2 size='sm' class='mb-3'>Your rights</H2>
+				<H2 size='sm' class='mb-3'>International transfers</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
-					Depending on where you live (for example under the GDPR or UK GDPR), you may
-					have rights to access, correct or delete personal data held about you. Since
-					we hold essentially none, requests will usually be a short conversation — but
-					email us and we will help, including passing requests to our hosting provider
-					where relevant.
+					Our hosting provider is a US company serving the site from a global network, so
+					the technical log data described above may be processed outside the UK/EEA.
+					Vercel applies the safeguards described in its
+					<a href='https://vercel.com/legal/dpa' rel='noopener' target='_blank' class={linkClass}>data processing agreement</a>,
+					including standard contractual clauses.
+				</P>
+			</section>
+
+			<section class='mb-10'>
+				<H2 size='sm' class='mb-3'>Your rights</H2>
+				<P class='text-gray-600 dark:text-gray-400 mb-4'>
+					As a South African operator we process personal information in line with the
+					Protection of Personal Information Act (POPIA). Depending on where you live,
+					equivalent laws may also protect you — for example the UK GDPR, the EU GDPR or
+					Canada's PIPEDA. Under these laws you have the right to access, correct, delete
+					or receive a copy of personal data held about you, to restrict or object to its
+					processing, and to withdraw any consent. Since we hold essentially no personal
+					data, requests will usually be a short conversation — but email us and we will
+					help, including passing requests to our hosting provider where relevant. We will
+					respond within one month.
+				</P>
+				<P class='text-gray-600 dark:text-gray-400 mb-0'>
+					You also have the right to complain to a data protection authority — the
+					<a href='https://inforegulator.org.za' rel='noopener' target='_blank' class={linkClass}>Information Regulator (South Africa)</a>,
+					or your local authority such as the
+					<a href='https://ico.org.uk' rel='noopener' target='_blank' class={linkClass}>ICO</a>
+					in the UK or the
+					<a href='https://www.priv.gc.ca' rel='noopener' target='_blank' class={linkClass}>Office of the Privacy Commissioner</a>
+					in Canada.
 				</P>
 			</section>
 
@@ -106,8 +172,8 @@ const lastUpdated = '2026-07-03';
 				<H2 size='sm' class='mb-3'>Changes to this policy</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
 					If we add features that change how data is handled (for example privacy-first
-					analytics or embedded game demos), this policy will be updated first and the
-					date above revised.
+					analytics), this policy will be updated first and the date above revised.
+					Significant changes will be noted on this page.
 				</P>
 			</section>
 		</article>
