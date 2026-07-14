@@ -23,7 +23,7 @@ function isActive(href: string): boolean {
 ---
 
 <header class='sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800'>
-	<Container padding='sm'>
+	<Container padding='none'>
 		<div class='flex items-center justify-between py-3 gap-4'>
 			<div class='flex items-center gap-8'>
 				<!-- Logo -->
@@ -70,11 +70,11 @@ function isActive(href: string): boolean {
 			<button
 				id='mobile-menu-open'
 				type='button'
-				class='lg:hidden p-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+				class='lg:hidden p-2.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
 				aria-label='Open menu'
 				aria-haspopup='dialog'
 			>
-				<Icon name='lucide:menu' class='size-7' />
+				<Icon name='lucide:menu' class='size-6' />
 			</button>
 
 			<!-- Mobile Menu (native dialog: focus trap, Esc close and backdrop for free) -->

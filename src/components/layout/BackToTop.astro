@@ -13,7 +13,7 @@
 <a
 	href='#'
 	aria-label='Back to top'
-	class='back-to-top group fixed bottom-16 right-16 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-200 hover:ring-2 ring-primary-300 dark:ring-primary-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900'
+	class='back-to-top group fixed z-50 flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-200 hover:ring-2 ring-primary-300 dark:ring-primary-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900'
 >
 	<svg
 		xmlns='http://www.w3.org/2000/svg'
@@ -34,10 +34,21 @@
 
 <style>
 	/* Hidden by default; only browsers with scroll-driven animation support
-	   ever reveal it, so there is no always-visible fallback clutter. */
+	   ever reveal it, so there is no always-visible fallback clutter.
+	   Anchored to the corner: 1rem inset on phones (respecting the iOS
+	   home-bar safe area), 2rem on larger screens. */
 	.back-to-top {
 		opacity: 0;
 		visibility: hidden;
+		right: max(1rem, env(safe-area-inset-right, 0px));
+		bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+	}
+
+	@media (min-width: 768px) {
+		.back-to-top {
+			right: 2rem;
+			bottom: 2rem;
+		}
 	}
 
 	@supports (animation-timeline: scroll()) {
