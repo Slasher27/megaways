@@ -76,10 +76,12 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 			)
 		}
 
-		<!-- Hero Content: Image + Stats/Features (Row on Desktop, Column on Mobile) -->
-		<div class='flex flex-col lg:flex-row lg:items-start gap-6 mb-8'>
+		<!-- Hero Content: Image + Stats/Features (Row on Desktop, Column on Mobile).
+		     While a demo iframe is active, SlotDemo's global styles expand the demo
+		     column to full width (stats wrap below) — see SlotDemo.astro. -->
+		<div class='slot-hero flex flex-col lg:flex-row lg:items-start gap-6 mb-8'>
 			<!-- Thumbnail / click-to-load demo facade -->
-			<div class='flex flex-col gap-4 lg:gap-6'>
+			<div class='demo-col flex flex-col gap-4 lg:gap-6'>
 				<div class='lg:w-100 shrink-0 rounded-xl overflow-hidden'>
 					{
 						slot.data.demoUrl ? (

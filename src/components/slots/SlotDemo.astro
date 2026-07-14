@@ -61,6 +61,23 @@ const { slotData: slot, eager = false, class: className } = Astro.props;
 		iframe.allow = 'fullscreen; autoplay';
 		iframe.className = 'absolute inset-0 h-full w-full border-0';
 		box.replaceChildren(iframe);
+
+		// Fullscreen toggle for immersive play (unsupported on iPhone Safari,
+		// where the non-sticky-header CSS below is the fallback).
+		if (document.fullscreenEnabled) {
+			const fs = document.createElement('button');
+			fs.type = 'button';
+			fs.setAttribute('aria-label', 'Toggle fullscreen');
+			fs.className =
+				'absolute top-2 right-2 z-10 p-2 rounded-lg bg-black/60 text-white hover:bg-black/80 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500';
+			fs.innerHTML =
+				'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>';
+			fs.addEventListener('click', () => {
+				if (document.fullscreenElement) document.exitFullscreen();
+				else box.requestFullscreen();
+			});
+			box.appendChild(fs);
+		}
 	}
 
 	document.querySelectorAll<HTMLElement>('.slot-demo').forEach((box) => {
@@ -76,3 +93,38 @@ const { slotData: slot, eager = false, class: className } = Astro.props;
 		}
 	});
 </script>
+
+<style is:global>
+	/* Active-demo UX (pure CSS via :has — no JS state).
+	   While a game iframe is loaded:
+	   1. the site header stops being sticky, so it can't overlay the game
+	      controls when the player scrolls (main fix for mobile);
+	   2. the BackToTop button is hidden (it floated over the game canvas);
+	   3. on desktop the hero switches to a column so the demo spans the full
+	      content width instead of the 25rem thumbnail slot. User-initiated,
+	      so the reflow is CLS-exempt. */
+	body:has(.slot-demo iframe) header.sticky {
+		position: static;
+	}
+
+	body:has(.slot-demo iframe) .back-to-top {
+		display: none;
+	}
+
+	@media (min-width: 64rem) {
+		.slot-hero:has(.slot-demo iframe) {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.slot-hero:has(.slot-demo iframe) .demo-col > div:first-of-type {
+			width: 100%;
+		}
+	}
+
+	/* In element fullscreen, let the box fill the screen instead of
+	   holding its 16:9 aspect ratio (games letterbox themselves). */
+	.slot-demo:fullscreen {
+		aspect-ratio: auto;
+	}
+</style>
