@@ -6,7 +6,7 @@
 
 ## Project
 
-Casino affiliate site (Megaways slots + casino reviews). WordPress → Astro rebuild, staged at `megaways.vercel.app`, replacing `megawaysonline.com`. **Primary goal: zero SEO regression.**
+Casino affiliate site (Megaways slots + casino reviews). WordPress → Astro rebuild — **LIVE on `megawaysonline.com` since 2026-07-14** (Vercel hosting; DNS + email stay on xneelo — never touch the mail/MX records). **Primary goal: zero SEO regression** — GSC monitoring window runs to ~2026-08-11; current work is Phase 6 backfill (`PROGRESS.md`).
 
 ### Stack
 - **Astro 6.x** (static) + `@astrojs/vercel` adapter — the adapter (plus `scripts/patch-vercel-redirects.mjs`, run by `npm run build`) is what makes the 47 redirects real HTTP 301s. Never remove either.
