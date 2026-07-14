@@ -1,11 +1,10 @@
 ---
 /**
  * NavDropdownMobile Component
- * Accordion-style dropdown for mobile navigation
+ * Accordion-style dropdown for mobile navigation — native <details>, no JS.
  * Supports light/dark mode
  */
 import type { NavLink } from '../../data/navigation';
-import Link from '../ui/Link.astro';
 import { Icon } from 'astro-icon/components';
 
 interface Props {
@@ -26,37 +25,22 @@ function isLinkActive(href: string): boolean {
 }
 ---
 
-<div
-	x-data='{ open: false }'
-	class:list={['border-b border-gray-100 dark:border-gray-700', className]}
->
-	<!-- Accordion Button -->
-	<button
-		x-on:click='open = !open'
-		:aria-expanded='open'
-		type='button'
-		class='w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors cursor-pointer text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+<details class:list={['group border-b border-gray-100 dark:border-gray-700', className]}>
+	<summary
+		class='flex items-center justify-between px-4 py-3 rounded-lg transition-colors cursor-pointer list-none [&::-webkit-details-marker]:hidden text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
 	>
 		<span>{label}</span>
 		<Icon
 			name='lucide:chevron-down'
-			class='size-4 transition-transform'
-			x-bind:class="open ? 'rotate-180' : ''"
+			class='size-4 transition-transform group-open:rotate-180'
 		/>
-	</button>
+	</summary>
 
-	<!-- Accordion Panel -->
-	<div
-		x-show='open'
-		x-collapse
-		x-cloak
-		class='pb-2'
-	>
+	<div class='pb-2'>
 		{
 			items.map((item) => (
 				<a
 					href={item.href}
-					@click='$dialog.close()'
 					class={`block pl-8 pr-4 py-2 text-sm rounded-lg transition-colors ${
 						isLinkActive(item.href)
 							? 'font-semibold bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
@@ -68,4 +52,4 @@ function isLinkActive(href: string): boolean {
 			))
 		}
 	</div>
-</div>
+</details>

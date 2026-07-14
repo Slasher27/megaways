@@ -45,6 +45,10 @@ const slots = defineCollection({
 			features: z.array(z.string()).default([]), // List of game features
 			bonusBuy: z.boolean().default(false), // Whether bonus buy is available
 
+			// Demo (click-to-load facade; harvested from the provider demo servers
+			// the legacy site embedded — no iframe ships in the initial HTML)
+			demoUrl: z.string().url().optional(),
+
 			// Theme
 			theme: z.array(z.string()).default([]), // Thematic tags
 
@@ -60,7 +64,7 @@ const slots = defineCollection({
 
 			// E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness)
 			author: reference('authors').optional(), // Reference to authors collection
-			realeasedDate: z.coerce.date().optional(), // Last update date
+			releasedDate: z.coerce.date().optional(), // Game release date (provider launch)
 			publishedDate: z.coerce.date().optional(), // Initial publication date
 			updatedDate: z.coerce.date().optional(), // Last update date
 		}),

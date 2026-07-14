@@ -1,0 +1,78 @@
+---
+/**
+ * SlotDemo — click-to-load demo facade (MIGRATION.md §5).
+ *
+ * No iframe ships in the initial HTML: the facade is the slot thumbnail plus
+ * a play button, and the game iframe is only created on interaction. The
+ * facade box and the iframe share the same aspect-video space, so the swap
+ * causes zero layout shift.
+ *
+ * NOTE: the thumbnail prop is `slotData`, not `slot` — see SlotThumbnail.
+ */
+import type { CollectionEntry } from 'astro:content';
+import SlotThumbnail from './SlotThumbnail.astro';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	slotData: CollectionEntry<'slots'>['data'];
+	/** Eager-load the facade thumbnail (it is usually the hero/LCP image). */
+	eager?: boolean;
+	class?: string;
+}
+
+const { slotData: slot, eager = false, class: className } = Astro.props;
+---
+
+<div
+	class:list={['slot-demo relative aspect-video overflow-hidden rounded-xl bg-gray-900', className]}
+	data-demo-url={slot.demoUrl}
+	data-demo-title={`${slot.name} free demo game`}
+>
+	<SlotThumbnail slotData={slot} eager={eager} class='absolute inset-0 h-full w-full object-cover' />
+	<button
+		type='button'
+		class='slot-demo-play group absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 hover:bg-black/50 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-inset'
+		aria-label={`Play the ${slot.name} demo`}
+	>
+		<span class='flex items-center justify-center w-16 h-16 rounded-full bg-primary-700 group-hover:bg-primary-800 text-white shadow-lg transition-transform group-hover:scale-105 motion-reduce:transform-none'>
+			<Icon name='lucide:play' class='size-8 translate-x-0.5' />
+		</span>
+		<span class='px-3 py-1 rounded-full bg-black/60 text-white text-sm font-semibold'>
+			Play Free Demo
+		</span>
+	</button>
+	<noscript>
+		<div class='absolute inset-x-0 bottom-0 bg-black/70 text-white text-xs text-center p-2'>
+			The demo needs JavaScript —
+			<a href={slot.demoUrl} rel='nofollow noreferrer' class='underline'>open it directly</a>.
+		</div>
+	</noscript>
+</div>
+
+<script>
+	function loadDemo(box: HTMLElement) {
+		const url = box.dataset.demoUrl;
+		if (!url || box.querySelector('iframe')) return;
+		const iframe = document.createElement('iframe');
+		iframe.src = url;
+		iframe.title = box.dataset.demoTitle ?? 'Slot demo game';
+		iframe.loading = 'lazy';
+		iframe.referrerPolicy = 'no-referrer';
+		iframe.allow = 'fullscreen; autoplay';
+		iframe.className = 'absolute inset-0 h-full w-full border-0';
+		box.replaceChildren(iframe);
+	}
+
+	document.querySelectorAll<HTMLElement>('.slot-demo').forEach((box) => {
+		box.querySelector('.slot-demo-play')?.addEventListener('click', () => loadDemo(box));
+	});
+
+	// Let external triggers (the hero "Play Demo" button) start the demo too.
+	window.addEventListener('load-slot-demo', () => {
+		const box = document.querySelector<HTMLElement>('.slot-demo');
+		if (box) {
+			loadDemo(box);
+			box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		}
+	});
+</script>

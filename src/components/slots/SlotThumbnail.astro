@@ -11,12 +11,16 @@
  *   3. A name-based inline SVG placeholder (so pages never look broken).
  *
  * The SVG is a backup only; real art always wins once present.
+ *
+ * NOTE: the prop is named `slotData`, not `slot` — a `slot` attribute on a
+ * component rendered as a direct child of another component is interpreted
+ * by Astro as a named-slot assignment and the element is silently dropped.
  */
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-	slot: CollectionEntry<'slots'>['data'];
+	slotData: CollectionEntry<'slots'>['data'];
 	/** Extra classes appended to the rendered <img>/<svg>. */
 	class?: string;
 	width?: number;
@@ -26,7 +30,7 @@ interface Props {
 }
 
 const {
-	slot,
+	slotData: slot,
 	class: className,
 	width = 400,
 	height = 225,

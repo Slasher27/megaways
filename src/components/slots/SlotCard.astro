@@ -8,9 +8,9 @@ import SlotThumbnail from './SlotThumbnail.astro';
 import Card from '../ui/Card.astro';
 import Badge from '../ui/Badge.astro';
 import Button from '../ui/Button.astro';
-import Link from '../ui/Link.astro';
 import H3 from '../typography/H3.astro';
 import { Icon } from 'astro-icon/components';
+import { providerSlug as resolveProviderSlug } from '../../data/providers';
 
 interface Props {
 	slotEntry: CollectionEntry<'slots'>;
@@ -24,28 +24,7 @@ const slot = slotEntry.data;
 // Generate slot URL from slug
 const slotUrl = `/online-slots/${slot.slug}/`;
 
-// Map provider names to their page slugs
-const providerSlugMap: Record<string, string> = {
-	'big time gaming': 'btg',
-	'btg': 'btg',
-	'blueprint gaming': 'blueprint',
-	'blueprint': 'blueprint',
-	'iron dog studio': 'iron-dog',
-	'iron dog': 'iron-dog',
-	'irondog': 'iron-dog',
-	'microgaming': 'microgaming',
-	'netent': 'netent',
-	'pragmatic play': 'pragmatic-play',
-	'pragmatic': 'pragmatic-play',
-	'red tiger': 'red-tiger',
-	'redtiger': 'red-tiger',
-	'scientific games': 'scientific-games',
-};
-
-// Get provider slug from mapping
-const providerSlug = slot.provider
-	? providerSlugMap[slot.provider.toLowerCase()] || slot.provider.toLowerCase().replace(/\s+/g, '-')
-	: null;
+const providerSlug = slot.provider ? resolveProviderSlug(slot.provider) : null;
 
 // Helper function to format volatility text
 function formatVolatility(volatility: string): string {
@@ -54,21 +33,13 @@ function formatVolatility(volatility: string): string {
 		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
 		.join(' ');
 }
-
-// Helper function to format provider name to title case
-function formatProviderName(provider: string): string {
-	return provider
-		.split(' ')
-		.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-		.join(' ');
-}
 ---
 
 <Card variant='slot' padding='none' hover={true} class:list={['group overflow-hidden flex flex-col', className]}>
 	<!-- Thumbnail -->
 	<a href={slotUrl} class='block relative overflow-hidden aspect-video flex-shrink-0'>
 		<SlotThumbnail
-			slot={slot}
+			slotData={slot}
 			eager={eager}
 			class='h-full object-cover group-hover:scale-105 transition-transform duration-300'
 		/>
@@ -99,7 +70,7 @@ function formatProviderName(provider: string): string {
 						href={`/online-slots/${providerSlug}/`}
 						class='inline-block text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 mb-4 no-underline transition-colors'
 					>
-						{formatProviderName(slot.provider.replace(/-/g, ' '))}
+						{slot.provider}
 					</a>
 				)
 			}

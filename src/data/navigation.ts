@@ -26,16 +26,21 @@ export const mainNavigation: NavItem[] = [
 	{
 		label: 'Providers',
 		items: [
+			// Every indexed provider listing + legacy nav providers with content.
+			// (Yggdrasil removed in Phase 4: no slots, and the URL 404s on the live site.)
 			{ label: 'Big Time Gaming', href: '/online-slots/btg/' },
 			{ label: 'Blueprint Gaming', href: '/online-slots/blueprint/' },
 			{ label: 'Iron Dog Studio', href: '/online-slots/iron-dog/' },
+			{ label: 'iSoftBet', href: '/online-slots/isoftbet/' },
 			{ label: 'Jelly', href: '/online-slots/jelly/' },
 			{ label: 'Microgaming', href: '/online-slots/microgaming/' },
 			{ label: 'NetEnt', href: '/online-slots/netent/' },
+			{ label: 'PoggiPlay', href: '/online-slots/poggiplay/' },
 			{ label: 'Pragmatic Play', href: '/online-slots/pragmatic-play/' },
 			{ label: 'Red Tiger', href: '/online-slots/red-tiger/' },
+			{ label: 'Relax Gaming', href: '/online-slots/relax/' },
 			{ label: 'Scientific Games', href: '/online-slots/scientific-games/' },
-			{ label: 'Yggdrasil', href: '/online-slots/yggdrasil/' },
+			{ label: 'Stakelogic', href: '/online-slots/stakelogic/' },
 		],
 	},
 	{

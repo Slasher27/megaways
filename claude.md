@@ -34,6 +34,8 @@ npx astro check
 8. **Affiliate links:** `rel="sponsored nofollow" target="_blank" referrerpolicy="no-referrer"`. → `docs/SEO-GUIDELINES.md`.
 9. **YMYL accuracy.** Verify RTP/maxWin/volatility — never hallucinate gambling stats.
 10. **No TS annotations inside Astro template expressions** (frontmatter fence only).
+11. **Never name a component prop `slot`.** On a direct child of another component, Astro treats `slot={…}` as a named-slot assignment and silently drops the element (this cost slot pages their JSON-LD once). Use `slotData` etc.
+12. **JSON-LD schema components render INSIDE layouts** (body is fine) — never before the layout tag, or they emit outside `<html>` and push the charset past 1024 bytes.
 
 ---
 

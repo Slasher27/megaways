@@ -1,0 +1,63 @@
+---
+/**
+ * BackToTop Button — pure CSS, zero JS.
+ *
+ * Visibility is driven by a scroll-driven animation (fades in over the first
+ * 300px of scroll). Browsers without `animation-timeline: scroll()` support
+ * simply never show the button (it is a convenience, not core functionality).
+ * The scroll itself is a plain `#` anchor jump, smoothed by the global
+ * `scroll-smooth` on <html> (which respects prefers-reduced-motion via CSS).
+ */
+---
+
+<a
+	href='#'
+	aria-label='Back to top'
+	class='back-to-top group fixed bottom-16 right-16 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white shadow-lg hover:shadow-xl transition-shadow duration-200 hover:ring-2 ring-primary-300 dark:ring-primary-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900'
+>
+	<svg
+		xmlns='http://www.w3.org/2000/svg'
+		width='24'
+		height='24'
+		viewBox='0 0 24 24'
+		fill='none'
+		stroke='currentColor'
+		stroke-width='2'
+		stroke-linecap='round'
+		stroke-linejoin='round'
+		aria-hidden='true'
+	>
+		<path d='m18 15-6-6-6 6'></path>
+	</svg>
+	<span class='sr-only'>Scroll to top of page</span>
+</a>
+
+<style>
+	/* Hidden by default; only browsers with scroll-driven animation support
+	   ever reveal it, so there is no always-visible fallback clutter. */
+	.back-to-top {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+	@supports (animation-timeline: scroll()) {
+		.back-to-top {
+			animation: back-to-top-appear linear both;
+			animation-timeline: scroll();
+			animation-range: 0px 300px;
+		}
+	}
+
+	@keyframes back-to-top-appear {
+		from {
+			opacity: 0;
+			visibility: hidden;
+			transform: translateY(1rem);
+		}
+		to {
+			opacity: 1;
+			visibility: visible;
+			transform: translateY(0);
+		}
+	}
+</style>

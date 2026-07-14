@@ -11,8 +11,8 @@ import {
 } from 'astro:content';
 import SlotReviewLayout from '../../layouts/SlotReviewLayout.astro';
 import SlotThumbnail from '../../components/slots/SlotThumbnail.astro';
+import SlotDemo from '../../components/slots/SlotDemo.astro';
 import H1 from '../../components/typography/H1.astro';
-import H2 from '../../components/typography/H2.astro';
 import P from '../../components/typography/P.astro';
 import Badge from '../../components/ui/Badge.astro';
 import Button from '../../components/ui/Button.astro';
@@ -54,9 +54,7 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 			{
 				slot.data.provider && (
 					<Badge variant='secondary' size='md'>
-						<span class='capitalize'>
-							{slot.data.provider.replace('-', ' ')}
-						</span>
+						{slot.data.provider}
 					</Badge>
 				)
 			}
@@ -80,20 +78,32 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 
 		<!-- Hero Content: Image + Stats/Features (Row on Desktop, Column on Mobile) -->
 		<div class='flex flex-col lg:flex-row lg:items-start gap-6 mb-8'>
-			<!-- Thumbnail -->
+			<!-- Thumbnail / click-to-load demo facade -->
 			<div class='flex flex-col gap-4 lg:gap-6'>
 				<div class='lg:w-100 shrink-0 rounded-xl overflow-hidden'>
-					<SlotThumbnail
-						slot={slot.data}
-						width={400}
-						height={225}
-						eager={true}
-						class='h-auto'
-					/>
+					{
+						slot.data.demoUrl ? (
+							<SlotDemo slotData={slot.data} eager={true} />
+						) : (
+							<SlotThumbnail
+								slotData={slot.data}
+								width={400}
+								height={225}
+								eager={true}
+								class='h-auto'
+							/>
+						)
+					}
 				</div>
 				<div class='flex flex-row items-center justify-center gap-4'>
-					<Button variant='secondary'>Play Demo</Button>
-					<Button variant='primary'>Where to play</Button>
+					{
+						slot.data.demoUrl && (
+							<Button variant='secondary' class='js-play-demo'>
+								Play Demo
+							</Button>
+						)
+					}
+					<Button variant='primary' href='#where-to-play'>Where to play</Button>
 				</div>
 			</div>
 			<!-- Stats & Features -->
@@ -186,4 +196,13 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 			</section>
 		)
 	}
+
+	<script>
+		// Hero "Play Demo" button starts the facade's demo (SlotDemo listens).
+		document.querySelectorAll('.js-play-demo').forEach((btn) =>
+			btn.addEventListener('click', () =>
+				window.dispatchEvent(new CustomEvent('load-slot-demo')),
+			),
+		);
+	</script>
 </SlotReviewLayout>

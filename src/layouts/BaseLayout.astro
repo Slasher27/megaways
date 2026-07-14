@@ -2,7 +2,7 @@
 /// <reference path="../alpine.d.ts" />
 import '../styles/global.css';
 import SEOHead from '../components/seo/SEOHead.astro';
-import BackToTop from '../components/interactive/alpinejs/BackToTop.astro';
+import BackToTop from '../components/layout/BackToTop.astro';
 
 interface Props {
 	title: string;
@@ -64,21 +64,9 @@ const {
 			}
 		</script>
 
-		<!-- Alpine.js with plugins -->
+		<!-- Alpine.js (core only — no plugins; used by NavDropdown + Search) -->
 		<script>
-			// @ts-expect-error - Alpine.js types are declared in src/alpine.d.ts
 			import Alpine from 'alpinejs';
-			// @ts-expect-error - Alpine.js UI plugin types are declared in src/alpine.d.ts
-			import ui from '@alpinejs/ui';
-			// @ts-expect-error - Alpine.js Focus plugin types are declared in src/alpine.d.ts
-			import focus from '@alpinejs/focus';
-			// @ts-expect-error - Alpine.js Collapse plugin types are declared in src/alpine.d.ts
-			import collapse from '@alpinejs/collapse';
-
-			// Register plugins
-			Alpine.plugin(ui);
-			Alpine.plugin(focus);
-			Alpine.plugin(collapse);
 
 			// Make Alpine available globally
 			window.Alpine = Alpine;

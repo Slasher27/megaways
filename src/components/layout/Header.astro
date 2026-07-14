@@ -1,6 +1,5 @@
 ---
 import Container from './Container.astro';
-import Flyout from '../interactive/alpinejs/Flyout.astro';
 import Link from '../ui/Link.astro';
 import NavDropdown from './NavDropdown.astro';
 import NavDropdownMobile from './NavDropdownMobile.astro';
@@ -25,20 +24,7 @@ function isActive(href: string): boolean {
 
 <header class='sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800'>
 	<Container padding='sm'>
-		<div
-			class='flex items-center justify-between py-3 gap-4'
-			x-data='{
-				open: false,
-				init() {
-					// Close mobile menu when resizing to desktop
-					window.addEventListener("resize", () => {
-						if (window.innerWidth >= 1024 && this.open) {
-							this.open = false;
-						}
-					});
-				}
-			}'
-		>
+		<div class='flex items-center justify-between py-3 gap-4'>
 			<div class='flex items-center gap-8'>
 				<!-- Logo -->
 				<Link href='/' underline={false} class='flex items-center'>
@@ -82,21 +68,27 @@ function isActive(href: string): boolean {
 
 			<!-- Mobile Menu Button -->
 			<button
-				@click='open = true'
+				id='mobile-menu-open'
+				type='button'
 				class='lg:hidden p-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
 				aria-label='Open menu'
+				aria-haspopup='dialog'
 			>
 				<Icon name='lucide:menu' class='size-7' />
 			</button>
 
-			<!-- Mobile Menu Flyout -->
-			<Flyout direction='right' maxWidth='xs' showCloseButton={false}>
-				<!-- Header Slot -->
-				<div slot='header' class='flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800'>
+			<!-- Mobile Menu (native dialog: focus trap, Esc close and backdrop for free) -->
+			<dialog
+				id='mobile-menu'
+				aria-label='Mobile menu'
+				class='mobile-menu bg-white dark:bg-gray-900 text-inherit shadow-xl w-full max-w-xs overflow-y-auto'
+			>
+				<!-- Menu Header -->
+				<div class='flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800'>
 					<span class='text-lg font-bold text-gray-900 dark:text-white'>Menu</span>
 					<button
+						id='mobile-menu-close'
 						type='button'
-						@click='$dialog.close()'
 						class='p-3 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800'
 						aria-label='Close menu'
 					>
@@ -123,7 +115,6 @@ function isActive(href: string): boolean {
 									.map((item) => (
 										<a
 											href={(item as NavLink).href}
-											@click='$dialog.close()'
 											class={`block px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${
 												isActive((item as NavLink).href)
 													? 'font-semibold bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
@@ -156,7 +147,87 @@ function isActive(href: string): boolean {
 						</div>
 					</div>
 				</nav>
-			</Flyout>
+			</dialog>
 		</div>
 	</Container>
 </header>
+
+<style>
+	/* Right-hand drawer: override the UA's centered-dialog defaults. */
+	.mobile-menu {
+		position: fixed;
+		inset: 0 0 0 auto;
+		margin: 0;
+		height: 100dvh;
+		max-height: none;
+		border: none;
+		padding: 0;
+		/* Slide + fade, including on close (allow-discrete keeps it rendered
+		   while the exit transition runs). */
+		translate: 100% 0;
+		transition:
+			translate 300ms ease-in,
+			display 300ms allow-discrete,
+			overlay 300ms allow-discrete;
+	}
+
+	.mobile-menu[open] {
+		translate: 0 0;
+		transition-timing-function: ease-out;
+	}
+
+	/* Entry start state (element has just switched to display:block). */
+	@starting-style {
+		.mobile-menu[open] {
+			translate: 100% 0;
+		}
+	}
+
+	.mobile-menu::backdrop {
+		background-color: rgb(0 0 0 / 0.5);
+		transition:
+			background-color 300ms,
+			display 300ms allow-discrete,
+			overlay 300ms allow-discrete;
+	}
+
+	:global(.dark) .mobile-menu::backdrop {
+		background-color: rgb(0 0 0 / 0.7);
+	}
+
+	@starting-style {
+		.mobile-menu[open]::backdrop {
+			background-color: rgb(0 0 0 / 0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mobile-menu,
+		.mobile-menu::backdrop {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	const menu = document.getElementById('mobile-menu') as HTMLDialogElement | null;
+
+	document
+		.getElementById('mobile-menu-open')
+		?.addEventListener('click', () => menu?.showModal());
+	document
+		.getElementById('mobile-menu-close')
+		?.addEventListener('click', () => menu?.close());
+
+	// Light dismiss: a click that lands on the <dialog> itself is on the backdrop.
+	menu?.addEventListener('click', (e) => {
+		if (e.target === menu) menu.close();
+	});
+
+	// Close if the viewport is resized up to the desktop layout.
+	window
+		.matchMedia('(min-width: 64rem)')
+		.addEventListener('change', (m) => {
+			if (m.matches) menu?.close();
+		});
+</script>
