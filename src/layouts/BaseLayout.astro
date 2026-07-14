@@ -75,6 +75,20 @@ const {
 			Alpine.start();
 		</script>
 
+		<!-- Vercel Web Analytics (cookieless, privacy-first — see /privacy/).
+		     Plain script integration: the @vercel/analytics package is not needed
+		     for a static site and conflicts with Astro's vite peer range. -->
+		{
+			import.meta.env.PROD && (
+				<>
+					<script is:inline>
+						window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+					</script>
+					<script is:inline defer src='/_vercel/insights/script.js'></script>
+				</>
+			)
+		}
+
 		<!-- Search keyboard shortcuts -->
 		<script>
 			document.addEventListener('keydown', (e) => {

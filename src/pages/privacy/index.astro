@@ -11,7 +11,7 @@ import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
 
 const pageTitle = 'Privacy Policy | Megaways Online';
 const pageDescription =
-	'How Megaways Online handles your data: no accounts, no tracking cookies set by us, a theme preference stored on your device, standard hosting logs, and third-party demo games that load only when you choose to play them.';
+	'How Megaways Online handles your data: no accounts, no cookies, cookieless aggregate analytics, a theme preference stored on your device, standard hosting logs, and third-party demo games that load only when you choose to play them.';
 
 const breadcrumbItems = [
 	{ label: 'Home', href: '/' },
@@ -42,7 +42,7 @@ const linkClass = 'underline hover:text-primary-600 dark:hover:text-primary-400'
 			<section class='mb-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-6'>
 				<H2 size='sm' class='mb-3'>This policy at a glance</H2>
 				<ul class='list-disc pl-5 space-y-2 text-gray-600 dark:text-gray-400'>
-					<li>We have no accounts, forms, newsletters, analytics or advertising trackers.</li>
+					<li>We have no accounts, forms, newsletters or advertising trackers. We use <strong>cookieless, aggregate-only analytics</strong> (Vercel Web Analytics) that cannot identify or follow you.</li>
 					<li>We set <strong>no cookies</strong>. Your light/dark theme choice is saved on your own device and never sent to us.</li>
 					<li>Our host (Vercel) keeps standard, short-lived server logs to run and protect the site.</li>
 					<li>Free demo games are hosted by the game providers and load <strong>only if you click play</strong> — at that point the provider receives the technical data any website visit involves.</li>
@@ -66,8 +66,17 @@ const linkClass = 'underline hover:text-primary-600 dark:hover:text-primary-400'
 				<H2 size='sm' class='mb-3'>What we collect, why, and for how long</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-4'>
 					Very little. This site has no user accounts, no comment forms and no newsletter.
-					We do not run analytics or advertising trackers, and we do not set cookies of any
-					kind.
+					We do not run advertising trackers, and we do not set cookies of any kind.
+				</P>
+				<P class='text-gray-600 dark:text-gray-400 mb-4'>
+					<strong>Site analytics.</strong> We use Vercel Web Analytics, a privacy-first,
+					<strong>cookieless</strong> service, to understand aggregate site usage — page
+					views, referrers, country and device type. It does not use cookies or local
+					storage, does not track you across sites, and cannot identify you: visits are
+					counted via a temporary hash that is discarded within 24 hours. Our legal basis
+					is legitimate interest (understanding how the site is used). Details are in
+					Vercel's
+					<a href='https://vercel.com/docs/analytics/privacy-policy' rel='noopener' target='_blank' class={linkClass}>analytics privacy documentation</a>.
 				</P>
 				<P class='text-gray-600 dark:text-gray-400 mb-4'>
 					<strong>Theme preference.</strong> If you switch between light and dark mode,
@@ -129,7 +138,8 @@ const linkClass = 'underline hover:text-primary-600 dark:hover:text-primary-400'
 				<H2 size='sm' class='mb-3'>International transfers</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
 					Our hosting provider is a US company serving the site from a global network, so
-					the technical log data described above may be processed outside the UK/EEA.
+					the technical log and aggregate analytics data described above may be processed
+					outside the UK/EEA.
 					Vercel applies the safeguards described in its
 					<a href='https://vercel.com/legal/dpa' rel='noopener' target='_blank' class={linkClass}>data processing agreement</a>,
 					including standard contractual clauses.
@@ -171,9 +181,9 @@ const linkClass = 'underline hover:text-primary-600 dark:hover:text-primary-400'
 			<section class='mb-0'>
 				<H2 size='sm' class='mb-3'>Changes to this policy</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
-					If we add features that change how data is handled (for example privacy-first
-					analytics), this policy will be updated first and the date above revised.
-					Significant changes will be noted on this page.
+					If we add features that change how data is handled, this policy will be updated
+					first and the date above revised. Significant changes will be noted on this
+					page.
 				</P>
 			</section>
 		</article>
