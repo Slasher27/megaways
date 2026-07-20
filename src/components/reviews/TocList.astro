@@ -1,0 +1,36 @@
+---
+/**
+ * TocList — numbered "On this page" link list for review articles.
+ *
+ * The numbering intentionally matches the section counters rendered on
+ * `.review-prose > h2` (global.css), so the TOC and the article agree.
+ * Wrappers differ per context (sticky aside on xl, <details> card below),
+ * so this component renders only the list itself.
+ */
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+	headings: MarkdownHeading[];
+	class?: string;
+}
+
+const { headings, class: className = '' } = Astro.props;
+---
+
+<ol class:list={['space-y-2.5', className]}>
+	{
+		headings.map((heading, index) => (
+			<li>
+				<a
+					href={`#${heading.slug}`}
+					class='flex items-baseline gap-2.5 text-gray-600 dark:text-gray-400 hover:text-primary-700 dark:hover:text-primary-400 transition-colors'
+				>
+					<span class='font-display text-xs font-bold text-primary-700 dark:text-primary-400 tabular-nums shrink-0'>
+						{String(index + 1).padStart(2, '0')}
+					</span>
+					<span class='min-w-0'>{heading.text}</span>
+				</a>
+			</li>
+		))
+	}
+</ol>

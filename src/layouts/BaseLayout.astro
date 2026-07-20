@@ -3,6 +3,7 @@
 import '../styles/global.css';
 import SEOHead from '../components/seo/SEOHead.astro';
 import BackToTop from '../components/layout/BackToTop.astro';
+import displayFontUrl from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
 
 interface Props {
 	title: string;
@@ -40,6 +41,9 @@ const {
 		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
 		<meta name='viewport' content='width=device-width, initial-scale=1' />
 		<meta name='generator' content={Astro.generator} />
+
+		<!-- Display font is used by every heading incl. the H1 — preload it -->
+		<link rel='preload' as='font' type='font/woff2' crossorigin href={displayFontUrl} />
 
 		<!-- SEO Meta Tags -->
 		<SEOHead
@@ -111,7 +115,9 @@ const {
 			});
 		</script>
 	</head>
-	<body class='min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200'>
+	<!-- Surface model: tinted page canvas (gray-50 / gray-950); content sits on
+	     raised white / gray-900 cards — contrast by background, not borders. -->
+	<body class='min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200'>
 		<slot />
 
 		<!-- Back to Top Button -->

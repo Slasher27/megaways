@@ -10,6 +10,7 @@ import { getCollection } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import Button from '../ui/Button.astro';
 import Badge from '../ui/Badge.astro';
+import Card from '../ui/Card.astro';
 import H2 from '../typography/H2.astro';
 import P from '../typography/P.astro';
 
@@ -56,17 +57,20 @@ if (displayCasinos.length === 0) {
 }
 ---
 
-<section class={`bg-linear-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 rounded-xl p-8 border border-primary-200 dark:border-primary-800 ${className}`}>
+<Card as='section' padding='none' class={`p-6 sm:p-8 ${className}`}>
 	<div class="text-center mb-8">
+		<p class="text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-2">
+			Ready to spin?
+		</p>
 		<H2 size="md" class="mb-3!">Where to Play {slotName}</H2>
 		<P class="text-gray-600 dark:text-gray-400">
 			Play {slotName} at these top-rated online casinos
 		</P>
 	</div>
 
-	<div class="grid md:grid-cols-2 gap-6">
+	<div class="grid md:grid-cols-2 gap-4">
 		{displayCasinos.map((casino) => (
-			<div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
+			<div class="rounded-xl bg-gray-100 dark:bg-gray-800/60 p-6">
 				{/* Featured Badge */}
 				{casino.featured && (
 					<div class="mb-3">
@@ -112,7 +116,7 @@ if (displayCasinos.length === 0) {
 
 				{/* Bonus */}
 				{casino.bonus && (
-					<div class="mb-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+					<div class="mb-4 p-3 bg-white dark:bg-gray-900/70 rounded-lg">
 						<div class="flex items-start gap-2">
 							<Icon name="lucide:gift" size={18} class="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
 							<div>
@@ -152,7 +156,7 @@ if (displayCasinos.length === 0) {
 				)}
 
 				{/* Disclaimer */}
-				<p class="text-xs text-gray-500 dark:text-gray-500 text-center mt-3">
+				<p class="text-xs text-gray-600 dark:text-gray-400 text-center mt-3">
 					18+. T&Cs apply. Gamble responsibly.
 				</p>
 			</div>
@@ -160,7 +164,7 @@ if (displayCasinos.length === 0) {
 	</div>
 
 	{/* Responsible Gambling Notice */}
-	<div class="mt-6 pt-6 border-t border-primary-200 dark:border-primary-800">
+	<div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
 		<div class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
 			<Icon name="lucide:shield-alert" size={20} class="flex-shrink-0 mt-0.5 text-primary-700 dark:text-primary-400" />
 			<p>
@@ -169,4 +173,4 @@ if (displayCasinos.length === 0) {
 			</p>
 		</div>
 	</div>
-</section>
+</Card>

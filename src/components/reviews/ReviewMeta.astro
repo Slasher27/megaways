@@ -1,0 +1,44 @@
+---
+/**
+ * ReviewMeta — hero meta row for review pages: stars, display-font score,
+ * and the last-updated date. Renders nothing without a rating.
+ */
+import Rating from './Rating.astro';
+
+interface Props {
+	rating?: number;
+	updatedDate?: Date;
+	class?: string;
+}
+
+const { rating, updatedDate, class: className = '' } = Astro.props;
+
+const updatedFormatted = updatedDate?.toLocaleDateString('en-GB', {
+	day: 'numeric',
+	month: 'short',
+	year: 'numeric',
+});
+---
+
+{
+	rating && (
+		<div
+			class:list={[
+				'flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-600 dark:text-gray-400',
+				className,
+			]}
+		>
+			<Rating rating={rating} size='sm' showNumber={false} />
+			<span class='font-display font-semibold text-gray-900 dark:text-white'>
+				{rating}
+			</span>
+			<span>/ 5</span>
+			{updatedFormatted && (
+				<>
+					<span aria-hidden='true'>·</span>
+					<span>Updated {updatedFormatted}</span>
+				</>
+			)}
+		</div>
+	)
+}

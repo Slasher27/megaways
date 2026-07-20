@@ -12,12 +12,13 @@ import P from '../../components/typography/P.astro';
 import Button from '../../components/ui/Button.astro';
 import Badge from '../../components/ui/Badge.astro';
 import Card from '../../components/ui/Card.astro';
-import Divider from '../../components/ui/Divider.astro';
 import Icon from '../../components/ui/Icon.astro';
 import { Image } from 'astro:assets';
-import Rating from '../../components/reviews/Rating.astro';
 import ProsCons from '../../components/reviews/ProsCons.astro';
 import AuthorCard from '../../components/reviews/AuthorCard.astro';
+import ReviewMeta from '../../components/reviews/ReviewMeta.astro';
+import TocCard from '../../components/reviews/TocCard.astro';
+import ActionBar from '../../components/layout/ActionBar.astro';
 import VideoPlayer from '../../components/reviews/VideoPlayer.astro';
 import VideoSchema from '../../components/seo/VideoSchema.astro';
 
@@ -36,8 +37,9 @@ interface Props {
 
 const { casino } = Astro.props;
 
-// Render content for the casino
-const { Content } = await render(casino);
+// Render content for the casino; h2 headings drive the two TOCs
+const { Content, headings } = await render(casino);
+const toc = headings.filter((heading) => heading.depth === 2);
 
 // Get author details if available
 const author = casino.data.author ? await getEntry(casino.data.author) : null;
@@ -51,7 +53,7 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 		: '';
 ---
 
-<CasinoReviewLayout casino={casino}>
+<CasinoReviewLayout casino={casino} headings={toc}>
 	<!-- Video Schema Markup (if video exists) -->
 	{hasVideo && casino.data.videoUrl && videoThumbnailUrl && (
 		<VideoSchema
@@ -67,13 +69,23 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 
 	<!-- Title & Rating -->
 	<header class='mb-8'>
-		<H1 size='lg' class='mb-4'>{casino.data.name} Review</H1>
+		<H1 size='md' class='mb-4'>{casino.data.name} Review</H1>
+
+		<ReviewMeta
+			rating={casino.data.rating}
+			updatedDate={casino.data.updatedDate}
+			class='mb-5'
+		/>
 
 		{
-			casino.data.rating && (
-				<div class='mb-6'>
-					<Rating rating={casino.data.rating} size='lg' showNumber={true} />
-				</div>
+			casino.data.description && (
+				<P
+					variant='lead'
+					size='lg'
+					class='text-gray-600 dark:text-gray-400 mb-6'
+				>
+					{casino.data.description}
+				</P>
 			)
 		}
 
@@ -126,8 +138,8 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 	<!-- Welcome Bonus CTA Section -->
 	{
 		casino.data.welcomeBonus && (
-			<Card variant='bonus' padding='none' class='mb-8'>
-				<div class='flex flex-col lg:flex-row overflow-hidden rounded-xl'>
+			<Card variant='bonus' padding='none' class='mb-8 overflow-hidden'>
+				<div class='flex flex-col lg:flex-row'>
 					<!-- Thumbnail Image (Left side on large screens, top on mobile) -->
 					{
 						(casino.data.thumbnail || casino.data.logo) && (
@@ -142,7 +154,7 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 										loading='eager'
 									/>
 								) : casino.data.logo ? (
-									<div class='bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-48 lg:h-full flex items-center justify-center p-8'>
+									<div class='bg-gray-100 dark:bg-gray-800/60 rounded-lg h-48 lg:h-full flex items-center justify-center p-8'>
 										<Image
 											src={casino.data.logo}
 											alt={casino.data.name}
@@ -159,10 +171,10 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 
 					<!-- Bonus Content -->
 					<div class='flex-1 p-6 lg:p-8'>
-						<div class='flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6'>
+						<div class='flex flex-col gap-6'>
 							<div class='flex-1'>
 								<div class='flex items-center gap-3 mb-3'>
-									<div class='p-3 bg-primary-100 dark:bg-primary-800/50 rounded-lg'>
+									<div class='p-3 bg-primary-50 dark:bg-primary-950/60 rounded-lg'>
 										<Icon name='lucide:gift' size={24} class='text-primary-700 dark:text-primary-400' />
 									</div>
 									<div>
@@ -199,7 +211,7 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 								>
 									Visit {casino.data.name}
 								</Button>
-								<P class='text-xs text-gray-500 dark:text-gray-500 mt-2 text-center'>
+								<P class='text-xs text-gray-600 dark:text-gray-400 mt-2 text-center'>
 									18+. T&Cs apply. Gamble responsibly.
 								</P>
 							</div>
@@ -216,9 +228,9 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 			casino.data.licenses && casino.data.licenses.length > 0 && (
 				<Card padding='sm' class='text-center'>
 					<div class='flex items-center justify-center mb-2'>
-						<Icon name='lucide:shield-check' size={24} class='text-green-600 dark:text-green-400' />
+						<Icon name='lucide:shield-check' size={24} class='text-green-700 dark:text-green-400' />
 					</div>
-					<P class='text-xs text-gray-500 dark:text-gray-500 mb-1'>License</P>
+					<P class='text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1'>License</P>
 					<P class='text-sm font-semibold mb-0'>{casino.data.licenses[0]}</P>
 				</Card>
 			)
@@ -227,9 +239,9 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 			casino.data.markets && casino.data.markets.length > 0 && (
 				<Card padding='sm' class='text-center'>
 					<div class='flex items-center justify-center mb-2'>
-						<Icon name='lucide:globe' size={24} class='text-blue-600 dark:text-blue-400' />
+						<Icon name='lucide:globe' size={24} class='text-primary-700 dark:text-primary-400' />
 					</div>
-					<P class='text-xs text-gray-500 dark:text-gray-500 mb-1'>Markets</P>
+					<P class='text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1'>Markets</P>
 					<P class='text-sm font-semibold capitalize mb-0'>
 						{casino.data.markets.slice(0, 2).join(', ')}
 					</P>
@@ -240,9 +252,9 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 			casino.data.providers && casino.data.providers.length > 0 && (
 				<Card padding='sm' class='text-center'>
 					<div class='flex items-center justify-center mb-2'>
-						<Icon name='lucide:building-2' size={24} class='text-purple-600 dark:text-purple-400' />
+						<Icon name='lucide:building-2' size={24} class='text-primary-700 dark:text-primary-400' />
 					</div>
-					<P class='text-xs text-gray-500 dark:text-gray-500 mb-1'>Providers</P>
+					<P class='text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1'>Providers</P>
 					<P class='text-sm font-semibold mb-0'>{casino.data.providers.length}+ Games</P>
 				</Card>
 			)
@@ -254,10 +266,10 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 						<Icon
 							name='lucide:credit-card'
 							size={24}
-							class='text-orange-600 dark:text-orange-400'
+							class='text-primary-700 dark:text-primary-400'
 						/>
 					</div>
-					<P class='text-xs text-gray-500 dark:text-gray-500 mb-1'>Payments</P>
+					<P class='text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1'>Payments</P>
 					<P class='text-sm font-semibold mb-0'>{casino.data.paymentMethods.length}+ Methods</P>
 				</Card>
 			)
@@ -313,14 +325,13 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 		)
 	}
 
-	<Divider class='my-8' />
+	<!-- On this page (mobile/tablet; xl+ uses the sticky aside in the layout) -->
+	<TocCard headings={toc} class='mb-8' />
 
 	<!-- Review Content -->
-	<article class='prose prose-lg dark:prose-invert max-w-none mb-8'>
+	<section class='review-prose prose prose-lg dark:prose-invert mb-8'>
 		<Content />
-	</article>
-
-	<Divider class='my-8' />
+	</section>
 
 	<!-- Author & Date Info -->
 	{
@@ -336,7 +347,10 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 	}
 
 	<!-- Final CTA -->
-	<Card variant='elevated' class='mt-12 text-center bg-linear-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20'>
+	<Card as='section' class='mt-12 text-center'>
+		<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-2'>
+			Ready to spin?
+		</p>
 		<H3 size='lg' class='mb-4'>Ready to Play at {casino.data.name}?</H3>
 		<P class='mb-6 text-gray-700 dark:text-gray-300'>
 			{
@@ -354,8 +368,24 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 		>
 			Visit {casino.data.name}
 		</Button>
-		<P class='text-xs text-gray-500 dark:text-gray-500 mt-4'>
+		<P class='text-xs text-gray-600 dark:text-gray-400 mt-4'>
 			18+. Terms and conditions apply. Please gamble responsibly.
 		</P>
 	</Card>
+
+	<!-- Sticky mobile affiliate CTA -->
+	{
+		casino.data.affiliateLink && (
+			<ActionBar>
+				<Button
+					href={casino.data.affiliateLink}
+					variant='primary'
+					affiliate={true}
+					class='flex-1 justify-center'
+				>
+					Visit {casino.data.name}
+				</Button>
+			</ActionBar>
+		)
+	}
 </CasinoReviewLayout>

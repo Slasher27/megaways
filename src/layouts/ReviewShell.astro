@@ -1,0 +1,88 @@
+---
+/**
+ * ReviewShell — shared page shell for the review archetypes (slot + casino).
+ *
+ * Owns the BaseLayout chrome, breadcrumbs, and the article/TOC column split.
+ * The entry-specific layouts (SlotReviewLayout, CasinoReviewLayout) stay as
+ * thin adapters that compute titles/breadcrumbs and inject their JSON-LD via
+ * the named `schema` slot (rendered inside <body>, per CLAUDE.md rule 12).
+ */
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Container from '../components/layout/Container.astro';
+import Breadcrumb from '../components/layout/Breadcrumb.astro';
+import TocList from '../components/reviews/TocList.astro';
+
+interface BreadcrumbItem {
+	label: string;
+	href: string;
+}
+
+interface Props {
+	title: string;
+	description: string;
+	image?: string;
+	publishedTime?: string;
+	modifiedTime?: string;
+	breadcrumbItems: BreadcrumbItem[];
+	/** h2 headings from render() — drives the sticky "On this page" aside (xl+). */
+	headings?: MarkdownHeading[];
+}
+
+const {
+	title,
+	description,
+	image,
+	publishedTime,
+	modifiedTime,
+	breadcrumbItems,
+	headings = [],
+} = Astro.props;
+---
+
+<BaseLayout
+	title={title}
+	description={description}
+	type='article'
+	image={image}
+	publishedTime={publishedTime}
+	modifiedTime={modifiedTime}
+>
+	<slot name='schema' />
+	<div class='flex min-h-screen flex-col'>
+		<Header />
+
+		<main class='flex-1'>
+			<Container>
+				<Breadcrumb items={breadcrumbItems} class='mb-6' />
+
+				<!-- Article + sticky "On this page" aside (xl+) -->
+				<div class='flex flex-col xl:flex-row gap-8 xl:gap-12'>
+					<article class='flex-1 min-w-0'>
+						<slot />
+					</article>
+
+					{
+						headings.length > 0 && (
+							<aside class='hidden xl:block w-60 shrink-0'>
+								<nav
+									aria-label='On this page'
+									class='sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto'
+								>
+									<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3'>
+										On this page
+									</p>
+									<TocList headings={headings} class='text-sm' />
+								</nav>
+							</aside>
+						)
+					}
+				</div>
+			</Container>
+		</main>
+
+		<Footer />
+	</div>
+</BaseLayout>

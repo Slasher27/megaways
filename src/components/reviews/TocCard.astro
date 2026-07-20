@@ -1,0 +1,35 @@
+---
+/**
+ * TocCard — collapsible "On this page" card for review pages below xl
+ * (xl+ uses the sticky aside in ReviewShell). Renders nothing without headings.
+ */
+import type { MarkdownHeading } from 'astro';
+import { Icon } from 'astro-icon/components';
+import Card from '../ui/Card.astro';
+import TocList from './TocList.astro';
+
+interface Props {
+	headings: MarkdownHeading[];
+	class?: string;
+}
+
+const { headings, class: className = '' } = Astro.props;
+---
+
+{
+	headings.length > 0 && (
+		<Card as='details' padding='none' class:list={['group xl:hidden', className]}>
+			<summary class='flex items-center justify-between px-5 py-4 cursor-pointer select-none font-display font-semibold text-gray-900 dark:text-white [&::-webkit-details-marker]:hidden'>
+				On this page
+				<Icon
+					name='lucide:chevron-down'
+					size={18}
+					class='text-gray-400 transition-transform group-open:rotate-180'
+				/>
+			</summary>
+			<nav aria-label='On this page' class='px-5 pb-5'>
+				<TocList headings={headings} class='text-sm' />
+			</nav>
+		</Card>
+	)
+}

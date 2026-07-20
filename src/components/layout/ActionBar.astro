@@ -1,0 +1,38 @@
+---
+/**
+ * ActionBar — sticky bottom CTA bar for mobile (hidden lg+, where the in-page
+ * CTAs are visible). Pass the buttons as children; safe-area padding included.
+ */
+interface Props {
+	class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div
+	class:list={[
+		'action-bar fixed inset-x-0 bottom-0 z-40 lg:hidden bg-white/85 dark:bg-gray-900/85 backdrop-blur border-t border-gray-200/70 dark:border-gray-800',
+		className,
+	]}
+>
+	<div
+		class='flex gap-3 max-w-md mx-auto px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]'
+	>
+		<slot />
+	</div>
+</div>
+
+<style is:global>
+	/* While an action bar is present (mobile): lift BackToTop above it and give
+	   the footer clearance so the bar never covers the last content. */
+	@media (max-width: 63.9375rem) {
+		body:has(.action-bar) .back-to-top {
+			bottom: 5.5rem;
+		}
+
+		body:has(.action-bar) footer {
+			padding-bottom: 4.5rem;
+		}
+	}
+</style>

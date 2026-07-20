@@ -1,0 +1,30 @@
+---
+/**
+ * Callout — tinted inline note (icon + text), for YMYL reminders and info
+ * asides. A sunken tinted well, deliberately not a raised Card.
+ */
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	icon?: string;
+	class?: string;
+}
+
+const { icon = 'lucide:info', class: className = '' } = Astro.props;
+---
+
+<div
+	class:list={[
+		'rounded-2xl bg-primary-50 dark:bg-primary-950/40 p-6 flex gap-3',
+		className,
+	]}
+>
+	<Icon
+		name={icon}
+		size={24}
+		class='text-primary-700 dark:text-primary-400 shrink-0'
+	/>
+	<div class='text-sm text-gray-700 dark:text-gray-300 [&>p]:mb-0'>
+		<slot />
+	</div>
+</div>

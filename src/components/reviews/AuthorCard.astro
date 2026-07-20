@@ -8,6 +8,7 @@
 
 import type { CollectionEntry } from 'astro:content';
 import { Icon } from 'astro-icon/components';
+import Card from '../ui/Card.astro';
 import Image from '../ui/Image.astro';
 
 interface Props {
@@ -40,7 +41,7 @@ const publishedFormatted = formatDate(publishedDate);
 const updatedFormatted = formatDate(updatedDate);
 ---
 
-<div class={`bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800 ${className}`}>
+<Card class={className}>
 	<div class="flex items-start gap-4">
 		<!-- Author Avatar -->
 		{author.data.avatar && (
@@ -50,7 +51,7 @@ const updatedFormatted = formatDate(updatedDate);
 					alt={author.data.name}
 					width={variant === 'full' ? 96 : 64}
 					height={variant === 'full' ? 96 : 64}
-					class="rounded-full border-2 border-blue-300 dark:border-blue-700"
+					class="rounded-full"
 					loading="lazy"
 				/>
 			</div>
@@ -64,7 +65,7 @@ const updatedFormatted = formatDate(updatedDate);
 					{author.data.name}
 				</h3>
 				{author.data.role && (
-					<p class="text-sm font-medium text-blue-700 dark:text-blue-400">
+					<p class="text-sm font-medium text-primary-700 dark:text-primary-400">
 						{author.data.role}
 					</p>
 				)}
@@ -90,7 +91,7 @@ const updatedFormatted = formatDate(updatedDate);
 					</p>
 					<div class="flex flex-wrap gap-2">
 						{author.data.expertise.map((skill) => (
-							<span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full">
+							<span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-full">
 								{skill}
 							</span>
 						))}
@@ -101,7 +102,7 @@ const updatedFormatted = formatDate(updatedDate);
 			<!-- Years Experience -->
 			{author.data.yearsExperience && (
 				<div class="flex items-center gap-2 mb-4">
-					<Icon name="lucide:award" size={16} class="text-blue-600 dark:text-blue-400" />
+					<Icon name="lucide:award" size={16} class="text-primary-600 dark:text-primary-400" />
 					<span class="text-sm text-gray-700 dark:text-gray-300">
 						{author.data.yearsExperience}+ years of experience
 					</span>
@@ -109,7 +110,7 @@ const updatedFormatted = formatDate(updatedDate);
 			)}
 
 			<!-- Publication Dates -->
-			<div class="flex flex-wrap items-center gap-4 text-xs text-gray-600 dark:text-gray-400 border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
+			<div class="flex flex-wrap items-center gap-4 text-xs text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800 pt-3 mt-3">
 				{publishedFormatted && (
 					<div class="flex items-center gap-1.5">
 						<Icon name="lucide:calendar" size={14} class="text-gray-500 dark:text-gray-500" />
@@ -132,10 +133,10 @@ const updatedFormatted = formatDate(updatedDate);
 							href={author.data.socials.linkedin}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="p-2 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-lg transition-colors"
+							class="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
 							aria-label="LinkedIn profile"
 						>
-							<Icon name="lucide:linkedin" size={18} class="text-blue-600 dark:text-blue-400" />
+							<Icon name="lucide:linkedin" size={18} class="text-gray-600 dark:text-gray-400" />
 						</a>
 					)}
 					{author.data.socials.twitter && (
@@ -143,14 +144,14 @@ const updatedFormatted = formatDate(updatedDate);
 							href={author.data.socials.twitter}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="p-2 bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-lg transition-colors"
+							class="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
 							aria-label="Twitter profile"
 						>
-							<Icon name="lucide:twitter" size={18} class="text-blue-600 dark:text-blue-400" />
+							<Icon name="lucide:twitter" size={18} class="text-gray-600 dark:text-gray-400" />
 						</a>
 					)}
 				</div>
 			)}
 		</div>
 	</div>
-</div>
+</Card>

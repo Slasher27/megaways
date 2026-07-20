@@ -1,0 +1,28 @@
+---
+/**
+ * CtaCard — centered call-to-action card: heading, body copy (default slot),
+ * one primary button. Used by mechanic hubs, provider listings, and other
+ * "browse more" sections.
+ */
+import Card from './Card.astro';
+import Button from './Button.astro';
+
+interface Props {
+	heading: string;
+	href: string;
+	label: string;
+	class?: string;
+}
+
+const { heading, href, label, class: className = '' } = Astro.props;
+---
+
+<Card as='section' padding='lg' class:list={['text-center', className]}>
+	<h2 class='font-display text-2xl font-bold mb-4 text-gray-900 dark:text-white'>
+		{heading}
+	</h2>
+	<p class='text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto'>
+		<slot />
+	</p>
+	<Button href={href} variant='primary' size='lg'>{label}</Button>
+</Card>

@@ -12,6 +12,7 @@ import H1 from '../../components/typography/H1.astro';
 import H2 from '../../components/typography/H2.astro';
 import H3 from '../../components/typography/H3.astro';
 import P from '../../components/typography/P.astro';
+import Callout from '../../components/ui/Callout.astro';
 import Card from '../../components/ui/Card.astro';
 import Divider from '../../components/ui/Divider.astro';
 import { Icon } from 'astro-icon/components';
@@ -189,15 +190,12 @@ const pageDescription =
 				</div>
 			</Card>
 
-			<Card variant='outlined' class='bg-blue-50 dark:bg-blue-900/20'>
-				<div class='flex gap-3'>
-					<Icon name='lucide:info' size={24} class='text-blue-600 dark:text-blue-400 flex-shrink-0' />
-					<P class='text-sm text-gray-700 dark:text-gray-300 mb-0'>
-						<strong>Note:</strong> Ratings are subjective and reflect our team's assessment. Different
-						players value different aspects, so we always provide detailed pros/cons to help you decide.
-					</P>
-				</div>
-			</Card>
+			<Callout>
+				<P class='text-sm text-gray-700 dark:text-gray-300 mb-0'>
+					<strong>Note:</strong> Ratings are subjective and reflect our team's assessment. Different
+					players value different aspects, so we always provide detailed pros/cons to help you decide.
+				</P>
+			</Callout>
 		</section>
 
 		<Divider class='my-16' />

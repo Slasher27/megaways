@@ -14,6 +14,7 @@ import H3 from '../components/typography/H3.astro';
 import P from '../components/typography/P.astro';
 import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
+import Callout from '../components/ui/Callout.astro';
 import Divider from '../components/ui/Divider.astro';
 import { Icon } from 'astro-icon/components';
 
@@ -40,10 +41,7 @@ const pageDescription =
 		</header>
 
 		<!-- Quick Help Card -->
-		<Card
-			variant='elevated'
-			class='mb-12 bg-linear-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border-2 border-red-200 dark:border-red-800'
-		>
+		<Card variant='elevated' class='mb-12'>
 			<div class='text-center'>
 				<H2 size='lg' class='mb-4 text-red-900 dark:text-red-200'>Need Help Now?</H2>
 				<P class='mb-6 text-gray-700 dark:text-gray-300'>
@@ -111,15 +109,12 @@ const pageDescription =
 				</ul>
 			</Card>
 
-			<Card variant='outlined' class='bg-blue-50 dark:bg-blue-900/20'>
-				<div class='flex gap-3'>
-					<Icon name='lucide:info' size={24} class='text-blue-600 dark:text-blue-400 flex-shrink-0' />
-					<P class='text-sm text-gray-700 dark:text-gray-300 mb-0'>
-						<strong>Remember:</strong> The house always has an edge. Over time, the casino will always
-						win. Gambling should never be seen as a way to make money or solve financial problems.
-					</P>
-				</div>
-			</Card>
+			<Callout>
+				<P class='text-sm text-gray-700 dark:text-gray-300 mb-0'>
+					<strong>Remember:</strong> The house always has an edge. Over time, the casino will always
+					win. Gambling should never be seen as a way to make money or solve financial problems.
+				</P>
+			</Callout>
 		</section>
 
 		<Divider class='my-16' />
@@ -468,7 +463,7 @@ const pageDescription =
 		<section class='mb-16'>
 			<Card
 				variant='elevated'
-				class='text-center bg-linear-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20'
+				class='text-center'
 			>
 				<Icon
 					name='lucide:heart'

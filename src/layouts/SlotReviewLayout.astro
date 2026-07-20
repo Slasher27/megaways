@@ -1,47 +1,42 @@
 ---
 /**
- * SlotReviewLayout
- *
- * Layout specifically designed for slot review pages
- * Includes BaseLayout, Header, Footer, Container, and Breadcrumbs
+ * SlotReviewLayout — thin adapter over ReviewShell: computes slot-specific
+ * title/description/breadcrumbs and injects the slot JSON-LD.
  */
-
 import type { CollectionEntry } from 'astro:content';
-import BaseLayout from './BaseLayout.astro';
-import Header from '../components/layout/Header.astro';
-import Footer from '../components/layout/Footer.astro';
-import Container from '../components/layout/Container.astro';
-import Breadcrumb from '../components/layout/Breadcrumb.astro';
+import type { MarkdownHeading } from 'astro';
+import { getEntry } from 'astro:content';
+import ReviewShell from './ReviewShell.astro';
 import BreadcrumbSchema from '../components/seo/BreadcrumbSchema.astro';
 import SlotSchema from '../components/seo/SlotSchema.astro';
-import { getEntry } from 'astro:content';
 
 interface Props {
 	slotEntry: CollectionEntry<'slots'>;
+	/** h2 headings from render() — drives the "On this page" aside. */
+	headings?: MarkdownHeading[];
 	title?: string;
 	description?: string;
 }
 
-const { slotEntry, title, description } = Astro.props;
+const { slotEntry, headings = [], title, description } = Astro.props;
 
-// Build page title and description
-const pageTitle = title || slotEntry.data.title || `${slotEntry.data.name} Review | Megaways Online`;
+const pageTitle =
+	title ||
+	slotEntry.data.title ||
+	`${slotEntry.data.name} Review | Megaways Online`;
 const pageDescription =
 	description ||
 	slotEntry.data.description ||
 	`Read our ${slotEntry.data.name} review. RTP ${slotEntry.data.rtp}%, max win ${slotEntry.data.maxWin}, ${slotEntry.data.paylines} ways to win.`;
 
-// Get OG image (use thumbnail or logo)
 const ogImage = slotEntry.data.thumbnail?.src || slotEntry.data.logo?.src;
-
-// Format dates for schema
 const publishedTime = slotEntry.data.publishedDate?.toISOString();
 const modifiedTime = slotEntry.data.updatedDate?.toISOString();
 
-// Get author details if available
-const author = slotEntry.data.author ? await getEntry(slotEntry.data.author) : null;
+const author = slotEntry.data.author
+	? await getEntry(slotEntry.data.author)
+	: null;
 
-// Build breadcrumb items
 const breadcrumbItems = [
 	{ label: 'Home', href: '/' },
 	{ label: 'Online Slots', href: '/online-slots/' },
@@ -49,43 +44,21 @@ const breadcrumbItems = [
 ];
 ---
 
-<BaseLayout
+<ReviewShell
 	title={pageTitle}
 	description={pageDescription}
-	type='article'
 	image={ogImage}
 	publishedTime={publishedTime}
 	modifiedTime={modifiedTime}
+	breadcrumbItems={breadcrumbItems}
+	headings={headings}
 >
-	<!-- Schema Markup for SEO -->
-	<BreadcrumbSchema items={breadcrumbItems} />
-	<SlotSchema slotData={slotEntry.data} author={author?.data} url={Astro.url.href} />
-	<div class="flex min-h-screen flex-col">
-		<!-- Header -->
-		<Header />
-
-		<!-- Main Content -->
-		<main class="flex-1">
-			<Container>
-				<!-- Breadcrumb Navigation -->
-				<Breadcrumb items={breadcrumbItems} class="mb-6" />
-
-				<!-- Two Column Layout: Main Content + Sidebar -->
-				<div class="flex flex-col lg:flex-row gap-8">
-					<!-- Main Content Column (left-aligned) -->
-					<article class="flex-1 min-w-0">
-						<slot />
-					</article>
-
-					<!-- Sidebar Column (placeholder for future aside) -->
-					<!-- <aside class="w-full lg:w-80 flex-shrink-0">
-						Sidebar content here
-					</aside> -->
-				</div>
-			</Container>
-		</main>
-
-		<!-- Footer -->
-		<Footer />
-	</div>
-</BaseLayout>
+	<BreadcrumbSchema slot='schema' items={breadcrumbItems} />
+	<SlotSchema
+		slot='schema'
+		slotData={slotEntry.data}
+		author={author?.data}
+		url={Astro.url.href}
+	/>
+	<slot />
+</ReviewShell>

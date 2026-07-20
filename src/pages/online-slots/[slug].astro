@@ -14,8 +14,12 @@ import SlotThumbnail from '../../components/slots/SlotThumbnail.astro';
 import SlotDemo from '../../components/slots/SlotDemo.astro';
 import H1 from '../../components/typography/H1.astro';
 import P from '../../components/typography/P.astro';
-import Badge from '../../components/ui/Badge.astro';
 import Button from '../../components/ui/Button.astro';
+import Card from '../../components/ui/Card.astro';
+import TocCard from '../../components/reviews/TocCard.astro';
+import ReviewMeta from '../../components/reviews/ReviewMeta.astro';
+import ActionBar from '../../components/layout/ActionBar.astro';
+import { providerSlug } from '../../data/providers';
 
 // New review components
 import Rating from '../../components/reviews/Rating.astro';
@@ -39,29 +43,38 @@ interface Props {
 
 const { slot } = Astro.props;
 
-// Render content for the slot
-const { Content } = await render(slot);
+// Render content for the slot; h2 headings drive the two TOCs
+const { Content, headings } = await render(slot);
+const toc = headings.filter((heading) => heading.depth === 2);
 
 // Get author details if available (author is already a reference)
 const author = slot.data.author ? await getEntry(slot.data.author) : null;
 ---
 
-<SlotReviewLayout slotEntry={slot}>
+<SlotReviewLayout slotEntry={slot} headings={toc}>
 	<!-- Hero Section -->
 	<header class='mb-10'>
-		<!-- Provider Badge -->
-		<div class='flex flex-wrap items-center gap-3 mb-4'>
-			{
-				slot.data.provider && (
-					<Badge variant='secondary' size='md'>
-						{slot.data.provider}
-					</Badge>
-				)
-			}
-		</div>
+		<!-- Provider eyebrow -->
+		{
+			slot.data.provider && (
+				<a
+					href={`/online-slots/${providerSlug(slot.data.provider)}/`}
+					class='inline-block text-xs font-bold uppercase tracking-[0.14em] text-primary-700 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 mb-3'
+				>
+					{slot.data.provider}
+				</a>
+			)
+		}
 
 		<!-- Heading -->
-		<H1 size='md' class='mb-6'>{slot.data.h1Tag || slot.data.name}</H1>
+		<H1 size='md' class='mb-4'>{slot.data.h1Tag || slot.data.name}</H1>
+
+		<!-- Rating + review meta -->
+		<ReviewMeta
+			rating={slot.data.rating}
+			updatedDate={slot.data.updatedDate}
+			class='mb-5'
+		/>
 
 		<!-- Description -->
 		{
@@ -69,7 +82,7 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 				<P
 					variant='lead'
 					size='lg'
-					class='text-gray-700 dark:text-gray-300 mb-8'
+					class='text-gray-600 dark:text-gray-400 mb-8'
 				>
 					{slot.data.description}
 				</P>
@@ -81,8 +94,8 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 		     column to full width (stats wrap below) — see SlotDemo.astro. -->
 		<div class='slot-hero flex flex-col lg:flex-row lg:items-start gap-6 mb-8'>
 			<!-- Thumbnail / click-to-load demo facade -->
-			<div class='demo-col flex flex-col gap-4 lg:gap-6'>
-				<div class='lg:w-100 shrink-0 rounded-xl overflow-hidden'>
+			<div class='demo-col flex flex-col gap-4 lg:gap-5'>
+				<div class='lg:w-100 shrink-0 rounded-2xl overflow-hidden shadow-sm'>
 					{
 						slot.data.demoUrl ? (
 							<SlotDemo slotData={slot.data} eager={true} />
@@ -97,7 +110,8 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 						)
 					}
 				</div>
-				<div class='flex flex-row items-center justify-center gap-4'>
+				<!-- Desktop CTAs; on mobile the sticky action bar takes over -->
+				<div class='hidden lg:flex flex-row items-center justify-center gap-3'>
 					{
 						slot.data.demoUrl && (
 							<Button variant='secondary' class='js-play-demo'>
@@ -108,10 +122,8 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 					<Button variant='primary' href='#where-to-play'>Where to play</Button>
 				</div>
 			</div>
-			<!-- Stats & Features -->
-			<div
-				class='flex-1 bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-700'
-			>
+			<!-- Stats & Features: raised card, tiles are sunken wells -->
+			<Card padding='none' class='flex-1 p-4 sm:p-5'>
 				<SlotStats
 					rtp={slot.data.rtp}
 					volatility={slot.data.volatility}
@@ -122,19 +134,19 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 					minBet={slot.data.minBet}
 					maxBet={slot.data.maxBet}
 					bonusBuy={slot.data.bonusBuy}
-					class='bg-transparent! border-0! p-0! mb-6'
+					class='mb-5'
 				/>
 
 				<!-- Features -->
 				{
 					slot.data.features?.length > 0 && (
-						<div class='pt-4 border-t border-gray-300 dark:border-gray-700'>
-							<p class='text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2'>
+						<div class='pt-4 border-t border-gray-100 dark:border-gray-800'>
+							<p class='text-[0.6875rem] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2'>
 								Features
 							</p>
 							<div class='flex flex-wrap gap-1.5'>
 								{slot.data.features.map((feature) => (
-									<span class='px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs capitalize'>
+									<span class='px-2.5 py-1 bg-primary-50 text-primary-800 dark:bg-primary-950/60 dark:text-primary-300 rounded-full text-xs font-medium capitalize'>
 										{feature}
 									</span>
 								))}
@@ -142,12 +154,15 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 						</div>
 					)
 				}
-			</div>
+			</Card>
 		</div>
 	</header>
 
-	<!-- Review Content -->
-	<section class='prose prose-lg dark:prose-invert max-w-none mb-10'>
+	<!-- On this page (mobile/tablet; xl+ uses the sticky aside in the layout) -->
+	<TocCard headings={toc} class='mb-8' />
+
+	<!-- Review Content (fills the article column; container + TOC bound it) -->
+	<section class='review-prose prose prose-lg dark:prose-invert mb-10'>
 		<Content />
 	</section>
 
@@ -175,14 +190,20 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 	<!-- Final Rating Summary -->
 	{
 		slot.data.rating && (
-			<section class='bg-linear-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 rounded-xl p-8 text-center border border-primary-200 dark:border-primary-800'>
-				<h3 class='text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4'>
+			<Card as='section' padding='lg' class='text-center'>
+				<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-2'>
 					Our Rating
-				</h3>
+				</p>
+				<p class='font-display text-5xl font-bold text-gray-900 dark:text-white mb-3'>
+					{slot.data.rating}
+					<span class='text-xl font-semibold text-gray-600 dark:text-gray-400'>
+						/ 5
+					</span>
+				</p>
 				<div class='flex items-center justify-center gap-4 mb-4'>
 					<Rating rating={slot.data.rating} size='xl' />
 				</div>
-				<P class='text-gray-700 dark:text-gray-300 max-w-2xl mx-auto'>
+				<P class='text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
 					{slot.data.name} scores {slot.data.rating} out of 5 stars in our
 					review.
 					{slot.data.rating >= 4.5 && ' Highly recommended for all players.'}
@@ -195,9 +216,35 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 					{slot.data.rating < 3 &&
 						' May appeal to specific player preferences.'}
 				</P>
-			</section>
+			</Card>
 		)
 	}
+
+	<!-- Sticky mobile action bar (hidden once the demo is playing) -->
+	<ActionBar class='slot-action-bar'>
+		{
+			slot.data.demoUrl && (
+				<Button variant='secondary' class='js-play-demo flex-1 justify-center'>
+					Play Demo
+				</Button>
+			)
+		}
+		<Button
+			variant='primary'
+			href='#where-to-play'
+			class='flex-1 justify-center'
+		>
+			Where to Play
+		</Button>
+	</ActionBar>
+
+	<style is:global>
+		/* Once a demo iframe is active the action bar disappears (its CTAs are
+		   redundant while playing); mirrors SlotDemo's :has patterns. */
+		body:has(.slot-demo iframe) .slot-action-bar {
+			display: none;
+		}
+	</style>
 
 	<script>
 		// Hero "Play Demo" button starts the facade's demo (SlotDemo listens).

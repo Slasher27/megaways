@@ -1,5 +1,9 @@
 ---
 interface Props {
+	/** Element to render — lets semantic wrappers (section, details, links) reuse the surface. */
+	as?: 'div' | 'section' | 'article' | 'details' | 'a';
+	/** Link target when as='a'. */
+	href?: string;
 	variant?: 'default' | 'outlined' | 'elevated' | 'slot' | 'casino' | 'bonus';
 	padding?: 'none' | 'sm' | 'md' | 'lg';
 	hover?: boolean;
@@ -7,19 +11,26 @@ interface Props {
 }
 
 const {
+	as: Tag = 'div',
+	href,
 	variant = 'default',
 	padding = 'md',
 	hover = false,
 	class: className = '',
-} = Astro.props;
+}: Props = Astro.props;
+
+// Surface language: raised cards separate from the canvas by background +
+// shadow, never borders. `outlined` remains for the rare case a border is
+// genuinely the right tool.
+const raised = 'bg-white dark:bg-gray-900 shadow-sm';
 
 const variants = {
-	default: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
-	outlined: 'bg-transparent border-2 border-gray-200 dark:border-gray-700',
-	elevated: 'bg-white dark:bg-gray-800 shadow-lg',
-	slot: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
-	casino: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
-	bonus: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
+	default: raised,
+	slot: raised,
+	casino: raised,
+	bonus: raised,
+	elevated: 'bg-white dark:bg-gray-900 shadow-lg',
+	outlined: 'bg-transparent border border-gray-200 dark:border-gray-800',
 } as const;
 
 const paddings = {
@@ -31,14 +42,15 @@ const paddings = {
 
 const hoverClasses = hover
 	? variant === 'slot' || variant === 'casino'
-		? 'transition-all duration-200 hover:shadow-lg'
-		: 'transition-all duration-200 hover:shadow-xl hover:scale-[1.02] cursor-pointer'
+		? 'transition-shadow duration-200 hover:shadow-lg'
+		: 'transition-all duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer'
 	: '';
 ---
 
-<div
+<Tag
+	href={href}
 	class:list={[
-		'rounded-xl',
+		'rounded-2xl',
 		variants[variant],
 		paddings[padding],
 		hoverClasses,
@@ -46,4 +58,4 @@ const hoverClasses = hover
 	]}
 >
 	<slot />
-</div>
+</Tag>

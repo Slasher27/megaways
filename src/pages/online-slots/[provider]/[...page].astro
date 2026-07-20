@@ -17,6 +17,7 @@ import H2 from '../../../components/typography/H2.astro';
 import H3 from '../../../components/typography/H3.astro';
 import P from '../../../components/typography/P.astro';
 import SlotCard from '../../../components/slots/SlotCard.astro';
+import CtaCard from '../../../components/ui/CtaCard.astro';
 
 export const getStaticPaths = (async ({ paginate }) => {
 	const { providerSlug } = await import('../../../data/providers');
@@ -189,21 +190,14 @@ const pageDescription = page.currentPage === 1
 		<!-- CTA (only on page 1) -->
 		{
 			page.currentPage === 1 && (
-				<div class='bg-linear-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 rounded-xl p-8 text-center'>
-					<H3 size='md' class='mb-4'>
-						Explore More Megaways Slots
-					</H3>
-					<P class='mb-6'>
-						Discover our complete collection of Megaways slot reviews from all
-						providers.
-					</P>
-					<a
-						href='/online-slots/'
-						class='inline-flex items-center justify-center font-semibold rounded-lg transition-colors cursor-pointer px-6 py-3 bg-primary-700 text-white hover:bg-primary-800 dark:bg-primary-500 dark:hover:bg-primary-600'
-					>
-						View All Slots
-					</a>
-				</div>
+				<CtaCard
+					heading='Explore More Megaways Slots'
+					href='/online-slots/'
+					label='View All Slots'
+				>
+					Discover our complete collection of Megaways slot reviews from all
+					providers.
+				</CtaCard>
 			)
 		}
 	</Container>

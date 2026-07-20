@@ -1,22 +1,189 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+/* Display face for headings — self-hosted variable font (latin subsets, woff2). */
+@import "@fontsource-variable/bricolage-grotesque";
 
 @theme {
-	/* Primary Brand Colors */
-	--color-primary-50: #f0f9ff;
-	--color-primary-100: #e0f2fe;
-	--color-primary-200: #bae6fd;
-	--color-primary-300: #7dd3fc;
-	--color-primary-400: #38bdf8;
-	--color-primary-500: #0ea5e9;
-	--color-primary-600: #0284c7;
-	--color-primary-700: #0369a1;
-	--color-primary-800: #075985;
-	--color-primary-900: #0c4a6e;
-	--color-primary-950: #082f49;
+	/* Ember brand scale — derived from the logo's red-orange, deliberately not a
+	   stock Tailwind palette. Text-on-white pairings verified ≥4.5:1 at 700+;
+	   white-on-ember passes at 700 (600 is 4.31:1 — decorative/large only). */
+	--color-primary-50: #fdf6ef;
+	--color-primary-100: #fbead9;
+	--color-primary-200: #f6d0b0;
+	--color-primary-300: #efab78;
+	--color-primary-400: #e8813e;
+	--color-primary-500: #e2621b;
+	--color-primary-600: #d34e11;
+	--color-primary-700: #af3a0f;
+	--color-primary-800: #8c3013;
+	--color-primary-900: #712a13;
+	--color-primary-950: #3d1307;
+
+	/* Warm neutrals: every existing gray-* utility resolves to these stone
+	   values, warming the whole site (no cold blue-gray anywhere). */
+	--color-gray-50: #fafaf9;
+	--color-gray-100: #f5f5f4;
+	--color-gray-200: #e7e5e4;
+	--color-gray-300: #d6d3d1;
+	--color-gray-400: #a8a29e;
+	--color-gray-500: #78716c;
+	--color-gray-600: #57534e;
+	--color-gray-700: #44403c;
+	--color-gray-800: #292524;
+	--color-gray-900: #1c1917;
+	--color-gray-950: #0c0a09;
+
+	--font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+	/* Headings carry the display face site-wide (incl. prose bodies). */
+	h1,
+	h2,
+	h3,
+	h4 {
+		font-family: var(--font-display);
+	}
+
+	/* Anchor jumps clear the sticky header. */
+	[id] {
+		scroll-margin-top: 5.5rem;
+	}
 }
 
 /* Alpine.js x-cloak: Hide elements until Alpine is ready */
 [x-cloak] {
 	display: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+   .review-prose — editorial treatment for MDX review bodies (slots + casinos).
+   Applied on top of `prose`; styles the raw markdown every review already has,
+   so all ~80 reviews upgrade at once with zero content edits.
+--------------------------------------------------------------------------- */
+.review-prose {
+	/* Warm the typography plugin's palette (light + dark var sets). */
+	--tw-prose-body: var(--color-gray-700);
+	--tw-prose-headings: var(--color-gray-950);
+	--tw-prose-lead: var(--color-gray-600);
+	--tw-prose-links: var(--color-primary-700);
+	--tw-prose-bold: var(--color-gray-900);
+	--tw-prose-counters: var(--color-primary-600);
+	--tw-prose-bullets: var(--color-primary-300);
+	--tw-prose-hr: var(--color-gray-200);
+	--tw-prose-quotes: var(--color-gray-900);
+	--tw-prose-quote-borders: var(--color-primary-300);
+	--tw-prose-captions: var(--color-gray-500);
+	--tw-prose-th-borders: var(--color-gray-300);
+	--tw-prose-td-borders: var(--color-gray-200);
+
+	counter-reset: review-section;
+
+	/* Fill the article column (user decision 2026-07-20): the page container
+	   and the TOC aside already bound line length — no inner measure cap. */
+	max-width: none;
+}
+
+/* These unlayered vars outrank the layered `dark:prose-invert` utility, so the
+   dark values must be re-declared here instead of relying on the invert swap. */
+.dark .review-prose {
+	--tw-prose-body: var(--color-gray-300);
+	--tw-prose-headings: #ffffff;
+	--tw-prose-lead: var(--color-gray-400);
+	--tw-prose-links: var(--color-primary-400);
+	--tw-prose-bold: #ffffff;
+	--tw-prose-counters: var(--color-primary-400);
+	--tw-prose-bullets: var(--color-primary-700);
+	--tw-prose-hr: var(--color-gray-800);
+	--tw-prose-quotes: var(--color-gray-100);
+	--tw-prose-quote-borders: var(--color-primary-800);
+	--tw-prose-captions: var(--color-gray-400);
+	--tw-prose-th-borders: var(--color-gray-700);
+	--tw-prose-td-borders: var(--color-gray-800);
+}
+
+/* Numbered section headers: eyebrow counter + generous separation. The MDX
+   `---` rules between sections are hidden — the h2 treatment replaces them. */
+.review-prose > hr {
+	display: none;
+}
+
+.review-prose > h2 {
+	counter-increment: review-section;
+	margin-top: 3.5rem;
+	padding-top: 2.5rem;
+	border-top: 1px solid var(--color-gray-200);
+}
+
+.dark .review-prose > h2 {
+	border-top-color: var(--color-gray-800);
+}
+
+.review-prose > h2::before {
+	content: counter(review-section, decimal-leading-zero);
+	display: block;
+	font-family: var(--font-display);
+	font-size: 0.8125rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	color: var(--color-primary-700);
+	margin-bottom: 0.5rem;
+}
+
+.dark .review-prose > h2::before {
+	color: var(--color-primary-400);
+}
+
+/* Bold-only lead-in paragraphs ("**How it works:**", FAQ questions) act as
+   pseudo-headings throughout the reviews — give them heading rhythm. */
+.review-prose p:has(> strong:only-child) {
+	margin-top: 2em;
+	margin-bottom: 0.75em;
+	font-family: var(--font-display);
+	font-size: 1.0625em;
+}
+
+/* Spec tables: sunken zebra panel, no outer border. */
+.review-prose table {
+	font-size: 0.9375em;
+}
+
+.review-prose thead th {
+	font-size: 0.75em;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--color-gray-500);
+}
+
+.dark .review-prose thead th {
+	color: var(--color-gray-400);
+}
+
+.review-prose tbody tr:nth-child(odd) {
+	background: var(--color-gray-100);
+}
+
+.dark .review-prose tbody tr:nth-child(odd) {
+	background: color-mix(in srgb, var(--color-gray-800) 55%, transparent);
+}
+
+.review-prose tbody td:first-child,
+.review-prose tbody th:first-child {
+	font-weight: 600;
+	color: var(--color-gray-900);
+}
+
+.dark .review-prose tbody td:first-child,
+.dark .review-prose tbody th:first-child {
+	color: var(--color-gray-100);
+}
+
+.review-prose tbody td,
+.review-prose tbody th {
+	padding: 0.625em 0.875em;
+	border-bottom: none;
+}
+
+.review-prose tbody tr {
+	border-bottom: none;
 }

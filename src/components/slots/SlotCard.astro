@@ -58,7 +58,7 @@ function formatVolatility(volatility: string): string {
 		<div class='flex-1'>
 			<!-- Title -->
 			<a href={slotUrl} class='block mb-2 no-underline hover:no-underline group/title'>
-				<H3 size='sm' class='group-hover/title:text-primary-600 dark:group-hover/title:text-primary-400 transition-colors'>
+				<H3 size='sm' class='group-hover/title:text-primary-700 dark:group-hover/title:text-primary-400 transition-colors'>
 					{slot.name}
 				</H3>
 			</a>
@@ -68,7 +68,7 @@ function formatVolatility(volatility: string): string {
 				slot.provider && providerSlug && (
 					<a
 						href={`/online-slots/${providerSlug}/`}
-						class='inline-block text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 mb-4 no-underline transition-colors'
+						class='inline-block text-sm text-gray-600 dark:text-gray-400 hover:text-primary-700 dark:hover:text-primary-400 mb-4 no-underline transition-colors'
 					>
 						{slot.provider}
 					</a>
@@ -80,8 +80,10 @@ function formatVolatility(volatility: string): string {
 				{
 					slot.rtp && (
 						<div>
-							<span class='text-gray-500 dark:text-gray-400 block'>RTP</span>
-							<span class='font-semibold text-gray-900 dark:text-white'>
+							<span class='block text-[0.6875rem] font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400'>
+								RTP
+							</span>
+							<span class='font-display font-semibold text-gray-900 dark:text-white'>
 								{slot.rtp}%
 							</span>
 						</div>
@@ -90,10 +92,10 @@ function formatVolatility(volatility: string): string {
 				{
 					slot.volatility && (
 						<div>
-							<span class='text-gray-500 dark:text-gray-400 block'>
+							<span class='block text-[0.6875rem] font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400'>
 								Volatility
 							</span>
-							<span class='font-semibold text-gray-900 dark:text-white'>
+							<span class='font-display font-semibold text-gray-900 dark:text-white'>
 								{formatVolatility(slot.volatility)}
 							</span>
 						</div>
@@ -102,8 +104,10 @@ function formatVolatility(volatility: string): string {
 				{
 					slot.maxWin && (
 						<div>
-							<span class='text-gray-500 dark:text-gray-400 block'>Max Win</span>
-							<span class='font-semibold text-gray-900 dark:text-white'>
+							<span class='block text-[0.6875rem] font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400'>
+								Max Win
+							</span>
+							<span class='font-display font-semibold text-gray-900 dark:text-white'>
 								{slot.maxWin}
 							</span>
 						</div>
@@ -112,8 +116,10 @@ function formatVolatility(volatility: string): string {
 				{
 					slot.paylines && (
 						<div>
-							<span class='text-gray-500 dark:text-gray-400 block'>Ways</span>
-							<span class='font-semibold text-gray-900 dark:text-white'>
+							<span class='block text-[0.6875rem] font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400'>
+								Ways
+							</span>
+							<span class='font-display font-semibold text-gray-900 dark:text-white'>
 								{slot.paylines.toLocaleString('en-US')}
 							</span>
 						</div>

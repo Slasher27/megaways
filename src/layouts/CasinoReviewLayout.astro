@@ -1,30 +1,25 @@
 ---
 /**
- * CasinoReviewLayout
- *
- * Layout specifically designed for casino review pages
- * Includes BaseLayout, Header, Footer, Container, and Breadcrumbs
+ * CasinoReviewLayout — thin adapter over ReviewShell: computes casino-specific
+ * title/description/breadcrumbs and injects the casino JSON-LD.
  */
-
 import type { CollectionEntry } from 'astro:content';
-import BaseLayout from './BaseLayout.astro';
-import Header from '../components/layout/Header.astro';
-import Footer from '../components/layout/Footer.astro';
-import Container from '../components/layout/Container.astro';
-import Breadcrumb from '../components/layout/Breadcrumb.astro';
+import type { MarkdownHeading } from 'astro';
+import { getEntry } from 'astro:content';
+import ReviewShell from './ReviewShell.astro';
 import BreadcrumbSchema from '../components/seo/BreadcrumbSchema.astro';
 import CasinoSchema from '../components/seo/CasinoSchema.astro';
-import { getEntry } from 'astro:content';
 
 interface Props {
 	casino: CollectionEntry<'casinos'>;
+	/** h2 headings from render() — drives the "On this page" aside. */
+	headings?: MarkdownHeading[];
 	title?: string;
 	description?: string;
 }
 
-const { casino, title, description } = Astro.props;
+const { casino, headings = [], title, description } = Astro.props;
 
-// Build page title and description
 const pageTitle =
 	title ||
 	casino.data.title ||
@@ -36,61 +31,37 @@ const pageDescription =
 		? `${casino.data.name} review. Get ${casino.data.welcomeBonus.amount}. Read our expert review of bonuses, games, and payment methods.`
 		: `Read our expert ${casino.data.name} review covering bonuses, games, payment methods, and more.`);
 
-// Get OG image (use thumbnail or logo)
 const ogImage = casino.data.thumbnail?.src || casino.data.logo?.src;
-
-// Format dates for schema
 const publishedTime = casino.data.publishedDate?.toISOString();
 const modifiedTime = casino.data.updatedDate?.toISOString();
 
-// Get author details if available
 const author = casino.data.author ? await getEntry(casino.data.author) : null;
 
-// Build breadcrumb items
 const breadcrumbItems = [
 	{ label: 'Home', href: '/' },
 	{ label: 'Online Casinos', href: '/online-casinos/' },
-	{ label: casino.data.name, href: `/online-casinos/${casino.data.slug}-casino-review/` },
+	{
+		label: casino.data.name,
+		href: `/online-casinos/${casino.data.slug}-casino-review/`,
+	},
 ];
 ---
 
-<BaseLayout
+<ReviewShell
 	title={pageTitle}
 	description={pageDescription}
-	type='article'
 	image={ogImage}
 	publishedTime={publishedTime}
 	modifiedTime={modifiedTime}
+	breadcrumbItems={breadcrumbItems}
+	headings={headings}
 >
-	<!-- Schema Markup for SEO -->
-	<BreadcrumbSchema items={breadcrumbItems} />
-	<CasinoSchema casino={casino.data} author={author?.data} url={Astro.url.href} />
-	<div class="flex min-h-screen flex-col">
-		<!-- Header -->
-		<Header />
-
-		<!-- Main Content -->
-		<main class="flex-1">
-			<Container>
-				<!-- Breadcrumb Navigation -->
-				<Breadcrumb items={breadcrumbItems} class="mb-6" />
-
-				<!-- Two Column Layout: Main Content + Sidebar -->
-				<div class="flex flex-col lg:flex-row gap-8">
-					<!-- Main Content Column (left-aligned) -->
-					<article class="flex-1 min-w-0">
-						<slot />
-					</article>
-
-					<!-- Sidebar Column (placeholder for future aside) -->
-					<!-- <aside class="w-full lg:w-80 flex-shrink-0">
-						Sidebar content here
-					</aside> -->
-				</div>
-			</Container>
-		</main>
-
-		<!-- Footer -->
-		<Footer />
-	</div>
-</BaseLayout>
+	<BreadcrumbSchema slot='schema' items={breadcrumbItems} />
+	<CasinoSchema
+		slot='schema'
+		casino={casino.data}
+		author={author?.data}
+		url={Astro.url.href}
+	/>
+	<slot />
+</ReviewShell>

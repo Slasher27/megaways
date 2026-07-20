@@ -33,12 +33,13 @@ const {
 } = Astro.props;
 
 // Volatility color mapping
+// 700-weight on light: the 600s fall under 4.5:1 on the gray-100 tile wells
 const volatilityColors = {
-	low: 'text-green-600 dark:text-green-400',
-	medium: 'text-yellow-600 dark:text-yellow-400',
-	'medium-high': 'text-orange-600 dark:text-orange-400',
-	high: 'text-red-600 dark:text-red-400',
-	'very-high': 'text-red-700 dark:text-red-500',
+	low: 'text-green-700 dark:text-green-400',
+	medium: 'text-yellow-700 dark:text-yellow-400',
+	'medium-high': 'text-orange-700 dark:text-orange-400',
+	high: 'text-red-700 dark:text-red-400',
+	'very-high': 'text-red-800 dark:text-red-500',
 };
 
 const volatilityColor = volatility ? volatilityColors[volatility] : '';
@@ -75,32 +76,24 @@ const stats = [
 
 {
 	stats.length > 0 && (
-		<div
-			class={`bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-700 ${className}`}
-		>
-			<div class='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
-				{stats.map((stat) => (
-					<div class='flex items-start gap-3'>
-						<div class='p-2 bg-primary-100 dark:bg-primary-900/50 rounded-lg shrink-0'>
-							<Icon
-								name={stat.icon}
-								size={20}
-								class='text-primary-700 dark:text-primary-400'
-							/>
-						</div>
-						<div class='min-w-0'>
-							<span class='block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1'>
-								{stat.label}
-							</span>
-							<span
-								class={`block text-md font-semibold text-gray-900 dark:text-white capitalize ${stat.colorClass || ''}`}
-							>
-								{stat.value}
-							</span>
-						</div>
-					</div>
-				))}
-			</div>
+		<div class={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 ${className}`}>
+			{stats.map((stat) => (
+				<div class='rounded-xl bg-gray-100 dark:bg-gray-800/60 px-3.5 py-3 min-w-0'>
+					<span class='flex items-center gap-1.5 text-[0.6875rem] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1'>
+						<Icon
+							name={stat.icon}
+							size={13}
+							class='text-primary-600 dark:text-primary-400 shrink-0'
+						/>
+						{stat.label}
+					</span>
+					<span
+						class={`block font-display font-semibold text-gray-900 dark:text-white capitalize leading-snug ${stat.colorClass || ''}`}
+					>
+						{stat.value}
+					</span>
+				</div>
+			))}
 		</div>
 	)
 }
