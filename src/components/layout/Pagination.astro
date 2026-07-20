@@ -1,0 +1,67 @@
+---
+/**
+ * Pagination — prev/numbers/next controls for paginated listings.
+ * Raised chips on the canvas; current page = ember, disabled = sunken.
+ */
+import type { Page } from 'astro';
+
+interface Props {
+	page: Page;
+	/** Listing base URL with trailing slash — page 1 is the bare base, page N appends `N/`. */
+	baseUrl: string;
+	class?: string;
+}
+
+const { page, baseUrl, class: className = '' } = Astro.props;
+
+const chip =
+	'px-4 py-2 rounded-lg bg-white dark:bg-gray-900 shadow-sm text-gray-700 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-400 hover:shadow transition';
+const disabledChip =
+	'px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800/60 text-gray-600 dark:text-gray-400 cursor-not-allowed';
+
+const urlFor = (pageNum: number) =>
+	pageNum === 1 ? baseUrl : `${baseUrl}${pageNum}/`;
+---
+
+{
+	page.lastPage > 1 && (
+		<nav
+			aria-label='Pagination'
+			class:list={['mt-12 flex items-center justify-center gap-2', className]}
+		>
+			{page.url.prev ? (
+				<a href={page.url.prev} class={chip}>
+					&larr; Previous
+				</a>
+			) : (
+				<span class={disabledChip}>&larr; Previous</span>
+			)}
+
+			<div class='flex gap-1'>
+				{Array.from({ length: page.lastPage }, (_, i) => i + 1).map(
+					(pageNum) =>
+						pageNum === page.currentPage ? (
+							<span
+								aria-current='page'
+								class='px-4 py-2 rounded-lg bg-primary-700 text-white font-semibold shadow-sm'
+							>
+								{pageNum}
+							</span>
+						) : (
+							<a href={urlFor(pageNum)} class={chip}>
+								{pageNum}
+							</a>
+						),
+				)}
+			</div>
+
+			{page.url.next ? (
+				<a href={page.url.next} class={chip}>
+					Next &rarr;
+				</a>
+			) : (
+				<span class={disabledChip}>Next &rarr;</span>
+			)}
+		</nav>
+	)
+}

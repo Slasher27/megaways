@@ -18,6 +18,7 @@ import H3 from '../../../components/typography/H3.astro';
 import P from '../../../components/typography/P.astro';
 import SlotCard from '../../../components/slots/SlotCard.astro';
 import CtaCard from '../../../components/ui/CtaCard.astro';
+import Pagination from '../../../components/layout/Pagination.astro';
 
 export const getStaticPaths = (async ({ paginate }) => {
 	const { providerSlug } = await import('../../../data/providers');
@@ -110,7 +111,7 @@ const pageDescription = page.currentPage === 1
 						))}
 					</div>
 				) : (
-					<div class='text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl'>
+					<div class='text-center py-12 bg-gray-100 dark:bg-gray-800/60 rounded-2xl'>
 						<P class='text-gray-600 dark:text-gray-400'>
 							No slots available yet. Check back soon!
 						</P>
@@ -119,69 +120,13 @@ const pageDescription = page.currentPage === 1
 			}
 
 			<!-- Pagination Controls -->
-			{
-				page.lastPage > 1 && (
-					<div class='mt-12 flex items-center justify-center gap-2'>
-						{page.url.prev ? (
-							<a
-								href={page.url.prev}
-								class='px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
-							>
-								← Previous
-							</a>
-						) : (
-							<span class='px-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-600 dark:text-gray-400 cursor-not-allowed'>
-								← Previous
-							</span>
-						)}
-
-						<div class='flex gap-1'>
-							{Array.from({ length: page.lastPage }, (_, i) => i + 1).map(
-								(pageNum) => {
-									const pageUrl =
-										pageNum === 1
-											? `/online-slots/${providerSlug}/`
-											: `/online-slots/${providerSlug}/${pageNum}/`;
-									return pageNum === page.currentPage ? (
-										<span
-											aria-current='page'
-											class='px-4 py-2 bg-primary-700 text-white rounded-lg font-semibold'
-										>
-											{pageNum}
-										</span>
-									) : (
-										<a
-											href={pageUrl}
-											class='px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
-										>
-											{pageNum}
-										</a>
-									);
-								},
-							)}
-						</div>
-
-						{page.url.next ? (
-							<a
-								href={page.url.next}
-								class='px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
-							>
-								Next →
-							</a>
-						) : (
-							<span class='px-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-600 dark:text-gray-400 cursor-not-allowed'>
-								Next →
-							</span>
-						)}
-					</div>
-				)
-			}
+			<Pagination page={page} baseUrl={`/online-slots/${providerSlug}/`} />
 		</section>
 
 		<!-- Provider Description (only on page 1) -->
 		{
 			page.currentPage === 1 && (
-				<article class='prose prose-lg dark:prose-invert max-w-none mb-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-8 mt-12'>
+				<article class='review-prose prose prose-lg dark:prose-invert mb-12 mt-12'>
 					<Content />
 				</article>
 			)

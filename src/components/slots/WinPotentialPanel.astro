@@ -1,0 +1,72 @@
+---
+/**
+ * WinPotentialPanel — max-win multiplier translated to stake-currency cash at
+ * min and max bet. MDX usage:
+ * <WinPotentialPanel maxWin={frontmatter.maxWin} minBet={frontmatter.minBet} maxBet={frontmatter.maxBet} />
+ * Renders nothing when the multiplier can't be parsed from maxWin.
+ */
+import Card from '../ui/Card.astro';
+
+interface Props {
+	maxWin?: string;
+	minBet?: number;
+	maxBet?: number;
+	/** Where the max win lives, e.g. "free spins with the full multiplier chain". */
+	where?: string;
+	class?: string;
+}
+
+const { maxWin, minBet, maxBet, where, class: className = '' } = Astro.props;
+
+const multiplier = maxWin
+	? Number.parseFloat(maxWin.replace(/,/g, '').match(/[\d.]+/)?.[0] ?? '')
+	: Number.NaN;
+const valid = Number.isFinite(multiplier) && multiplier > 0;
+const fmt = (v) =>
+	v.toLocaleString('en-GB', { maximumFractionDigits: v < 100 ? 2 : 0 });
+---
+
+{
+	valid && (
+		<Card class:list={['not-prose', className]}>
+			<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-3'>
+				Win potential
+			</p>
+			<p class='font-display text-3xl font-bold text-gray-900 dark:text-white mb-3'>
+				{fmt(multiplier)}&times;{' '}
+				<span class='text-sm font-semibold text-gray-600 dark:text-gray-400'>
+					your stake
+				</span>
+			</p>
+			{(minBet || maxBet) && (
+				<div class='grid grid-cols-2 gap-2 mb-3'>
+					{minBet && (
+						<div class='rounded-xl bg-gray-100 dark:bg-gray-800/60 px-3.5 py-3'>
+							<span class='block text-[0.6875rem] font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1'>
+								At {fmt(minBet)} min bet
+							</span>
+							<span class='font-display font-semibold text-gray-900 dark:text-white'>
+								{fmt(minBet * multiplier)}
+							</span>
+						</div>
+					)}
+					{maxBet && (
+						<div class='rounded-xl bg-gray-100 dark:bg-gray-800/60 px-3.5 py-3'>
+							<span class='block text-[0.6875rem] font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1'>
+								At {fmt(maxBet)} max bet
+							</span>
+							<span class='font-display font-semibold text-gray-900 dark:text-white'>
+								{fmt(maxBet * multiplier)}
+							</span>
+						</div>
+					)}
+				</div>
+			)}
+			{where && (
+				<p class='text-sm text-gray-600 dark:text-gray-400 mb-0'>
+					Where it lives: {where}
+				</p>
+			)}
+		</Card>
+	)
+}

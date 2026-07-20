@@ -1,0 +1,23 @@
+---
+/**
+ * TileGrid — grid wrapper for Tile items inside MDX review bodies.
+ * `not-prose` opts out of typography styles; available in MDX without imports
+ * via the routes' <Content components={{ TileGrid, Tile }}> wiring.
+ */
+interface Props {
+	cols?: 2 | 3;
+	class?: string;
+}
+
+const { cols = 2, class: className = '' } = Astro.props;
+---
+
+<div
+	class:list={[
+		'not-prose grid grid-cols-1 gap-3 my-6',
+		cols === 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2',
+		className,
+	]}
+>
+	<slot />
+</div>

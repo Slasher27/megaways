@@ -17,7 +17,17 @@ import P from '../../components/typography/P.astro';
 import Button from '../../components/ui/Button.astro';
 import Card from '../../components/ui/Card.astro';
 import TocCard from '../../components/reviews/TocCard.astro';
+import Tile from '../../components/ui/Tile.astro';
+import TileGrid from '../../components/ui/TileGrid.astro';
+import Callout from '../../components/ui/Callout.astro';
 import ReviewMeta from '../../components/reviews/ReviewMeta.astro';
+import VerifiedChip from '../../components/reviews/VerifiedChip.astro';
+import Scorecard from '../../components/reviews/Scorecard.astro';
+import Faq from '../../components/reviews/Faq.astro';
+import RTPContextBar from '../../components/slots/RTPContextBar.astro';
+import VolatilityMeter from '../../components/slots/VolatilityMeter.astro';
+import WinPotentialPanel from '../../components/slots/WinPotentialPanel.astro';
+import CompareTable from '../../components/slots/CompareTable.astro';
 import ActionBar from '../../components/layout/ActionBar.astro';
 import { providerSlug } from '../../data/providers';
 
@@ -69,12 +79,14 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 		<!-- Heading -->
 		<H1 size='md' class='mb-4'>{slot.data.h1Tag || slot.data.name}</H1>
 
-		<!-- Rating + review meta -->
-		<ReviewMeta
-			rating={slot.data.rating}
-			updatedDate={slot.data.updatedDate}
-			class='mb-5'
-		/>
+		<!-- Rating + review meta + stat provenance -->
+		<div class='flex flex-wrap items-center gap-x-4 gap-y-2 mb-5'>
+			<ReviewMeta
+				rating={slot.data.rating}
+				updatedDate={slot.data.updatedDate}
+			/>
+			<VerifiedChip verified={slot.data.verified} />
+		</div>
 
 		<!-- Description -->
 		{
@@ -161,9 +173,23 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 	<!-- On this page (mobile/tablet; xl+ uses the sticky aside in the layout) -->
 	<TocCard headings={toc} class='mb-8' />
 
-	<!-- Review Content (fills the article column; container + TOC bound it) -->
+	<!-- Review Content (fills the article column; container + TOC bound it).
+	     Protocol components (docs/REVIEW-PROTOCOL.md) available in MDX without
+	     imports; frontmatter props via the MDX `frontmatter` binding. -->
 	<section class='review-prose prose prose-lg dark:prose-invert mb-10'>
-		<Content />
+		<Content
+			components={{
+				Tile,
+				TileGrid,
+				Callout,
+				Scorecard,
+				RTPContextBar,
+				VolatilityMeter,
+				WinPotentialPanel,
+				CompareTable,
+				Faq,
+			}}
+		/>
 	</section>
 
 	<!-- Pros & Cons -->

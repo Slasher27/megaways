@@ -57,6 +57,39 @@ const slots = defineCollection({
 			pros: z.array(z.string()).default([]),
 			cons: z.array(z.string()).default([]),
 
+			// Review protocol (docs/REVIEW-PROTOCOL.md) — per-category scorecard.
+			// Overall `rating` stays the single source for JSON-LD; categories
+			// are the visible breakdown. All 0-5.
+			scorecard: z
+				.object({
+					features: z.number().min(0).max(5),
+					winPotential: z.number().min(0).max(5),
+					baseGame: z.number().min(0).max(5),
+					value: z.number().min(0).max(5),
+					presentation: z.number().min(0).max(5),
+				})
+				.optional(),
+
+			// Stat provenance — set ONLY when stats were genuinely verified
+			// against a first-party source (rule 9; never fabricate).
+			verified: z
+				.object({
+					source: z.string(), // e.g. "Playin (Evolution) portal + redtiger.com"
+					date: z.coerce.date(),
+					url: z.string().url().optional(),
+				})
+				.optional(),
+
+			// Known operator-configurable RTP variants (from provider sheets).
+			// Empty/omitted = no variants documented; renders nothing.
+			rtpVariants: z.array(z.number().min(0).max(100)).default([]),
+
+			// FAQ — single source for the visible accordion AND FAQPage JSON-LD
+			// (same rule as the homepage: text must stay identical).
+			faqs: z
+				.array(z.object({ question: z.string(), answer: z.string() }))
+				.default([]),
+
 			// SEO
 			title: z.string().optional(), // Custom page title (overrides default)
 			description: z.string().optional(), // Meta description

@@ -11,6 +11,7 @@ import P from '../../components/typography/P.astro';
 import Breadcrumb from '../../components/layout/Breadcrumb.astro';
 import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
 import SlotCard from '../../components/slots/SlotCard.astro';
+import Pagination from '../../components/layout/Pagination.astro';
 
 export const getStaticPaths = (async ({ paginate }) => {
 	// Get all slots from content collection
@@ -85,56 +86,7 @@ const breadcrumbItems = [
 		)}
 
 		<!-- Pagination Controls -->
-		{page.lastPage > 1 && (
-			<div class="mt-12 flex items-center justify-center gap-2">
-				<!-- Previous Button -->
-				{page.url.prev ? (
-					<a
-						href={page.url.prev}
-						class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-					>
-						← Previous
-					</a>
-				) : (
-					<span class="px-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-600 dark:text-gray-400 cursor-not-allowed">
-						← Previous
-					</span>
-				)}
-
-				<!-- Page Numbers -->
-				<div class="flex gap-1">
-					{Array.from({ length: page.lastPage }, (_, i) => i + 1).map((pageNum) => {
-						const pageUrl = pageNum === 1 ? '/online-slots/' : `/online-slots/${pageNum}/`;
-						return pageNum === page.currentPage ? (
-							<span class="px-4 py-2 bg-primary-600 text-white rounded-lg font-semibold">
-								{pageNum}
-							</span>
-						) : (
-							<a
-								href={pageUrl}
-								class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-							>
-								{pageNum}
-							</a>
-						);
-					})}
-				</div>
-
-				<!-- Next Button -->
-				{page.url.next ? (
-					<a
-						href={page.url.next}
-						class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-					>
-						Next →
-					</a>
-				) : (
-					<span class="px-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-600 dark:text-gray-400 cursor-not-allowed">
-						Next →
-					</span>
-				)}
-			</div>
-		)}
+		<Pagination page={page} baseUrl='/online-slots/' />
 		</section>
 	</Container>
 

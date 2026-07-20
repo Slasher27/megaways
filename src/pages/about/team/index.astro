@@ -8,6 +8,7 @@ import H1 from '../../../components/typography/H1.astro';
 import H2 from '../../../components/typography/H2.astro';
 import P from '../../../components/typography/P.astro';
 import Badge from '../../../components/ui/Badge.astro';
+import Card from '../../../components/ui/Card.astro';
 import Breadcrumb from '../../../components/layout/Breadcrumb.astro';
 import BreadcrumbSchema from '../../../components/seo/BreadcrumbSchema.astro';
 import { Icon } from 'astro-icon/components';
@@ -62,10 +63,10 @@ const personSchema = {
 
 		{profiles.map(({ author, Content }) => (
 			<article class='mb-16 max-w-4xl'>
-				<div class='rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 md:p-8 mb-8'>
+				<Card padding='none' class='p-6 md:p-8 mb-8'>
 					<div class='flex flex-col sm:flex-row sm:items-center gap-6'>
 						<span
-							class='flex size-20 shrink-0 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/50 text-2xl font-bold text-primary-700 dark:text-primary-300'
+							class='flex size-20 shrink-0 items-center justify-center rounded-full bg-primary-50 dark:bg-primary-950/60 text-2xl font-bold text-primary-700 dark:text-primary-300'
 							aria-hidden='true'
 						>
 							{author.data.name.split(' ').map((part) => part[0]).join('')}
@@ -87,7 +88,7 @@ const personSchema = {
 											href={author.data.socials.linkedin}
 											rel='noopener'
 											target='_blank'
-											class='inline-flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400'
+											class='inline-flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary-700 dark:hover:text-primary-400'
 										>
 											<Icon name='lucide:linkedin' class='size-4' aria-hidden='true' /> LinkedIn
 										</a>
@@ -97,7 +98,7 @@ const personSchema = {
 											href={author.data.socials.twitter}
 											rel='noopener'
 											target='_blank'
-											class='inline-flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400'
+											class='inline-flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary-700 dark:hover:text-primary-400'
 										>
 											<Icon name='lucide:twitter' class='size-4' aria-hidden='true' /> Twitter
 										</a>
@@ -107,7 +108,7 @@ const personSchema = {
 											href={author.data.socials.website}
 											rel='noopener'
 											target='_blank'
-											class='inline-flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400'
+											class='inline-flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-primary-700 dark:hover:text-primary-400'
 										>
 											<Icon name='lucide:globe' class='size-4' aria-hidden='true' /> Website
 										</a>
@@ -128,25 +129,25 @@ const personSchema = {
 					{author.data.bio && (
 						<P class='mt-6 mb-0 text-gray-600 dark:text-gray-400'>{author.data.bio}</P>
 					)}
-				</div>
+				</Card>
 
-				<div class='prose dark:prose-invert max-w-none'>
+				<div class='review-prose prose dark:prose-invert'>
 					<Content />
 				</div>
 			</article>
 		))}
 
 		<section class='mb-16 max-w-4xl'>
-			<div class='rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-6 md:p-8'>
+			<Card padding='none' class='p-6 md:p-8'>
 				<H2 size='sm' class='mb-3'>How we work</H2>
 				<P class='text-gray-600 dark:text-gray-400 mb-0'>
 					Every stat we publish — RTP, max win, volatility — is verified against the
 					provider's official data before it goes live, and every review carries a
 					visible published and updated date. Read the full
-					<a href='/about/methodology/' class='underline hover:text-primary-600 dark:hover:text-primary-400'>review methodology</a>
+					<a href='/about/methodology/' class='underline hover:text-primary-700 dark:hover:text-primary-400'>review methodology</a>
 					to see exactly how ratings are produced.
 				</P>
-			</div>
+			</Card>
 		</section>
 	</Container>
 

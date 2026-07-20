@@ -1,0 +1,40 @@
+---
+/**
+ * Faq — review FAQ accordion + FAQPage JSON-LD from ONE source (frontmatter
+ * faqs array), same single-source rule as the homepage FAQ. MDX usage:
+ * <Faq items={frontmatter.faqs} />
+ */
+import { Icon } from 'astro-icon/components';
+import Card from '../ui/Card.astro';
+import FAQSchema from '../seo/FAQSchema.astro';
+
+interface Props {
+	items: { question: string; answer: string }[];
+	class?: string;
+}
+
+const { items = [], class: className = '' } = Astro.props;
+---
+
+{
+	items.length > 0 && (
+		<div class:list={['not-prose space-y-3', className]}>
+			<FAQSchema questions={items} />
+			{items.map((faq) => (
+				<Card as='details' padding='none' class='group'>
+					<summary class='flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-display font-semibold text-gray-900 dark:text-white list-none [&::-webkit-details-marker]:hidden'>
+						{faq.question}
+						<Icon
+							name='lucide:chevron-down'
+							class='size-5 shrink-0 text-gray-400 transition-transform group-open:rotate-180 motion-reduce:transition-none'
+							aria-hidden='true'
+						/>
+					</summary>
+					<p class='px-5 pb-5 text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-0'>
+						{faq.answer}
+					</p>
+				</Card>
+			))}
+		</div>
+	)
+}

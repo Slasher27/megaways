@@ -1,0 +1,75 @@
+---
+/**
+ * RTPContextBar — plots this slot's verified RTP against our own verified
+ * catalog (computed at build time from the slots collection): range band,
+ * median tick, this-slot marker, and an honest percentile sentence.
+ * MDX usage: <RTPContextBar rtp={frontmatter.rtp} />
+ */
+import { getCollection } from 'astro:content';
+import Card from '../ui/Card.astro';
+
+interface Props {
+	rtp?: number;
+	class?: string;
+}
+
+const { rtp, class: className = '' } = Astro.props;
+
+const all = (await getCollection('slots'))
+	.map((s) => s.data.rtp)
+	.filter((v) => typeof v === 'number')
+	.sort((a, b) => a - b);
+
+const min = all[0];
+const max = all[all.length - 1];
+const median =
+	all.length % 2
+		? all[(all.length - 1) / 2]
+		: (all[all.length / 2 - 1] + all[all.length / 2]) / 2;
+
+// Rank: 1 = highest RTP in our catalog
+const rank = rtp !== undefined ? all.filter((v) => v > rtp).length + 1 : 0;
+const pos = (v) => ((v - min) / (max - min)) * 100;
+---
+
+{
+	rtp !== undefined && all.length > 2 && (
+		<Card class:list={['not-prose', className]}>
+			<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-3'>
+				RTP in context
+			</p>
+			<div class='flex items-baseline gap-2 mb-4'>
+				<span class='font-display text-3xl font-bold text-gray-900 dark:text-white'>
+					{rtp}%
+				</span>
+				<span class='text-sm text-gray-600 dark:text-gray-400'>
+					vs {median.toFixed(2)}% median across the {all.length} Megaways-family
+					slots we've verified
+				</span>
+			</div>
+			<div class='relative h-2 rounded-full bg-gray-100 dark:bg-gray-800 mb-2'>
+				{/* median tick */}
+				<div
+					class='absolute top-1/2 -translate-y-1/2 h-4 w-0.5 bg-gray-400 dark:bg-gray-500'
+					style={`left: ${pos(median)}%`}
+					aria-hidden='true'
+				/>
+				{/* this slot */}
+				<div
+					class='absolute top-1/2 -translate-y-1/2 size-4 rounded-full bg-primary-600 dark:bg-primary-500 ring-4 ring-primary-600/20'
+					style={`left: calc(${pos(rtp)}% - 0.5rem)`}
+					aria-hidden='true'
+				/>
+			</div>
+			<div class='flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-2'>
+				<span>{min}% (lowest)</span>
+				<span>{max}% (highest)</span>
+			</div>
+			<p class='text-sm text-gray-700 dark:text-gray-300 mb-0'>
+				Ranks <strong class='text-gray-900 dark:text-white'>#{rank}</strong> of{' '}
+				{all.length} in our verified catalog — over a long session, a 100.00
+				stake returns about {rtp.toFixed(2)} on average.
+			</p>
+		</Card>
+	)
+}

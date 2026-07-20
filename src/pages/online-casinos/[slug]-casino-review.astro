@@ -15,12 +15,15 @@ import Card from '../../components/ui/Card.astro';
 import Icon from '../../components/ui/Icon.astro';
 import { Image } from 'astro:assets';
 import ProsCons from '../../components/reviews/ProsCons.astro';
+import Tile from '../../components/ui/Tile.astro';
+import TileGrid from '../../components/ui/TileGrid.astro';
 import AuthorCard from '../../components/reviews/AuthorCard.astro';
 import ReviewMeta from '../../components/reviews/ReviewMeta.astro';
 import TocCard from '../../components/reviews/TocCard.astro';
 import ActionBar from '../../components/layout/ActionBar.astro';
 import VideoPlayer from '../../components/reviews/VideoPlayer.astro';
 import VideoSchema from '../../components/seo/VideoSchema.astro';
+import { paymentMethodMeta } from '../../data/payment-methods';
 
 export async function getStaticPaths() {
 	const casinos = await getCollection('casinos');
@@ -293,12 +296,23 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 					Payment Methods
 				</H2>
 				<Card>
-					<div class='flex flex-wrap gap-3'>
-						{casino.data.paymentMethods.map((method) => (
-							<Badge variant='secondary' size='md'>
-								{method.replace(/-/g, ' ')}
-							</Badge>
-						))}
+					<div class='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2'>
+						{casino.data.paymentMethods.map((method) => {
+							const meta = paymentMethodMeta(method);
+							return (
+								<div class='flex items-center gap-2.5 rounded-xl bg-gray-100 dark:bg-gray-800/60 px-3 py-2.5 min-w-0'>
+									<Icon
+										name={meta.icon}
+										size={18}
+										class='text-primary-700 dark:text-primary-400 shrink-0'
+										aria-hidden='true'
+									/>
+									<span class='text-sm font-medium text-gray-800 dark:text-gray-200 truncate'>
+										{meta.label}
+									</span>
+								</div>
+							);
+						})}
 					</div>
 				</Card>
 			</section>
@@ -330,7 +344,7 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 
 	<!-- Review Content -->
 	<section class='review-prose prose prose-lg dark:prose-invert mb-8'>
-		<Content />
+		<Content components={{ Tile, TileGrid }} />
 	</section>
 
 	<!-- Author & Date Info -->

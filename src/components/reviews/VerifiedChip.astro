@@ -1,0 +1,56 @@
+---
+/**
+ * VerifiedChip — stat-provenance badge: "Stats verified {date}" with a native
+ * popover naming the first-party source. Renders nothing without `verified`
+ * frontmatter (rule 9: never claim verification that didn't happen).
+ */
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	verified?: { source: string; date: Date; url?: string };
+	class?: string;
+}
+
+const { verified, class: className = '' } = Astro.props;
+
+const popId = `verified-pop-${Math.random().toString(36).slice(2, 8)}`;
+const dateFormatted = verified?.date.toLocaleDateString('en-GB', {
+	day: 'numeric',
+	month: 'short',
+	year: 'numeric',
+});
+---
+
+{
+	verified && (
+		<span class:list={['inline-flex', className]}>
+			<button
+				type='button'
+				popovertarget={popId}
+				class='inline-flex items-center gap-1.5 rounded-full bg-green-50 dark:bg-green-900/30 px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-wider text-green-800 dark:text-green-300 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors'
+			>
+				<Icon name='lucide:badge-check' size={13} aria-hidden='true' />
+				Stats verified {dateFormatted}
+			</button>
+			<div
+				id={popId}
+				popover='auto'
+				class='rounded-xl bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-800 p-4 max-w-xs text-sm text-gray-700 dark:text-gray-300 m-auto'
+			>
+				<p class='font-display font-semibold text-gray-900 dark:text-white mb-1'>
+					How we verified these stats
+				</p>
+				<p class='mb-2'>
+					RTP, max win and volatility checked against{' '}
+					<strong>{verified.source}</strong> on {dateFormatted}.
+				</p>
+				<a
+					href='/about/methodology/'
+					class='text-primary-700 dark:text-primary-400 underline'
+				>
+					Our review methodology
+				</a>
+			</div>
+		</span>
+	)
+}

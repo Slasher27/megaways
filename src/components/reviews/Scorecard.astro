@@ -1,0 +1,82 @@
+---
+/**
+ * Scorecard — per-category editorial rating bars (docs/REVIEW-PROTOCOL.md).
+ * MDX usage: <Scorecard scores={frontmatter.scorecard} rating={frontmatter.rating} />
+ * Renders nothing without scores. Pure CSS; overall rating is the number that
+ * feeds Review JSON-LD elsewhere — this is its visible justification.
+ */
+import { Icon } from 'astro-icon/components';
+import Card from '../ui/Card.astro';
+
+interface Props {
+	scores?: {
+		features: number;
+		winPotential: number;
+		baseGame: number;
+		value: number;
+		presentation: number;
+	};
+	rating?: number;
+	class?: string;
+}
+
+const { scores, rating, class: className = '' } = Astro.props;
+
+const rows = scores
+	? [
+			{ label: 'Features & Mechanics', icon: 'lucide:cog', value: scores.features },
+			{ label: 'Win Potential', icon: 'lucide:trending-up', value: scores.winPotential },
+			{ label: 'Base-Game Experience', icon: 'lucide:play', value: scores.baseGame },
+			{ label: 'Value / RTP', icon: 'lucide:percent', value: scores.value },
+			{ label: 'Presentation', icon: 'lucide:palette', value: scores.presentation },
+		]
+	: [];
+---
+
+{
+	scores && (
+		<Card class:list={['not-prose', className]}>
+			<div class='flex items-center justify-between gap-4 mb-4'>
+				<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-0'>
+					Our Scorecard
+				</p>
+				{rating !== undefined && (
+					<p class='font-display text-2xl font-bold text-gray-900 dark:text-white mb-0'>
+						{rating}
+						<span class='text-sm font-semibold text-gray-600 dark:text-gray-400'>
+							{' '}/ 5
+						</span>
+					</p>
+				)}
+			</div>
+			<dl class='space-y-3 mb-0'>
+				{rows.map((row) => (
+					<div class='grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1'>
+						<dt class='flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300'>
+							<Icon
+								name={row.icon}
+								size={15}
+								class='text-primary-700 dark:text-primary-400 shrink-0'
+								aria-hidden='true'
+							/>
+							{row.label}
+						</dt>
+						<dd class='font-display text-sm font-semibold text-gray-900 dark:text-white m-0'>
+							{row.value.toFixed(1)}
+						</dd>
+						<div
+							class='col-span-2 h-1.5 rounded-full bg-gray-100 dark:bg-gray-800'
+							role='img'
+							aria-label={`${row.label}: ${row.value} out of 5`}
+						>
+							<div
+								class='h-full rounded-full bg-primary-600 dark:bg-primary-500'
+								style={`width: ${(row.value / 5) * 100}%`}
+							/>
+						</div>
+					</div>
+				))}
+			</dl>
+		</Card>
+	)
+}

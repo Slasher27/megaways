@@ -1,0 +1,101 @@
+---
+/**
+ * CompareTable — hand-curated within-mechanic comparison: the current slot vs
+ * up to 3 siblings, pulled from the collection. MDX usage:
+ * <CompareTable current={frontmatter.slug} slugs={['gold-megaways', 'bonanza-megapays', 'nft-megaways']} />
+ * Unknown slugs are skipped silently (build stays safe).
+ */
+import { getCollection } from 'astro:content';
+
+interface Props {
+	current: string;
+	slugs: string[];
+	class?: string;
+}
+
+const { current, slugs, class: className = '' } = Astro.props;
+
+const all = await getCollection('slots');
+const bySlug = new Map(all.map((s) => [s.data.slug, s.data]));
+const rows = [current, ...slugs]
+	.map((slug) => bySlug.get(slug))
+	.filter((d) => d !== undefined);
+---
+
+{
+	rows.length > 1 && (
+		<div class:list={['not-prose overflow-x-auto', className]}>
+			<table class='w-full text-sm border-separate border-spacing-0'>
+				<thead>
+					<tr>
+						<th class='text-left px-3.5 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400'>
+							Slot
+						</th>
+						<th class='text-left px-3.5 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400'>
+							RTP
+						</th>
+						<th class='text-left px-3.5 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400'>
+							Volatility
+						</th>
+						<th class='text-left px-3.5 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400'>
+							Max win
+						</th>
+						<th class='text-left px-3.5 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400'>
+							Bonus buy
+						</th>
+						<th class='text-left px-3.5 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400'>
+							Our score
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{rows.map((slot) => {
+						const isCurrent = slot.slug === current;
+						return (
+							<tr
+								class:list={[
+									isCurrent
+										? 'bg-primary-50 dark:bg-primary-950/40'
+										: 'odd:bg-gray-100 dark:odd:bg-gray-800/40',
+								]}
+							>
+								<td class='px-3.5 py-2.5 font-display font-semibold text-gray-900 dark:text-white rounded-l-xl'>
+									{isCurrent ? (
+										<span>
+											{slot.name}{' '}
+											<span class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400'>
+												this review
+											</span>
+										</span>
+									) : (
+										<a
+											href={`/online-slots/${slot.slug}/`}
+											class='text-primary-700 dark:text-primary-400 hover:underline'
+										>
+											{slot.name}
+										</a>
+									)}
+								</td>
+								<td class='px-3.5 py-2.5 text-gray-700 dark:text-gray-300'>
+									{slot.rtp ? `${slot.rtp}%` : '—'}
+								</td>
+								<td class='px-3.5 py-2.5 text-gray-700 dark:text-gray-300 capitalize'>
+									{slot.volatility?.replace('-', ' ') ?? '—'}
+								</td>
+								<td class='px-3.5 py-2.5 text-gray-700 dark:text-gray-300'>
+									{slot.maxWin ?? '—'}
+								</td>
+								<td class='px-3.5 py-2.5 text-gray-700 dark:text-gray-300'>
+									{slot.bonusBuy ? 'Yes' : 'No'}
+								</td>
+								<td class='px-3.5 py-2.5 font-display font-semibold text-gray-900 dark:text-white rounded-r-xl'>
+									{slot.rating ? `${slot.rating}/5` : '—'}
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</div>
+	)
+}

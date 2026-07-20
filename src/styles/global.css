@@ -143,6 +143,61 @@
 	font-size: 1.0625em;
 }
 
+/* Definition-style lists — the MDX "- **Term** - description" convention —
+   render as a responsive tile grid instead of a long stacked list. Guard:
+   first AND last item must lead with <strong>, so narrative/mixed lists keep
+   their normal list form. Terms stay inline (separator conventions vary),
+   the grid provides the compression. */
+.review-prose
+	ul:has(> li:first-child > strong:first-child):has(
+		> li:last-child > strong:first-child
+	) {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0.625rem;
+	margin-top: 1.25em;
+	padding-left: 0;
+	list-style: none;
+}
+
+@media (min-width: 40rem) {
+	.review-prose
+		ul:has(> li:first-child > strong:first-child):has(
+			> li:last-child > strong:first-child
+		) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.review-prose
+	ul:has(> li:first-child > strong:first-child):has(
+		> li:last-child > strong:first-child
+	)
+	> li {
+	margin: 0;
+	padding: 0.875rem 1.125rem;
+	border-radius: 1rem;
+	background: var(--color-gray-100);
+	font-size: 0.9375em;
+}
+
+.dark .review-prose
+	ul:has(> li:first-child > strong:first-child):has(
+		> li:last-child > strong:first-child
+	)
+	> li {
+	background: color-mix(in srgb, var(--color-gray-800) 60%, transparent);
+}
+
+.review-prose
+	ul:has(> li:first-child > strong:first-child):has(
+		> li:last-child > strong:first-child
+	)
+	> li
+	> strong {
+	font-family: var(--font-display);
+}
+
 /* Spec tables: sunken zebra panel, no outer border. */
 .review-prose table {
 	font-size: 0.9375em;

@@ -7,6 +7,7 @@ import H1 from '../../components/typography/H1.astro';
 import H2 from '../../components/typography/H2.astro';
 import P from '../../components/typography/P.astro';
 import Breadcrumb from '../../components/layout/Breadcrumb.astro';
+import Card from '../../components/ui/Card.astro';
 import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
 
 const pageTitle = 'Privacy Policy | Megaways Online';
@@ -20,7 +21,7 @@ const breadcrumbItems = [
 
 const lastUpdated = '2026-07-14';
 
-const linkClass = 'underline hover:text-primary-600 dark:hover:text-primary-400';
+const linkClass = 'underline hover:text-primary-700 dark:hover:text-primary-400';
 ---
 
 <PageLayout title={pageTitle} description={pageDescription}>
@@ -39,7 +40,7 @@ const linkClass = 'underline hover:text-primary-600 dark:hover:text-primary-400'
 			</header>
 
 			<!-- Layered summary (at a glance) -->
-			<section class='mb-10 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-6'>
+			<Card as='section' class='mb-10'>
 				<H2 size='sm' class='mb-3'>This policy at a glance</H2>
 				<ul class='list-disc pl-5 space-y-2 text-gray-600 dark:text-gray-400'>
 					<li>We have no accounts, forms, newsletters or advertising trackers. We use <strong>cookieless, aggregate-only analytics</strong> (Vercel Web Analytics) that cannot identify or follow you.</li>
@@ -48,7 +49,7 @@ const linkClass = 'underline hover:text-primary-600 dark:hover:text-primary-400'
 					<li>Free demo games are hosted by the game providers and load <strong>only if you click play</strong> — at that point the provider receives the technical data any website visit involves.</li>
 					<li>Casino links are affiliate links; the casino's own privacy policy applies on their site. We never receive your personal details from them.</li>
 				</ul>
-			</section>
+			</Card>
 
 			<section class='mb-10'>
 				<H2 size='sm' class='mb-3'>Who we are</H2>

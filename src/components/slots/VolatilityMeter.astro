@@ -1,0 +1,61 @@
+---
+/**
+ * VolatilityMeter — 5-band scale from the volatility enum + a player-fit
+ * sentence. MDX usage: <VolatilityMeter volatility={frontmatter.volatility} />
+ */
+import Card from '../ui/Card.astro';
+
+interface Props {
+	volatility?: 'low' | 'medium' | 'medium-high' | 'high' | 'very-high';
+	/** Optional custom player-fit sentence; a sensible default renders otherwise. */
+	fit?: string;
+	class?: string;
+}
+
+const { volatility, fit, class: className = '' } = Astro.props;
+
+const bands = ['low', 'medium', 'medium-high', 'high', 'very-high'];
+const labels = ['Low', 'Medium', 'Med-High', 'High', 'Very High'];
+const active = volatility ? bands.indexOf(volatility) : -1;
+
+const defaultFit = {
+	low: 'Frequent small wins — suits cautious bankrolls and long sessions.',
+	medium:
+		'Balanced pace — features land often enough that modest bankrolls stay in the game.',
+	'medium-high':
+		'Leans swingy — expect meaningful dry spells between the bigger feature wins.',
+	high: 'Long dry spells, big spikes — bring a bankroll sized for 150+ dead spins.',
+	'very-high':
+		'Extreme swings — most sessions lose slowly, the rare ones pay big. High-roller territory.',
+}[volatility ?? 'medium'];
+---
+
+{
+	volatility && (
+		<Card class:list={['not-prose', className]}>
+			<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-3'>
+				Volatility
+			</p>
+			<div
+				class='grid grid-cols-5 gap-1.5 mb-2'
+				role='img'
+				aria-label={`Volatility: ${labels[active]} (${active + 1} of 5)`}
+			>
+				{bands.map((band, index) => (
+					<div
+						class:list={[
+							'h-2 rounded-full',
+							index <= active
+								? 'bg-primary-600 dark:bg-primary-500'
+								: 'bg-gray-100 dark:bg-gray-800',
+						]}
+					/>
+				))}
+			</div>
+			<p class='font-display font-semibold text-gray-900 dark:text-white mb-1'>
+				{labels[active]}
+			</p>
+			<p class='text-sm text-gray-600 dark:text-gray-400 mb-0'>{fit ?? defaultFit}</p>
+		</Card>
+	)
+}
