@@ -1,0 +1,82 @@
+---
+/**
+ * Screenshot — own-capture evidence figure for review prose
+ * (docs/REVIEW-PROTOCOL.md §7). Resolves images by convention from
+ * src/content/<collection>/images/screenshots/ and optimises via astro:assets
+ * (WebP at build time — capture sources can stay JPG/PNG). Non-16:9 captures
+ * (older 4:3 games — never stretched) are letterboxed on the sunken tile.
+ * A missing file FAILS the build: a review must never ship referencing
+ * evidence that doesn't exist.
+ *
+ * Provenance follows the same honesty rule as stats: `source='provider'`
+ * labels press-kit material as the provider's image, never as our capture.
+ *
+ * MDX usage (no import needed — injected via the review routes):
+ * <Screenshot src="dragons-luck-megaways/base.jpg" alt="…" caption="…" />
+ */
+import { Image } from 'astro:assets';
+
+interface Props {
+	/** Path under images/screenshots/, e.g. "dragons-luck-megaways/base.jpg". */
+	src: string;
+	alt: string;
+	caption?: string;
+	/** Who captured it: our own screenshot (default) or provider press kit. */
+	source?: 'own' | 'provider';
+	class?: string;
+}
+
+const { src, alt, caption, source = 'own', class: className = '' } = Astro.props;
+
+const modules = import.meta.glob(
+	'../../content/*/images/screenshots/**/*.{jpg,jpeg,png,webp,avif}',
+	{ eager: true },
+);
+
+let resolved: ImageMetadata | undefined;
+for (const [path, mod] of Object.entries(modules)) {
+	if (path.endsWith(`/images/screenshots/${src}`)) {
+		resolved = (mod as { default: ImageMetadata }).default;
+		break;
+	}
+}
+if (!resolved) {
+	throw new Error(
+		`Screenshot not found: "${src}" — expected under src/content/*/images/screenshots/`,
+	);
+}
+
+// Letterbox anything meaningfully off 16:9 (protocol: never upscale/stretch).
+const wide = Math.abs(resolved.width / resolved.height - 16 / 9) < 0.05;
+---
+
+<figure class:list={['not-prose my-6', className]}>
+	<div
+		class:list={[
+			'rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800/60',
+			!wide && 'aspect-video grid place-items-center',
+		]}
+	>
+		<Image
+			src={resolved}
+			alt={alt}
+			widths={[480, 800, 1280]}
+			sizes='(min-width: 64rem) 48rem, 100vw'
+			format='webp'
+			class:list={['block', wide ? 'w-full h-auto' : 'max-h-full w-auto']}
+		/>
+	</div>
+	{
+		(caption || source === 'provider') && (
+			<figcaption class='mt-2 text-sm text-gray-600 dark:text-gray-400'>
+				{caption}
+				<span class='text-xs text-gray-500 dark:text-gray-500'>
+					{caption && ' — '}
+					{source === 'provider'
+						? 'Image: provider press kit'
+						: 'Our screenshot'}
+				</span>
+			</figcaption>
+		)
+	}
+</figure>

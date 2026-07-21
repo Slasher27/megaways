@@ -24,6 +24,8 @@ import ReviewMeta from '../../components/reviews/ReviewMeta.astro';
 import VerifiedChip from '../../components/reviews/VerifiedChip.astro';
 import Scorecard from '../../components/reviews/Scorecard.astro';
 import Faq from '../../components/reviews/Faq.astro';
+import Screenshot from '../../components/reviews/Screenshot.astro';
+import SessionLog from '../../components/reviews/SessionLog.astro';
 import RTPContextBar from '../../components/slots/RTPContextBar.astro';
 import VolatilityMeter from '../../components/slots/VolatilityMeter.astro';
 import WinPotentialPanel from '../../components/slots/WinPotentialPanel.astro';
@@ -188,6 +190,8 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 				WinPotentialPanel,
 				CompareTable,
 				Faq,
+				Screenshot,
+				SessionLog,
 			}}
 		/>
 	</section>

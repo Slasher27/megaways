@@ -1,0 +1,112 @@
+---
+/**
+ * SessionLog — dated first-person play-session timeline, the E-E-A-T evidence
+ * section (docs/REVIEW-PROTOCOL.md §3.8). Sessions are demo-play observations
+ * from limited samples and are visibly labelled as such — they never restate
+ * verified stats. Adding an entry here is the ONLY honest updatedDate trigger
+ * (law 5). Renders nothing without entries — never a placeholder; the "Our
+ * Play Sessions" H2 goes into the MDX only once at least one entry exists
+ * (a JSX-wrapped heading would be invisible to the TOC).
+ *
+ * MDX usage: <SessionLog sessions={frontmatter.sessions} />
+ */
+import { Icon } from 'astro-icon/components';
+import Card from '../ui/Card.astro';
+import Screenshot from './Screenshot.astro';
+
+interface Props {
+	sessions?: {
+		/** Date object from the parsed collection, string via MDX `frontmatter`. */
+		date: Date | string;
+		spins?: string;
+		stake?: string;
+		duration?: string;
+		notes: string;
+		evidence?: { image: string; alt: string; caption?: string }[];
+	}[];
+	class?: string;
+}
+
+const { sessions = [], class: className = '' } = Astro.props;
+
+// MDX's `frontmatter` binding is RAW YAML (Zod coercion/defaults don't apply),
+// so normalise here; latest first — freshest experience up top.
+const sorted = sessions
+	.map((s) => ({ ...s, date: new Date(s.date), evidence: s.evidence ?? [] }))
+	.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+const fmtDate = (d: Date) =>
+	d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const metaChips = (s: (typeof sorted)[number]) =>
+	[
+		s.spins && { icon: 'lucide:refresh-cw', label: `${s.spins} spins` },
+		s.stake && { icon: 'lucide:coins', label: `${s.stake} stake` },
+		s.duration && { icon: 'lucide:timer', label: s.duration },
+	].filter(Boolean) as { icon: string; label: string }[];
+---
+
+{
+	sorted.length > 0 && (
+		<div class:list={['not-prose space-y-4', className]}>
+			<p class='text-sm text-gray-600 dark:text-gray-400'>
+				<Icon
+					name='lucide:gamepad-2'
+					size={14}
+					class='inline-block align-[-2px] mr-1.5 text-primary-700 dark:text-primary-400'
+					aria-hidden='true'
+				/>
+				Demo-play sessions by our reviewer. These are observations from
+				limited samples — not statistical claims about the game's maths.
+			</p>
+			<ol class='space-y-4 list-none p-0 m-0'>
+				{sorted.map((session) => (
+					<li>
+						<Card as='article'>
+							<div class='flex flex-wrap items-center gap-x-3 gap-y-2 mb-3'>
+								<time
+									datetime={session.date.toISOString().slice(0, 10)}
+									class='font-display font-semibold text-gray-900 dark:text-white'
+								>
+									{fmtDate(session.date)}
+								</time>
+								{metaChips(session).map((chip) => (
+									<span class='inline-flex items-center gap-1.5 rounded-full bg-gray-100 dark:bg-gray-800/60 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300'>
+										<Icon
+											name={chip.icon}
+											size={12}
+											class='text-primary-700 dark:text-primary-400'
+											aria-hidden='true'
+										/>
+										{chip.label}
+									</span>
+								))}
+							</div>
+							<p class='text-sm leading-relaxed text-gray-700 dark:text-gray-300 mb-0'>
+								{session.notes}
+							</p>
+							{session.evidence.length > 0 && (
+								<div
+									class:list={[
+										'mt-4 grid gap-4',
+										session.evidence.length > 1 &&
+											'sm:grid-cols-2',
+									]}
+								>
+									{session.evidence.map((shot) => (
+										<Screenshot
+											src={shot.image}
+											alt={shot.alt}
+											caption={shot.caption}
+											class='my-0'
+										/>
+									))}
+								</div>
+							)}
+						</Card>
+					</li>
+				))}
+			</ol>
+		</div>
+	)
+}

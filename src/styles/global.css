@@ -134,6 +134,13 @@
 	color: var(--color-primary-400);
 }
 
+/* Protocol modules (Scorecard, RTPContextBar, Callout… — all not-prose
+   blocks) opt out of prose margins, so give them prose-like vertical rhythm.
+   :where keeps specificity at 0 — component utilities (my-0, my-6) win. */
+.review-prose :where(.not-prose) {
+	margin-block: 1.5rem;
+}
+
 /* Bold-only lead-in paragraphs ("**How it works:**", FAQ questions) act as
    pseudo-headings throughout the reviews — give them heading rhythm. */
 .review-prose p:has(> strong:only-child) {

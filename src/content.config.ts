@@ -84,6 +84,34 @@ const slots = defineCollection({
 			// Empty/omitted = no variants documented; renders nothing.
 			rtpVariants: z.array(z.number().min(0).max(100)).default([]),
 
+			// Play sessions (docs/REVIEW-PROTOCOL.md §3.8) — dated demo-play
+			// logs, the honest updatedDate trigger (law 5): bump updatedDate
+			// ONLY when an entry lands here. Observations, not stats — never
+			// restate RTP/max-win claims from session anecdotes. `spins` and
+			// `duration` are strings so honest approximation ("~120", "20 min
+			// demo cap") is first-class. Evidence images live under
+			// images/screenshots/<slug>/ and are resolved by SessionLog.
+			sessions: z
+				.array(
+					z.object({
+						date: z.coerce.date(),
+						spins: z.string().optional(), // e.g. "~120"
+						stake: z.string().optional(), // e.g. "2.00 demo credits"
+						duration: z.string().optional(), // e.g. "20 min (demo time cap)"
+						notes: z.string(),
+						evidence: z
+							.array(
+								z.object({
+									image: z.string(), // path under images/screenshots/, e.g. "dragons-luck-megaways/base.jpg"
+									alt: z.string(),
+									caption: z.string().optional(),
+								}),
+							)
+							.default([]),
+					}),
+				)
+				.default([]),
+
 			// FAQ — single source for the visible accordion AND FAQPage JSON-LD
 			// (same rule as the homepage: text must stay identical).
 			faqs: z
