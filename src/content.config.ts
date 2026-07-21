@@ -208,6 +208,7 @@ const casinos = defineCollection({
 
 		// Affiliate
 		affiliateLink: z.string().url().optional(), // Affiliate tracking link
+		website: z.string().url().optional(), // The casino's REAL domain (entity URL for schema — never the affiliate link)
 
 		// Video Review (60-second summary)
 		videoUrl: z.string().url().optional(), // YouTube or Vimeo embed URL
@@ -231,6 +232,83 @@ const casinos = defineCollection({
 		author: reference('authors').optional(),
 		publishedDate: z.coerce.date().optional(),
 		updatedDate: z.coerce.date().optional(),
+
+		// ---- Casino review protocol (docs/CASINO-REVIEW-PROTOCOL.md) ----
+
+		// Status honesty (law 6) — gates CTAs, banners, listing sort and the
+		// /online-casinos/closed/ page. Status claims are verified first-hand
+		// (never relayed from competitors) and cited in statusNote.
+		status: z.enum(['live', 'warning', 'closed']).default('live'),
+		closedDate: z.coerce.date().optional(),
+		statusNote: z.string().optional(), // one line, evidence-cited
+
+		// Stat provenance (law 5) — set ONLY when genuinely verified.
+		verified: z
+			.object({
+				source: z.string(),
+				date: z.coerce.date(),
+				url: z.string().url().optional(),
+			})
+			.optional(),
+
+		// 6-category scorecard, 0–10 (law 2: the overall score is the
+		// arithmetic mean of these — computed, never stored separately).
+		scorecard: z
+			.object({
+				trust: z.number().min(0).max(10),
+				megawaysLibrary: z.number().min(0).max(10),
+				bonusFairness: z.number().min(0).max(10),
+				payments: z.number().min(0).max(10),
+				support: z.number().min(0).max(10),
+				rgTools: z.number().min(0).max(10),
+			})
+			.optional(),
+
+		// The moat data (§3.6): hand-counted, never a marketing number.
+		megawaysCount: z.number().optional(),
+		megawaysCountedDate: z.coerce.date().optional(),
+
+		// Licence verification (law 3) — register-linked or it doesn't count.
+		licenceDetails: z
+			.array(
+				z.object({
+					authority: z.string(), // e.g. "Curaçao GCB"
+					number: z.string().optional(),
+					registerUrl: z.string().url().optional(),
+					verifiedDate: z.coerce.date().optional(),
+				}),
+			)
+			.default([]),
+
+		// FAQ / sessions / changelog — same conventions as slots (single
+		// source for visible + JSON-LD; sessions/changelog are the ONLY
+		// honest updatedDate triggers).
+		faqs: z
+			.array(z.object({ question: z.string(), answer: z.string() }))
+			.default([]),
+		sessions: z
+			.array(
+				z.object({
+					date: z.coerce.date(),
+					spins: z.string().optional(),
+					stake: z.string().optional(),
+					duration: z.string().optional(),
+					notes: z.string(),
+					evidence: z
+						.array(
+							z.object({
+								image: z.string(),
+								alt: z.string(),
+								caption: z.string().optional(),
+							}),
+						)
+						.default([]),
+				}),
+			)
+			.default([]),
+		changelog: z
+			.array(z.object({ date: z.coerce.date(), change: z.string() }))
+			.default([]),
 	}),
 });
 

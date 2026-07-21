@@ -1,0 +1,106 @@
+---
+/**
+ * CategoryScorecard — the 6-category casino scorecard
+ * (docs/CASINO-REVIEW-PROTOCOL.md §3.4). Law 2: the overall score is the
+ * ARITHMETIC MEAN of the six categories, computed here — never stored or
+ * hand-picked (casino.org's 5.0-vs-4.55 incoherence is the anti-pattern).
+ * Scores are 0–10. Renders nothing without scores.
+ * MDX usage: <CategoryScorecard scores={frontmatter.scorecard} justifications={{trust: '…', …}} />
+ */
+import { Icon } from 'astro-icon/components';
+import Card from '../ui/Card.astro';
+
+interface Scores {
+	trust: number;
+	megawaysLibrary: number;
+	bonusFairness: number;
+	payments: number;
+	support: number;
+	rgTools: number;
+}
+
+interface Props {
+	scores?: Scores;
+	/** Optional one-line justification per category key. */
+	justifications?: Partial<Record<keyof Scores, string>>;
+	class?: string;
+}
+
+const { scores, justifications = {}, class: className = '' } = Astro.props;
+
+const rows = scores
+	? ([
+			{ key: 'trust', label: 'Trust & Licensing', icon: 'lucide:shield-check' },
+			{ key: 'megawaysLibrary', label: 'Megaways Library', icon: 'lucide:zap' },
+			{ key: 'bonusFairness', label: 'Bonus Fairness', icon: 'lucide:gift' },
+			{ key: 'payments', label: 'Payments & Payout Speed', icon: 'lucide:wallet' },
+			{ key: 'support', label: 'Support', icon: 'lucide:message-circle' },
+			{ key: 'rgTools', label: 'Responsible Gambling Tools', icon: 'lucide:heart-pulse' },
+		] as const)
+	: [];
+
+// Law 2: overall = arithmetic mean, one decimal.
+const overall = scores
+	? Math.round(
+			(Object.values(scores).reduce((sum, value) => sum + value, 0) /
+				Object.values(scores).length) *
+				10,
+		) / 10
+	: 0;
+---
+
+{
+	scores && (
+		<Card class:list={['not-prose', className]}>
+			<div class='flex items-center justify-between gap-4 mb-4'>
+				<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-0'>
+					How We Scored It
+				</p>
+				<p class='font-display text-2xl font-bold text-gray-900 dark:text-white mb-0'>
+					{overall.toFixed(1)}
+					<span class='text-sm font-semibold text-gray-600 dark:text-gray-400'>
+						{' '}
+						/ 10
+					</span>
+				</p>
+			</div>
+			<dl class='space-y-4 mb-0'>
+				{rows.map((row) => (
+					<div class='grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1'>
+						<dt class='flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300'>
+							<Icon
+								name={row.icon}
+								size={15}
+								class='text-primary-700 dark:text-primary-400 shrink-0'
+								aria-hidden='true'
+							/>
+							{row.label}
+						</dt>
+						<dd class='font-display text-sm font-semibold text-gray-900 dark:text-white m-0'>
+							{scores[row.key].toFixed(1)}
+						</dd>
+						<div
+							class='col-span-2 h-1.5 rounded-full bg-gray-100 dark:bg-gray-800'
+							role='img'
+							aria-label={`${row.label}: ${scores[row.key]} out of 10`}
+						>
+							<div
+								class='h-full rounded-full bg-primary-600 dark:bg-primary-500'
+								style={`width: ${(scores[row.key] / 10) * 100}%`}
+							/>
+						</div>
+						{justifications[row.key] && (
+							<p class='col-span-2 text-xs text-gray-600 dark:text-gray-400 mb-0'>
+								{justifications[row.key]}
+							</p>
+						)}
+					</div>
+				))}
+			</dl>
+			<p class='mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400 mb-0'>
+				The overall score is the arithmetic mean of the six categories —
+				never adjusted by hand.
+			</p>
+		</Card>
+	)
+}

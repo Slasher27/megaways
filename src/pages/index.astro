@@ -54,7 +54,7 @@ const latestReviews = allSlots
 	.slice(0, 4);
 
 const featuredCasinos = allCasinos
-	.filter((c) => c.data.featured)
+	.filter((c) => c.data.featured && (c.data.status ?? 'live') === 'live')
 	.sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0))
 	.slice(0, 4);
 

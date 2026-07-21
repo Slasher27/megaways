@@ -13,7 +13,11 @@ import CasinoCard from '../../../components/casino/CasinoCard.astro';
 
 const allCasinos = await getCollection('casinos');
 const australianCasinos = allCasinos
-	.filter((casino) => casino.data.markets?.includes('australia'))
+	.filter(
+		(casino) =>
+			casino.data.markets?.includes('australia') &&
+			(casino.data.status ?? 'live') !== 'closed',
+	)
 	.sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0));
 
 const metadata = {

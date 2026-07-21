@@ -23,6 +23,15 @@ import TocCard from '../../components/reviews/TocCard.astro';
 import ActionBar from '../../components/layout/ActionBar.astro';
 import VideoPlayer from '../../components/reviews/VideoPlayer.astro';
 import VideoSchema from '../../components/seo/VideoSchema.astro';
+import CasinoStatusBanner from '../../components/casino/CasinoStatusBanner.astro';
+import ReviewChangeLog from '../../components/reviews/ReviewChangeLog.astro';
+import CategoryScorecard from '../../components/casino/CategoryScorecard.astro';
+import QuickVerdict from '../../components/casino/QuickVerdict.astro';
+import VerifiedChip from '../../components/reviews/VerifiedChip.astro';
+import Faq from '../../components/reviews/Faq.astro';
+import SessionLog from '../../components/reviews/SessionLog.astro';
+import Screenshot from '../../components/reviews/Screenshot.astro';
+import Callout from '../../components/ui/Callout.astro';
 import { paymentMethodMeta } from '../../data/payment-methods';
 
 export async function getStaticPaths() {
@@ -47,6 +56,9 @@ const toc = headings.filter((heading) => heading.depth === 2);
 // Get author details if available
 const author = casino.data.author ? await getEntry(casino.data.author) : null;
 
+// Status honesty (CASINO-REVIEW-PROTOCOL law 6): closed = zero CTAs.
+const isClosed = casino.data.status === 'closed';
+
 // Prepare video schema data if video exists
 const hasVideo = !!casino.data.videoUrl;
 const videoThumbnailUrl = casino.data.videoThumbnail
@@ -70,15 +82,20 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 		/>
 	)}
 
+	<!-- Status banner (warning/closed; renders nothing for live) -->
+	<CasinoStatusBanner casino={casino.data} class='mb-8' />
+
 	<!-- Title & Rating -->
 	<header class='mb-8'>
 		<H1 size='md' class='mb-4'>{casino.data.name} Review</H1>
 
-		<ReviewMeta
-			rating={casino.data.rating}
-			updatedDate={casino.data.updatedDate}
-			class='mb-5'
-		/>
+		<div class='flex flex-wrap items-center gap-x-4 gap-y-2 mb-5'>
+			<ReviewMeta
+				rating={isClosed ? undefined : casino.data.rating}
+				updatedDate={casino.data.updatedDate}
+			/>
+			<VerifiedChip verified={casino.data.verified} />
+		</div>
 
 		{
 			casino.data.description && (
@@ -138,9 +155,9 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 		</section>
 	)}
 
-	<!-- Welcome Bonus CTA Section -->
+	<!-- Welcome Bonus CTA Section (never on a closed casino) -->
 	{
-		casino.data.welcomeBonus && (
+		!isClosed && casino.data.welcomeBonus && (
 			<Card variant='bonus' padding='none' class='mb-8 overflow-hidden'>
 				<div class='flex flex-col lg:flex-row'>
 					<!-- Thumbnail Image (Left side on large screens, top on mobile) -->
@@ -199,7 +216,7 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 									{casino.data.welcomeBonus.minDeposit && (
 										<span class='flex items-center gap-1'>
 											<Icon name='lucide:coins' size={14} />
-											Min deposit: ${casino.data.welcomeBonus.minDeposit}
+											Min deposit: €{casino.data.welcomeBonus.minDeposit}
 										</span>
 									)}
 								</div>
@@ -342,9 +359,20 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 	<!-- On this page (mobile/tablet; xl+ uses the sticky aside in the layout) -->
 	<TocCard headings={toc} class='mb-8' />
 
-	<!-- Review Content -->
+	<!-- Review Content (protocol components injected — no MDX imports needed) -->
 	<section class='review-prose prose prose-lg dark:prose-invert mb-8'>
-		<Content components={{ Tile, TileGrid }} />
+		<Content
+			components={{
+				Tile,
+				TileGrid,
+				Callout,
+				Faq,
+				SessionLog,
+				Screenshot,
+				QuickVerdict,
+				CategoryScorecard,
+			}}
+		/>
 	</section>
 
 	<!-- Author & Date Info -->
@@ -360,7 +388,11 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 		)
 	}
 
-	<!-- Final CTA -->
+	<!-- Review History (renders only when changelog entries exist) -->
+	<ReviewChangeLog entries={casino.data.changelog} class='mb-8' />
+
+	<!-- Final CTA (never on a closed casino) -->
+	{!isClosed && (
 	<Card as='section' class='mt-12 text-center'>
 		<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-2'>
 			Ready to spin?
@@ -386,10 +418,11 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 			18+. Terms and conditions apply. Please gamble responsibly.
 		</P>
 	</Card>
+	)}
 
-	<!-- Sticky mobile affiliate CTA -->
+	<!-- Sticky mobile affiliate CTA (never on a closed casino) -->
 	{
-		casino.data.affiliateLink && (
+		!isClosed && casino.data.affiliateLink && (
 			<ActionBar>
 				<Button
 					href={casino.data.affiliateLink}

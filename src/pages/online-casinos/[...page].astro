@@ -17,8 +17,13 @@ export const getStaticPaths = (async ({ paginate }) => {
 	// Get all casinos from content collection
 	const allCasinos = await getCollection('casinos');
 
-	// Sort by rating (highest first), then by name
+	// Sort by rating (highest first), then by name — closed casinos always
+	// last (CASINO-REVIEW-PROTOCOL law 6: a "best casinos" flow never ranks
+	// a corpse above live options; their cards carry the CLOSED ribbon).
+	const statusRank = (entry: (typeof allCasinos)[number]) =>
+		entry.data.status === 'closed' ? 1 : 0;
 	const sortedCasinos = allCasinos.sort((a, b) => {
+		if (statusRank(a) !== statusRank(b)) return statusRank(a) - statusRank(b);
 		if (b.data.rating && a.data.rating) {
 			return b.data.rating - a.data.rating;
 		}

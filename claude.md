@@ -36,7 +36,7 @@ npx astro check
 10. **No TS annotations inside Astro template expressions** (frontmatter fence only).
 11. **Never name a component prop `slot`.** On a direct child of another component, Astro treats `slot={…}` as a named-slot assignment and silently drops the element (this cost slot pages their JSON-LD once). Use `slotData` etc.
 12. **JSON-LD schema components render INSIDE layouts** (body is fine) — never before the layout tag, or they emit outside `<html>` and push the charset past 1024 bytes.
-13. **Review rewrites follow `docs/REVIEW-PROTOCOL.md`** (§5b conventions locked via the dragons-luck-megaways prototype): never `AggregateRating` on a single editorial review; a `sessions[]` entry is the ONLY honest `updatedDate` bump; always click-verify a `demoUrl` loads the reviewed game; screenshots live in `screenshots/<slug>/` and press-kit images are labelled `source='provider'`.
+13. **Review rewrites follow `docs/REVIEW-PROTOCOL.md`** (slots) and **`docs/CASINO-REVIEW-PROTOCOL.md`** (casinos): never `AggregateRating` on a single editorial review; `sessions[]`/`changelog` entries are the ONLY honest `updatedDate` bumps; always click-verify a `demoUrl` loads the reviewed game; screenshots live in `screenshots/<slug>/`, press-kit images labelled `source='provider'`. Casino extras: verdict atom first, overall score = mean of categories, licence facts register-linked, casino `status` gates CTAs (dead brand = zero CTAs). ⚠ BlueLeo + Casitsu are reported CLOSED by competitors — status-gate before touching their reviews.
 
 ---
 
@@ -49,7 +49,8 @@ npx astro check
 | URLs, routing, redirects, slug rule | `docs/ARCHITECTURE.md` |
 | Rebuild content / Wayback / demo iframes | `docs/MIGRATION.md` |
 | Meta, schema, sitemap, robots, E-E-A-T, AI | `docs/SEO-GUIDELINES.md` |
-| Review rewrite laws, blueprints, conventions | `docs/REVIEW-PROTOCOL.md` |
+| Review rewrite laws, blueprints, conventions (slots) | `docs/REVIEW-PROTOCOL.md` |
+| Casino review spec (landscape, laws, blueprint, strategy) | `docs/CASINO-REVIEW-PROTOCOL.md` |
 | Collection frontmatter | `docs/CONTENT-SCHEMAS.md` |
 | Component organisation | `docs/COMPONENTS.md` |
 | Tokens, CSS-over-JS, a11y | `docs/STYLING.md` |

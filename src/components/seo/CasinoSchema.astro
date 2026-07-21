@@ -1,12 +1,17 @@
 ---
 /**
- * CasinoSchema Component
+ * CasinoSchema — JSON-LD for casino reviews per docs/CASINO-REVIEW-PROTOCOL.md §4.
  *
- * Generates JSON-LD structured data for casino reviews
- * Implements schema.org Review and Organization types
+ * - itemReviewed is OnlineBusiness (bare Organization is star-ineligible —
+ *   casino.guru's defect) with the casino's REAL domain as url (never the
+ *   affiliate link — a tracker as entity URL is Trustpilot's tinyurl defect).
+ * - NO AggregateRating, ever (law: one editorial review is not an aggregate).
+ * - status='closed' omits reviewRating entirely: the score described a live
+ *   casino; a dead one keeps the honest dates + statusNote until the
+ *   post-mortem re-scores it (askgamblers slashes to 1/10 — we prefer
+ *   omission over an invented number).
  *
- * Usage:
- * <CasinoSchema casino={casino.data} author={author} />
+ * Usage: <CasinoSchema casino={casino.data} author={author} />
  */
 
 import type { CollectionEntry } from 'astro:content';
@@ -19,11 +24,10 @@ interface Props {
 
 const { casino, author, url } = Astro.props;
 
-// Get absolute URL
 const siteUrl = Astro.site?.href || 'https://megawaysonline.com';
 const reviewUrl = url || Astro.url.href;
+const isClosed = casino.status === 'closed';
 
-// Build absolute image URL
 const imageUrl = casino.thumbnail?.src || casino.logo?.src;
 const absoluteImageUrl = imageUrl
 	? imageUrl.startsWith('http')
@@ -31,35 +35,48 @@ const absoluteImageUrl = imageUrl
 		: new URL(imageUrl, siteUrl).href
 	: new URL('/images/og-default.jpg', siteUrl).href;
 
-// Format dates
 const publishedDate = casino.publishedDate?.toISOString().split('T')[0];
 const modifiedDate = casino.updatedDate?.toISOString().split('T')[0];
 
-// Build the schema
 const schema = {
 	'@context': 'https://schema.org',
 	'@type': 'Review',
 	itemReviewed: {
-		'@type': 'Organization',
+		'@type': 'OnlineBusiness',
 		name: casino.name,
 		image: absoluteImageUrl,
-		...(casino.affiliateLink && { url: casino.affiliateLink }),
-		...(casino.rating && {
-			aggregateRating: {
-				'@type': 'AggregateRating',
+		...(casino.website && { url: casino.website }),
+		...(casino.paymentMethods?.length > 0 && {
+			acceptedPaymentMethod: casino.paymentMethods,
+		}),
+	},
+	...(casino.rating &&
+		!isClosed && {
+			reviewRating: {
+				'@type': 'Rating',
 				ratingValue: casino.rating,
 				bestRating: 5,
 				worstRating: 0,
-				ratingCount: 1,
 			},
 		}),
-	},
-	...(casino.rating && {
-		reviewRating: {
-			'@type': 'Rating',
-			ratingValue: casino.rating,
-			bestRating: 5,
-			worstRating: 0,
+	...(casino.pros?.length > 0 && {
+		positiveNotes: {
+			'@type': 'ItemList',
+			itemListElement: casino.pros.map((item, index) => ({
+				'@type': 'ListItem',
+				position: index + 1,
+				name: item,
+			})),
+		},
+	}),
+	...(casino.cons?.length > 0 && {
+		negativeNotes: {
+			'@type': 'ItemList',
+			itemListElement: casino.cons.map((item, index) => ({
+				'@type': 'ListItem',
+				position: index + 1,
+				name: item,
+			})),
 		},
 	}),
 	...(author && {
@@ -67,6 +84,14 @@ const schema = {
 			'@type': 'Person',
 			name: author.name,
 			...(author.role && { jobTitle: author.role }),
+			url: new URL('/about/team/', siteUrl).href,
+			...(author.socials && {
+				sameAs: [
+					author.socials.linkedin,
+					author.socials.twitter,
+					author.socials.website,
+				].filter(Boolean),
+			}),
 		},
 	}),
 	...(publishedDate && { datePublished: publishedDate }),

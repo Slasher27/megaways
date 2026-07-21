@@ -1,0 +1,132 @@
+---
+/**
+ * /online-casinos/closed/ — the closed-casino archive
+ * (CASINO-REVIEW-PROTOCOL law 6 + §4b). Lists every casino we previously
+ * reviewed that has since shut down. Reviews are kept as dated post-mortem
+ * records — an E-E-A-T asset: we visibly track closures where competitors
+ * leave stale bonus strips on dead brands.
+ */
+import { getCollection } from 'astro:content';
+import PageLayout from '../../../layouts/PageLayout.astro';
+import Container from '../../../components/layout/Container.astro';
+import Header from '../../../components/layout/Header.astro';
+import Footer from '../../../components/layout/Footer.astro';
+import H1 from '../../../components/typography/H1.astro';
+import H2 from '../../../components/typography/H2.astro';
+import P from '../../../components/typography/P.astro';
+import Breadcrumb from '../../../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../../../components/seo/BreadcrumbSchema.astro';
+import CasinoCard from '../../../components/casino/CasinoCard.astro';
+
+const allCasinos = await getCollection('casinos');
+const closedCasinos = allCasinos
+	.filter((c) => c.data.status === 'closed')
+	.sort(
+		(a, b) =>
+			(b.data.closedDate?.getTime() ?? 0) - (a.data.closedDate?.getTime() ?? 0),
+	);
+
+const metadata = {
+	title: 'Closed Casinos | Sites We Reviewed That Have Shut Down',
+	description:
+		'Online casinos we previously reviewed that have since closed. What happened, when we verified it, and better Megaways alternatives that are still live.',
+};
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Online Casinos', href: '/online-casinos/' },
+	{ label: 'Closed Casinos', href: '/online-casinos/closed/' },
+];
+
+const fmtDate = (d?: Date) =>
+	d?.toLocaleDateString('en-GB', {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric',
+	});
+---
+
+<PageLayout title={metadata.title} description={metadata.description}>
+	<BreadcrumbSchema items={breadcrumbItems} />
+	<Header slot='header' />
+
+	<Container>
+		<Breadcrumb items={breadcrumbItems} class='mb-6' />
+
+		<div class='mb-12'>
+			<H1 size='lg'>Closed Casinos</H1>
+			<P variant='lead' size='lg' class='mt-4'>
+				Online casinos close more often than review sites admit — and many
+				keep recommending them long after the doors shut. This page lists
+				every casino we previously reviewed that has since ceased operating.
+				We keep each review online as a dated record of what happened, and we
+				verify closures ourselves rather than relaying rumours.
+			</P>
+		</div>
+
+		<section aria-labelledby='closed-casinos-heading'>
+			<H2 id='closed-casinos-heading' size='md' class='mb-4'>
+				Casinos That Have Shut Down
+			</H2>
+
+			{
+				closedCasinos.length > 0 ? (
+					<>
+						<ul class='mb-8 space-y-2 list-none p-0'>
+							{closedCasinos.map((entry) => (
+								<li class='text-sm text-gray-700 dark:text-gray-300'>
+									<a
+										href={`/online-casinos/${entry.data.slug}-casino-review/`}
+										class='font-semibold text-primary-700 dark:text-primary-400 hover:underline'
+									>
+										{entry.data.name}
+									</a>
+									{entry.data.closedDate &&
+										` — closed ${fmtDate(entry.data.closedDate)}`}
+									{entry.data.statusNote && ` · ${entry.data.statusNote}`}
+								</li>
+							))}
+						</ul>
+						<div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+							{closedCasinos.map((casinoEntry, index) => (
+								<CasinoCard casinoEntry={casinoEntry} eager={index < 4} />
+							))}
+						</div>
+					</>
+				) : (
+					<P class='text-gray-600 dark:text-gray-400'>
+						None right now — every casino we review is currently operating.
+					</P>
+				)
+			}
+		</section>
+
+		<section aria-labelledby='why-heading' class='mt-16 max-w-3xl'>
+			<H2 id='why-heading' size='md' class='mb-4'>
+				Why We Keep Reviews of Closed Casinos
+			</H2>
+			<P class='mb-4'>
+				When a casino shuts down, players are left with questions: what
+				happened, whether pending withdrawals will be honoured, and where to
+				play instead. Deleting the review helps nobody. Instead we mark the
+				review as closed, remove every sign-up link, record the closure date
+				and evidence, and point readers at live alternatives with comparable
+				Megaways libraries.
+			</P>
+			<P>
+				If a casino listed here still appears "open" somewhere — a mirror
+				site, an old bonus page — treat it with extreme caution and never
+				deposit. Looking for a safe place to play?{' '}
+				<a
+					href='/online-casinos/'
+					class='text-primary-700 dark:text-primary-400 font-medium hover:underline'
+				>
+					See our live, tested Megaways casinos
+				</a>
+				.
+			</P>
+		</section>
+	</Container>
+
+	<Footer slot='footer' />
+</PageLayout>

@@ -44,8 +44,14 @@ const {
 // real affiliate links) — never hardcoded placeholders.
 let displayCasinos = casinos;
 if (displayCasinos.length === 0) {
+	// Only live casinos are ever recommended (protocol law 6: no closed or
+	// warning-status casino appears in an automatic recommendation slot).
 	const featured = await getCollection('casinos', (entry) =>
-		Boolean(entry.data.featured && entry.data.affiliateLink),
+		Boolean(
+			entry.data.featured &&
+				entry.data.affiliateLink &&
+				(entry.data.status ?? 'live') === 'live',
+		),
 	);
 	displayCasinos = featured
 		.sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0))

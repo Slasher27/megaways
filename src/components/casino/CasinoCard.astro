@@ -23,6 +23,9 @@ const casino = casinoEntry.data;
 
 // Generate casino URL
 const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
+
+// Status honesty (CASINO-REVIEW-PROTOCOL law 6): closed/warning ribbons.
+const status = casino.status ?? 'live';
 ---
 
 <Card
@@ -34,8 +37,25 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 	<!-- Thumbnail / Logo Banner -->
 	<a
 		href={casinoUrl}
-		class='block relative overflow-hidden aspect-video bg-gray-100 dark:bg-gray-800'
+		class:list={[
+			'block relative overflow-hidden aspect-video bg-gray-100 dark:bg-gray-800',
+			status === 'closed' && 'grayscale',
+		]}
 	>
+		{
+			status === 'closed' && (
+				<span class='absolute top-3 left-0 z-10 bg-red-700 text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-r-full shadow-sm'>
+					Closed
+				</span>
+			)
+		}
+		{
+			status === 'warning' && (
+				<span class='absolute top-3 left-0 z-10 bg-amber-600 text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-r-full shadow-sm'>
+					Caution
+				</span>
+			)
+		}
 		{
 			casino.thumbnail ? (
 				<Image
@@ -117,9 +137,9 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 			</H3>
 		</a>
 
-		<!-- Welcome Bonus (Compact) -->
+		<!-- Welcome Bonus (Compact) — never advertised on a closed casino -->
 		{
-			casino.welcomeBonus && (
+			status !== 'closed' && casino.welcomeBonus && (
 				<div class='mb-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg'>
 					<p class='text-[0.6875rem] font-semibold uppercase tracking-wider text-green-700 dark:text-green-400 mb-1'>
 						{casino.welcomeBonus.title}
@@ -205,23 +225,31 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 			)
 		}
 
-		<!-- CTA Button -->
-		<Button
-			href={casino.affiliateLink}
-			variant='primary'
-			size='md'
-			affiliate={true}
-			class='w-full mb-2'
-		>
-			Visit Casino
-		</Button>
-
-		<!-- Review Link -->
-		<a
-			href={casinoUrl}
-			class='block text-center text-xs text-gray-600 dark:text-gray-400 hover:text-primary-700 dark:hover:text-primary-400 transition-colors'
-		>
-			Read Review →
-		</a>
+		<!-- CTA — closed casinos get the review link only (law 6: zero CTAs) -->
+		{
+			status !== 'closed' ? (
+				<>
+					<Button
+						href={casino.affiliateLink}
+						variant='primary'
+						size='md'
+						affiliate={true}
+						class='w-full mb-2'
+					>
+						Visit Casino
+					</Button>
+					<a
+						href={casinoUrl}
+						class='block text-center text-xs text-gray-600 dark:text-gray-400 hover:text-primary-700 dark:hover:text-primary-400 transition-colors'
+					>
+						Read Review →
+					</a>
+				</>
+			) : (
+				<Button href={casinoUrl} variant='secondary' size='md' class='w-full'>
+					Read What Happened
+				</Button>
+			)
+		}
 	</div>
 </Card>

@@ -1,0 +1,108 @@
+---
+/**
+ * QuickVerdict — the extractable verdict block (CASINO-REVIEW-PROTOCOL law 1):
+ * the one-sentence verdict atom (rendered as quotable prose, not chrome),
+ * best-for / avoid-if chips, and six mini-bars mirroring the scorecard.
+ * MDX usage:
+ * <QuickVerdict atom="…one sentence…" bestFor="…" avoidIf="…" scores={frontmatter.scorecard} />
+ */
+import { Icon } from 'astro-icon/components';
+import Card from '../ui/Card.astro';
+
+interface Props {
+	/** The verdict atom — score + label + basis + date in ONE sentence. */
+	atom: string;
+	bestFor?: string;
+	avoidIf?: string;
+	scores?: {
+		trust: number;
+		megawaysLibrary: number;
+		bonusFairness: number;
+		payments: number;
+		support: number;
+		rgTools: number;
+	};
+	class?: string;
+}
+
+const { atom, bestFor, avoidIf, scores, class: className = '' } = Astro.props;
+
+const bars = scores
+	? ([
+			['Trust', scores.trust],
+			['Megaways', scores.megawaysLibrary],
+			['Bonus', scores.bonusFairness],
+			['Payments', scores.payments],
+			['Support', scores.support],
+			['RG', scores.rgTools],
+		] as const)
+	: [];
+---
+
+<Card class:list={['not-prose', className]}>
+	<p class='font-display text-lg font-semibold text-gray-900 dark:text-white leading-snug mb-4'>
+		{atom}
+	</p>
+
+	{
+		(bestFor || avoidIf) && (
+			<div class='space-y-2 mb-4'>
+				{bestFor && (
+					<p class='flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300 mb-0'>
+						<Icon
+							name='lucide:circle-check'
+							size={16}
+							class='text-green-700 dark:text-green-400 shrink-0 mt-0.5'
+							aria-hidden='true'
+						/>
+						<span>
+							<strong class='text-gray-900 dark:text-white'>Best for:</strong>{' '}
+							{bestFor}
+						</span>
+					</p>
+				)}
+				{avoidIf && (
+					<p class='flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300 mb-0'>
+						<Icon
+							name='lucide:circle-x'
+							size={16}
+							class='text-red-700 dark:text-red-400 shrink-0 mt-0.5'
+							aria-hidden='true'
+						/>
+						<span>
+							<strong class='text-gray-900 dark:text-white'>Avoid if:</strong>{' '}
+							{avoidIf}
+						</span>
+					</p>
+				)}
+			</div>
+		)
+	}
+
+	{
+		bars.length > 0 && (
+			<div class='grid grid-cols-3 sm:grid-cols-6 gap-3'>
+				{bars.map(([label, value]) => (
+					<div>
+						<div
+							class='h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 mb-1'
+							role='img'
+							aria-label={`${label}: ${value} out of 10`}
+						>
+							<div
+								class='h-full rounded-full bg-primary-600 dark:bg-primary-500'
+								style={`width: ${(value / 10) * 100}%`}
+							/>
+						</div>
+						<p class='text-[0.6875rem] font-semibold text-gray-600 dark:text-gray-400 mb-0'>
+							{label}{' '}
+							<span class='text-gray-900 dark:text-white tabular-nums'>
+								{value.toFixed(1)}
+							</span>
+						</p>
+					</div>
+				))}
+			</div>
+		)
+	}
+</Card>
