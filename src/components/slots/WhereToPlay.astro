@@ -27,12 +27,16 @@ interface Casino {
 interface Props {
 	slotName: string;
 	casinos?: Casino[];
+	/** Suppress the internal header when the MDX supplies its own H2
+	 *  (protocol reviews use a question-format, TOC-visible heading). */
+	hideHeader?: boolean;
 	class?: string;
 }
 
 const {
 	slotName,
 	casinos = [],
+	hideHeader = false,
 	class: className = '',
 } = Astro.props;
 
@@ -58,15 +62,21 @@ if (displayCasinos.length === 0) {
 ---
 
 <Card as='section' padding='none' class={`p-6 sm:p-8 ${className}`}>
-	<div class="text-center mb-8">
-		<p class="text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-2">
-			Ready to spin?
-		</p>
-		<H2 size="md" class="mb-3!">Where to Play {slotName}</H2>
-		<P class="text-gray-600 dark:text-gray-400">
-			Play {slotName} at these top-rated online casinos
-		</P>
-	</div>
+	{
+		!hideHeader && (
+			<div class='text-center mb-8'>
+				<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-2'>
+					Ready to spin?
+				</p>
+				<H2 size='md' class='mb-3!'>
+					Where to Play {slotName}
+				</H2>
+				<P class='text-gray-600 dark:text-gray-400'>
+					Play {slotName} at these top-rated online casinos
+				</P>
+			</div>
+		)
+	}
 
 	<div class="grid md:grid-cols-2 gap-4">
 		{displayCasinos.map((casino) => (

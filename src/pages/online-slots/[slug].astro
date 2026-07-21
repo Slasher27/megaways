@@ -34,7 +34,6 @@ import ActionBar from '../../components/layout/ActionBar.astro';
 import { providerSlug } from '../../data/providers';
 
 // New review components
-import Rating from '../../components/reviews/Rating.astro';
 import ProsCons from '../../components/reviews/ProsCons.astro';
 import AuthorCard from '../../components/reviews/AuthorCard.astro';
 import SlotStats from '../../components/slots/SlotStats.astro';
@@ -192,6 +191,7 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 				Faq,
 				Screenshot,
 				SessionLog,
+				WhereToPlay,
 			}}
 		/>
 	</section>
@@ -199,10 +199,15 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 	<!-- Pros & Cons -->
 	<ProsCons pros={slot.data.pros} cons={slot.data.cons} class='mb-10' />
 
-	<!-- Where to Play -->
-	<div id='where-to-play'>
-		<WhereToPlay slotName={slot.data.name} class='mb-10' />
-	</div>
+	<!-- Where to Play — protocol-format MDX places this itself (blueprint §10,
+	     before the FAQs); only render here when the body hasn't. -->
+	{
+		!slot.body?.includes('<WhereToPlay') && (
+			<div id='where-to-play'>
+				<WhereToPlay slotName={slot.data.name} class='mb-10' />
+			</div>
+		)
+	}
 
 	<!-- Author Card -->
 	{
@@ -214,39 +219,6 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 				variant='full'
 				class='mb-10'
 			/>
-		)
-	}
-
-	<!-- Final Rating Summary -->
-	{
-		slot.data.rating && (
-			<Card as='section' padding='lg' class='text-center'>
-				<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-2'>
-					Our Rating
-				</p>
-				<p class='font-display text-5xl font-bold text-gray-900 dark:text-white mb-3'>
-					{slot.data.rating}
-					<span class='text-xl font-semibold text-gray-600 dark:text-gray-400'>
-						/ 5
-					</span>
-				</p>
-				<div class='flex items-center justify-center gap-4 mb-4'>
-					<Rating rating={slot.data.rating} size='xl' />
-				</div>
-				<P class='text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
-					{slot.data.name} scores {slot.data.rating} out of 5 stars in our
-					review.
-					{slot.data.rating >= 4.5 && ' Highly recommended for all players.'}
-					{slot.data.rating >= 4 &&
-						slot.data.rating < 4.5 &&
-						' A solid choice worth trying.'}
-					{slot.data.rating >= 3 &&
-						slot.data.rating < 4 &&
-						' Decent slot with some good features.'}
-					{slot.data.rating < 3 &&
-						' May appeal to specific player preferences.'}
-				</P>
-			</Card>
 		)
 	}
 

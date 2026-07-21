@@ -19,16 +19,18 @@ interface Props {
 	slotData: CollectionEntry<'slots'>['data'];
 	author?: CollectionEntry<'authors'>['data'];
 	url?: string;
+	/** Resolved page image (own screenshot/thumbnail) — overrides convention. */
+	image?: string;
 }
 
-const { slotData: slot, author, url } = Astro.props;
+const { slotData: slot, author, url, image } = Astro.props;
 
 // Get absolute URL
 const siteUrl = Astro.site?.href || 'https://megawaysonline.com';
 const reviewUrl = url || Astro.url.href;
 
 // Build absolute image URL
-const imageUrl = slot.thumbnail?.src || slot.logo?.src;
+const imageUrl = image || slot.thumbnail?.src || slot.logo?.src;
 const absoluteImageUrl = imageUrl
 	? imageUrl.startsWith('http')
 		? imageUrl
@@ -49,18 +51,14 @@ const schema = {
 		name: slot.name,
 		image: absoluteImageUrl,
 		...(releasedDate && { datePublished: releasedDate }),
-		...(slot.provider && { publisher: slot.provider }),
+		...(slot.provider && {
+			publisher: { '@type': 'Organization', name: slot.provider },
+		}),
 		genre: 'Slot Machine',
 		gamePlatform: 'Web Browser',
-		...(slot.rating && {
-			aggregateRating: {
-				'@type': 'AggregateRating',
-				ratingValue: slot.rating,
-				bestRating: 5,
-				worstRating: 0,
-				ratingCount: 1,
-			},
-		}),
+		// NO aggregateRating: one editorial review is not an aggregate
+		// (protocol law 9 — thin-vote AggregateRating is the incumbents'
+		// documented schema sin). reviewRating below carries the score.
 	},
 	...(slot.rating && {
 		reviewRating: {
@@ -75,6 +73,14 @@ const schema = {
 			'@type': 'Person',
 			name: author.name,
 			...(author.role && { jobTitle: author.role }),
+			url: new URL('/about/team/', siteUrl).href,
+			...(author.socials && {
+				sameAs: [
+					author.socials.linkedin,
+					author.socials.twitter,
+					author.socials.website,
+				].filter(Boolean),
+			}),
 		},
 	}),
 	...(publishedDate && { datePublished: publishedDate }),

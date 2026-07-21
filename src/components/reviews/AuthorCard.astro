@@ -27,10 +27,10 @@ const {
 	class: className = '',
 } = Astro.props;
 
-// Format dates
+// Format dates (en-GB — the site's register, matches SessionLog/VerifiedChip)
 const formatDate = (date: Date | undefined) => {
 	if (!date) return null;
-	return date.toLocaleDateString('en-US', {
+	return date.toLocaleDateString('en-GB', {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric',
@@ -62,7 +62,12 @@ const updatedFormatted = formatDate(updatedDate);
 			<!-- Name & Role -->
 			<div class="mb-3">
 				<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">
-					{author.data.name}
+					<a
+						href="/about/team/"
+						class="hover:text-primary-700 dark:hover:text-primary-400"
+					>
+						{author.data.name}
+					</a>
 				</h3>
 				{author.data.role && (
 					<p class="text-sm font-medium text-primary-700 dark:text-primary-400">

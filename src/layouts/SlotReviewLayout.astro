@@ -6,6 +6,7 @@
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import { getEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
 import ReviewShell from './ReviewShell.astro';
 import BreadcrumbSchema from '../components/seo/BreadcrumbSchema.astro';
 import SlotSchema from '../components/seo/SlotSchema.astro';
@@ -29,7 +30,24 @@ const pageDescription =
 	slotEntry.data.description ||
 	`Read our ${slotEntry.data.name} review. RTP ${slotEntry.data.rtp}%, max win ${slotEntry.data.maxWin}, ${slotEntry.data.paylines} ways to win.`;
 
-const ogImage = slotEntry.data.thumbnail?.src || slotEntry.data.logo?.src;
+// Page image for og:image + Review JSON-LD: real thumbnail art wins, else
+// our own captures by convention (screenshots/<slug>/startpage → base),
+// else SEOHead's og-default. Rendered as JPEG for social-crawler support.
+const shots = import.meta.glob(
+	'../content/slots/images/screenshots/**/*.{jpg,jpeg,png,webp}',
+	{ eager: true },
+);
+const shotFor = (name: string) =>
+	Object.entries(shots).find(([path]) =>
+		path.includes(`/screenshots/${slotEntry.data.slug}/${name}.`),
+	)?.[1] as { default: ImageMetadata } | undefined;
+const captureMeta = (shotFor('startpage') ?? shotFor('base'))?.default;
+const capture = captureMeta
+	? await getImage({ src: captureMeta, width: 1200, format: 'jpeg' })
+	: null;
+
+const ogImage =
+	slotEntry.data.thumbnail?.src || slotEntry.data.logo?.src || capture?.src;
 const publishedTime = slotEntry.data.publishedDate?.toISOString();
 const modifiedTime = slotEntry.data.updatedDate?.toISOString();
 
@@ -59,6 +77,7 @@ const breadcrumbItems = [
 		slotData={slotEntry.data}
 		author={author?.data}
 		url={Astro.url.href}
+		image={ogImage}
 	/>
 	<slot />
 </ReviewShell>
