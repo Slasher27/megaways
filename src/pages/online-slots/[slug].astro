@@ -26,6 +26,11 @@ import Scorecard from '../../components/reviews/Scorecard.astro';
 import Faq from '../../components/reviews/Faq.astro';
 import Screenshot from '../../components/reviews/Screenshot.astro';
 import SessionLog from '../../components/reviews/SessionLog.astro';
+import ReviewChangeLog from '../../components/reviews/ReviewChangeLog.astro';
+import PaytableTable from '../../components/slots/PaytableTable.astro';
+import RTPRangeCallout from '../../components/slots/RTPRangeCallout.astro';
+import ReelLayout from '../../components/slots/ReelLayout.astro';
+import RelatedSlots from '../../components/slots/RelatedSlots.astro';
 import RTPContextBar from '../../components/slots/RTPContextBar.astro';
 import VolatilityMeter from '../../components/slots/VolatilityMeter.astro';
 import WinPotentialPanel from '../../components/slots/WinPotentialPanel.astro';
@@ -192,6 +197,9 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 				Screenshot,
 				SessionLog,
 				WhereToPlay,
+				PaytableTable,
+				RTPRangeCallout,
+				ReelLayout,
 			}}
 		/>
 	</section>
@@ -221,6 +229,12 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 			/>
 		)
 	}
+
+	<!-- Review History (renders only when changelog entries exist) -->
+	<ReviewChangeLog entries={slot.data.changelog} class='mb-10' />
+
+	<!-- Related rails (blueprint §13): More {Provider} + More {Mechanic} -->
+	<RelatedSlots current={slot.data} class='mb-10' />
 
 	<!-- Sticky mobile action bar (hidden once the demo is playing) -->
 	<ActionBar class='slot-action-bar'>

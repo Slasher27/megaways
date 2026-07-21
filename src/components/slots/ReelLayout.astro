@@ -1,0 +1,84 @@
+---
+/**
+ * ReelLayout — parameterised, theme-aware reel-grid diagram (REVIEW-PROTOCOL
+ * §3.4): ghost tiles show the maximum board, solid tiles one example spin
+ * (edges at minimum, centre at maximum — the variable-rows point at a
+ * glance). Pure SVG, Tailwind fill utilities for theming.
+ * MDX usage: <ReelLayout reels={frontmatter.reels} rows={frontmatter.rows} maxWays={frontmatter.paylines} />
+ */
+interface Props {
+	reels?: number;
+	/** "2-7" (variable) or a plain number/string for fixed rows. */
+	rows?: string | number;
+	/** Maximum ways/paylines for the caption. */
+	maxWays?: number;
+	/** Override the auto-generated caption. */
+	caption?: string;
+	class?: string;
+}
+
+const { reels = 6, rows = '2-7', maxWays, caption, class: className = '' } =
+	Astro.props;
+
+const match = String(rows).match(/^(\d+)\s*-\s*(\d+)$/);
+const min = match ? Number(match[1]) : Number(rows) || 3;
+const max = match ? Number(match[2]) : Number(rows) || 3;
+
+// Example spin: minimum at the edges, maximum at the centre, linear between.
+const centre = (reels - 1) / 2;
+const heights = Array.from({ length: reels }, (_, i) => {
+	const t = centre === 0 ? 1 : 1 - Math.abs(i - centre) / centre;
+	return Math.round(min + (max - min) * t);
+});
+
+const TILE = 20;
+const GAP = 4;
+const width = reels * TILE + (reels - 1) * GAP;
+const height = max * TILE + (max - 1) * GAP;
+const x = (col: number) => col * (TILE + GAP);
+const y = (row: number) => height - (row + 1) * TILE - row * GAP; // stack from the bottom
+
+const autoCaption =
+	min === max
+		? `${reels} reels × ${max} symbols`
+		: `${reels} reels showing ${min} to ${max} symbols each` +
+			(maxWays
+				? ` — up to ${maxWays.toLocaleString('en-GB')} ways when every reel lands ${max}`
+				: '');
+---
+
+<figure
+	class:list={[
+		'not-prose my-6 rounded-2xl bg-gray-100 dark:bg-gray-800/60 p-6',
+		className,
+	]}
+>
+	<svg
+		viewBox={`0 0 ${width} ${height}`}
+		class='block mx-auto w-full max-w-xs h-auto'
+		role='img'
+		aria-label={caption ?? autoCaption}
+	>
+		{
+			heights.map((solid, col) =>
+				Array.from({ length: max }, (_, row) => (
+					<rect
+						x={x(col)}
+						y={y(row)}
+						width={TILE}
+						height={TILE}
+						rx={4}
+						class={
+							row < solid
+								? 'fill-primary-600 dark:fill-primary-500'
+								: 'fill-gray-300/60 dark:fill-gray-700/50'
+						}
+					/>
+				)),
+			)
+		}
+	</svg>
+	<figcaption class='mt-4 text-center text-sm text-gray-600 dark:text-gray-400'>
+		{caption ?? autoCaption}
+	</figcaption>
+</figure>

@@ -6,6 +6,11 @@
  * `.review-prose > h2` (global.css), so the TOC and the article agree.
  * Wrappers differ per context (sticky aside on xl, <details> card below),
  * so this component renders only the list itself.
+ *
+ * Scrollspy: the section currently being read carries
+ * `aria-current="location"` (set by the script below; styled in CSS).
+ * JS justification (CLAUDE.md rule 5): CSS has no scroll-position selector —
+ * this is a ~20-line rAF-throttled handler, no library, no Alpine.
  */
 import type { MarkdownHeading } from 'astro';
 
@@ -17,7 +22,7 @@ interface Props {
 const { headings, class: className = '' } = Astro.props;
 ---
 
-<ol class:list={['space-y-2.5', className]}>
+<ol class:list={['toc-list space-y-2.5', className]}>
 	{
 		headings.map((heading, index) => (
 			<li>
@@ -25,7 +30,7 @@ const { headings, class: className = '' } = Astro.props;
 					href={`#${heading.slug}`}
 					class='flex items-baseline gap-2.5 text-gray-600 dark:text-gray-400 hover:text-primary-700 dark:hover:text-primary-400 transition-colors'
 				>
-					<span class='font-display text-xs font-bold text-primary-700 dark:text-primary-400 tabular-nums shrink-0'>
+					<span class='toc-num font-display text-xs font-bold text-primary-700 dark:text-primary-400 tabular-nums shrink-0 px-1 rounded-sm transition-colors'>
 						{String(index + 1).padStart(2, '0')}
 					</span>
 					<span class='min-w-0'>{heading.text}</span>
@@ -34,3 +39,66 @@ const { headings, class: className = '' } = Astro.props;
 		))
 	}
 </ol>
+
+<style>
+	/* Active section (scrollspy). Colour-only emphasis — no weight change,
+	   so the list never reflows as the highlight moves. */
+	.toc-list a[aria-current='location'] {
+		color: var(--color-gray-900);
+	}
+
+	:global(.dark) .toc-list a[aria-current='location'] {
+		color: #fff;
+	}
+
+	.toc-list a[aria-current='location'] .toc-num {
+		background: var(--color-primary-700);
+		color: #fff;
+	}
+
+	:global(.dark) .toc-list a[aria-current='location'] .toc-num {
+		background: var(--color-primary-500);
+		color: var(--color-gray-950);
+	}
+</style>
+
+<script>
+	// Scrollspy: mark the last heading scrolled past the 120px reading line.
+	// Astro dedupes this script even though TocList renders twice per page.
+	const links = [
+		...document.querySelectorAll<HTMLAnchorElement>('.toc-list a[href^="#"]'),
+	];
+	const targets = [
+		...new Set(links.map((a) => a.getAttribute('href')!.slice(1))),
+	]
+		.map((id) => document.getElementById(id))
+		.filter((el): el is HTMLElement => el !== null);
+
+	if (links.length && targets.length) {
+		let ticking = false;
+		const update = () => {
+			ticking = false;
+			let current: string | null = null;
+			for (const el of targets) {
+				if (el.getBoundingClientRect().top <= 120) current = el.id;
+				else break; // targets are in document order
+			}
+			for (const a of links) {
+				if (current && a.getAttribute('href') === `#${current}`)
+					a.setAttribute('aria-current', 'location');
+				else a.removeAttribute('aria-current');
+			}
+		};
+		addEventListener(
+			'scroll',
+			() => {
+				if (!ticking) {
+					ticking = true;
+					requestAnimationFrame(update);
+				}
+			},
+			{ passive: true },
+		);
+		update();
+	}
+</script>

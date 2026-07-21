@@ -1,0 +1,72 @@
+---
+/**
+ * RTPRangeCallout — the configurable-RTP truth every competitor hides
+ * (REVIEW-PROTOCOL §3.6): renders the documented operator builds from the
+ * `rtpVariants` frontmatter as chips, with the verified default highlighted
+ * and the worst-case gap spelt out. Renders nothing without ≥2 variants
+ * (a single value is just the RTP, already shown in context).
+ * MDX usage: <RTPRangeCallout rtp={frontmatter.rtp} variants={frontmatter.rtpVariants} note="…" />
+ */
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	rtp?: number;
+	variants?: number[];
+	/** Optional game-specific extra sentence (e.g. jackpot-variant caveat). */
+	note?: string;
+	class?: string;
+}
+
+const { rtp, variants = [], note, class: className = '' } = Astro.props;
+
+const sorted = [...new Set(variants)].sort((a, b) => b - a);
+const best = sorted[0];
+const worst = sorted[sorted.length - 1];
+const gap = best !== undefined ? (best - worst).toFixed(2) : null;
+---
+
+{
+	sorted.length >= 2 && (
+		<div
+			class:list={[
+				'not-prose rounded-2xl bg-primary-50 dark:bg-primary-950/40 p-6',
+				className,
+			]}
+		>
+			<div class='flex gap-3'>
+				<Icon
+					name='lucide:sliders-horizontal'
+					size={24}
+					class='text-primary-700 dark:text-primary-400 shrink-0'
+					aria-hidden='true'
+				/>
+				<div class='text-sm text-gray-700 dark:text-gray-300'>
+					<p class='font-display font-semibold text-gray-900 dark:text-white mb-2'>
+						Check your casino's build — this game ships in{' '}
+						{sorted.length} documented RTP versions
+					</p>
+					<div class='flex flex-wrap gap-1.5 mb-3'>
+						{sorted.map((value) => (
+							<span
+								class:list={[
+									'rounded-full px-2.5 py-1 text-xs font-semibold tabular-nums',
+									value === rtp
+										? 'bg-primary-700 text-white dark:bg-primary-500 dark:text-gray-950'
+										: 'bg-white dark:bg-gray-900/70 text-gray-700 dark:text-gray-300',
+								]}
+							>
+								{value.toFixed(2)}%{value === rtp && ' — verified default'}
+							</span>
+						))}
+					</div>
+					<p class='mb-0'>
+						A casino running the weakest build pays {gap} percentage
+						points less than the headline figure.
+						{note && ` ${note}`} The in-game paytable always shows the
+						version that applies to you.
+					</p>
+				</div>
+			</div>
+		</div>
+	)
+}

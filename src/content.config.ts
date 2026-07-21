@@ -112,6 +112,30 @@ const slots = defineCollection({
 				)
 				.default([]),
 
+			// Paytable (REVIEW-PROTOCOL §3.7) — symbol pays as stake multiples,
+			// transcribed from the in-game paytable / gamesheet (cite via
+			// `verified`). Keys are of-a-kind counts; omit those the game
+			// lacks (5-reel games have no x6).
+			paytable: z
+				.array(
+					z.object({
+						symbol: z.string(), // e.g. "138 Coin"
+						tier: z.enum(['premium', 'low']).default('low'),
+						x3: z.number().optional(),
+						x4: z.number().optional(),
+						x5: z.number().optional(),
+						x6: z.number().optional(),
+					}),
+				)
+				.default([]),
+
+			// Review history (REVIEW-PROTOCOL law 5) — dated, honest record of
+			// material changes. A changelog entry (like a session entry) is a
+			// legitimate updatedDate trigger; silent edits are not.
+			changelog: z
+				.array(z.object({ date: z.coerce.date(), change: z.string() }))
+				.default([]),
+
 			// FAQ — single source for the visible accordion AND FAQPage JSON-LD
 			// (same rule as the homepage: text must stay identical).
 			faqs: z

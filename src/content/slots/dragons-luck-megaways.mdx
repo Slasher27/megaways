@@ -36,6 +36,19 @@ verified:
   source: "Red Tiger's official operator gamesheet, redtiger.com and Playin (Evolution's official portal)"
   date: 2026-07-21
 rtpVariants: [95.69, 94.69, 92.71, 90.73]
+paytable:
+  - { symbol: '138 Coin', tier: premium, x3: 2, x4: 6, x5: 15, x6: 38 }
+  - { symbol: 'Chinese Doll', tier: premium, x3: 0.7, x4: 1.2, x5: 2, x6: 3.8 }
+  - { symbol: 'Koi Fish', tier: premium, x3: 0.5, x4: 0.9, x5: 1.5, x6: 2.5 }
+  - { symbol: 'Lotus', tier: premium, x3: 0.4, x4: 0.7, x5: 1.2, x6: 2 }
+  - { symbol: 'A', x3: 0.2, x4: 0.4, x5: 0.7, x6: 1 }
+  - { symbol: 'K', x3: 0.2, x4: 0.3, x5: 0.5, x6: 0.8 }
+  - { symbol: 'Q', x3: 0.1, x4: 0.2, x5: 0.5, x6: 0.7 }
+  - { symbol: 'J', x3: 0.1, x4: 0.2, x5: 0.3, x6: 0.6 }
+  - { symbol: '10', x3: 0.1, x4: 0.2, x5: 0.3, x6: 0.5 }
+changelog:
+  - date: 2026-07-21
+    change: "Demo embed corrected to the Megaways version — the legacy embed silently loaded Red Tiger's 2016 original Dragon's Luck. Documented RTP variants added from Red Tiger's operator gamesheet, the pays-both-ways rule corrected and evidenced with our own capture, full paytable transcribed in-game, and our first play session logged."
 faqs:
   - question: "What is the RTP of Dragon's Luck Megaways?"
     answer: "The RTP we verified against Red Tiger's own listing is 95.69%, which sits below the roughly 96.2% median of the Megaways slots in our catalogue. Operators can run different RTP configurations of the same game, so always check the in-game paytable at your casino before playing for real money."
@@ -89,6 +102,8 @@ Dragon's Luck Megaways scores **4 out of 5**: a beautifully produced, refreshing
 
 Dragon's Luck Megaways is a six-reel slot on Big Time Gaming's licensed Megaways™ engine, showing two to seven symbols per reel for between 64 and **117,649 ways to win**, with wins paid as multiples of your total stake. And here's a detail most reviews of this game get wrong: wins are **not** left-to-right only. The game's own rules screen awards them when matching symbols land on adjacent reels *from either side of the board — or even from a run in the middle* — a both-ways quirk carried over from the original Dragon's Luck, and one it shares with very few Megaways titles (Blueprint's [Lightning Strike Megaways](/online-slots/lightning-strike-megaways/) is the other notable pay-both-ways engine we've reviewed). The ways count is recalculated on every spin, so a tall board dramatically raises the ceiling of anything that lands on it.
 
+<ReelLayout reels={frontmatter.reels} rows={frontmatter.rows} maxWays={frontmatter.paylines} />
+
 <Screenshot src="dragons-luck-megaways/ways-rules.jpg" alt="In-game Winning Megaways rules screen: wins are awarded when matching symbols land on adjacent positions from either side of the reels or in the middle" caption="The game's own rules screen: wins count from either side of the reels — or the middle." />
 
 What makes this game unusual is what Red Tiger left out. There are **no cascading reels**, no scatters and no bonus wheel: each spin is a single, self-contained event. In most Megaways slots the drama rolls out through tumbling chains; here it arrives in one screen-filling moment when the coin features collide with a high-ways board. That gives the game a cleaner, punchier rhythm — spin, coins land, coins reveal, result — and it means the [Megaways engine](/megaways/) is doing something subtly different from its usual job: instead of feeding cascades, the variable board exists purely to multiply what the coins become.
@@ -125,13 +140,13 @@ The stats below were verified on 21 July 2026 against Red Tiger's official opera
 
 <WinPotentialPanel maxWin={frontmatter.maxWin} minBet={frontmatter.minBet} maxBet={frontmatter.maxBet} where="the base game only — most realistically a mass Dragon Coin or 4x4 Mega Coin reveal of the 138 Coin on a high-ways board." />
 
-<Callout>
-  <p><strong>Check your casino's build.</strong> 95.69% is the best configuration — but Red Tiger's own operator gamesheet documents lower builds at 94.69%, 92.71% and 90.73%, plus jackpot variants that trade base RTP for a pooled prize. A casino running the weakest build pays nearly five points less than the figure most review sites quote. The in-game paytable always shows the version that actually applies to you.</p>
-</Callout>
+<RTPRangeCallout rtp={frontmatter.rtp} variants={frontmatter.rtpVariants} note="Red Tiger's gamesheet also documents jackpot variants that trade base RTP for a pooled prize." />
 
 ## Symbols & What They Pay
 
-The paytable is a classic two-tier structure in silk and gold. The top premium is the **138 Coin** — the game's lucky-number symbol, paying a verified **38x your stake for six across the reels** — followed by the Chinese dolls, koi fish and water lilies, with gold-trimmed royal card values (10 through A) filling the low tier. There is deliberately **no wild** — the Dragon Coins fill that connective role by morphing into whatever the board needs — and no scatter, because there is nothing to trigger.
+The paytable is a classic two-tier structure in silk and gold. The top premium is the **138 Coin** — the game's lucky-number symbol, paying a verified **38x your stake for six across the reels** — followed by the Chinese doll, koi fish and lotus, with gold-trimmed royal card values (10 through A) filling the low tier. There is deliberately **no wild** — the Dragon Coins fill that connective role by morphing into whatever the board needs — and no scatter, because there is nothing to trigger.
+
+<PaytableTable rows={frontmatter.paytable} />
 
 <Screenshot src="dragons-luck-megaways/paytable-premium.jpg" alt="Dragon's Luck Megaways paytable: the 138 Coin pays 38x for six of a kind, ahead of the doll (3.8x), koi (2.5x) and lotus (2x)" caption="The premium paytable from the in-game rules — the 138 Coin's 38x for six, exactly as we verified." />
 

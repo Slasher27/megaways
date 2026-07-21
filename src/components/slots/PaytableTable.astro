@@ -1,0 +1,103 @@
+---
+/**
+ * PaytableTable — the real symbol table (REVIEW-PROTOCOL §3.7): pays as
+ * stake multiples per of-a-kind count, transcribed from the in-game
+ * paytable/gamesheet (provenance via the page's VerifiedChip). Premium rows
+ * lead and are visually separated from the low tier. Renders nothing
+ * without rows. MDX usage: <PaytableTable rows={frontmatter.paytable} />
+ */
+interface Row {
+	symbol: string;
+	tier?: 'premium' | 'low';
+	x3?: number;
+	x4?: number;
+	x5?: number;
+	x6?: number;
+}
+
+interface Props {
+	rows?: Row[];
+	class?: string;
+}
+
+const { rows = [], class: className = '' } = Astro.props;
+
+// Only show of-a-kind columns any row actually has (5-reel games lack x6).
+const counts = (['x3', 'x4', 'x5', 'x6'] as const).filter((key) =>
+	rows.some((row) => row[key] !== undefined),
+);
+const sorted = [
+	...rows.filter((row) => (row.tier ?? 'low') === 'premium'),
+	...rows.filter((row) => (row.tier ?? 'low') !== 'premium'),
+];
+const fmt = (value?: number) =>
+	value === undefined
+		? '—'
+		: `${value.toLocaleString('en-GB', { maximumFractionDigits: 2 })}x`;
+
+const thClass =
+	'text-left px-3.5 py-2.5 text-[0.6875rem] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400';
+---
+
+{
+	sorted.length > 0 && (
+		<div class:list={['not-prose overflow-x-auto', className]}>
+			<table class='w-full text-sm border-separate border-spacing-0'>
+				<thead>
+					<tr>
+						<th class={thClass}>Symbol</th>
+						{counts.map((key) => (
+							<th class={thClass}>{key.slice(1)} of a kind</th>
+						))}
+					</tr>
+				</thead>
+				<tbody>
+					{sorted.map((row, index) => {
+						const premium = (row.tier ?? 'low') === 'premium';
+						const tierBreak =
+							index > 0 &&
+							premium !==
+								((sorted[index - 1].tier ?? 'low') === 'premium');
+						return (
+							<tr
+								class:list={[
+									premium
+										? 'bg-primary-50 dark:bg-primary-950/40'
+										: 'odd:bg-gray-100 dark:odd:bg-gray-800/40',
+									tierBreak && 'border-t-4 border-transparent',
+								]}
+							>
+								<th
+									scope='row'
+									class='px-3.5 py-2.5 text-left font-display font-semibold text-gray-900 dark:text-white rounded-l-xl'
+								>
+									{row.symbol}
+									{premium && (
+										<span class='ml-2 text-[0.6875rem] font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400'>
+											premium
+										</span>
+									)}
+								</th>
+								{counts.map((key, colIndex) => (
+									<td
+										class:list={[
+											'px-3.5 py-2.5 text-gray-700 dark:text-gray-300 tabular-nums',
+											colIndex === counts.length - 1 &&
+												'rounded-r-xl font-semibold text-gray-900 dark:text-white',
+										]}
+									>
+										{fmt(row[key])}
+									</td>
+								))}
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+			<p class='mt-2 text-xs text-gray-600 dark:text-gray-400'>
+				All values are multiples of your total stake, from the in-game
+				paytable at the verified default RTP build.
+			</p>
+		</div>
+	)
+}

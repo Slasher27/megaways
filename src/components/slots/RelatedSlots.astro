@@ -1,0 +1,100 @@
+---
+/**
+ * RelatedSlots — blueprint §13: two capped rails, "More {Provider}" and
+ * "More {Mechanic}", 6 cards max each, programmatic from the collection.
+ * Rendered route-level on every slot review; rails that would be empty
+ * simply don't render. Mechanic rail links its hub page when one exists.
+ */
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import SlotCard from './SlotCard.astro';
+import { providerSlug } from '../../data/providers';
+
+interface Props {
+	current: CollectionEntry<'slots'>['data'];
+	class?: string;
+}
+
+const { current, class: className = '' } = Astro.props;
+
+const all = await getCollection('slots');
+const byRating = (
+	a: CollectionEntry<'slots'>,
+	b: CollectionEntry<'slots'>,
+) => (b.data.rating ?? 0) - (a.data.rating ?? 0);
+
+// Rail 1: same provider, top-rated, excluding this slot.
+const providerRail = all
+	.filter(
+		(entry) =>
+			entry.data.provider === current.provider &&
+			entry.data.slug !== current.slug,
+	)
+	.sort(byRating)
+	.slice(0, 6);
+
+// Rail 2: same primary mechanic, excluding this slot + rail-1 duplicates.
+const normalise = (value: string) =>
+	value.toLowerCase().replace(/[^a-z]/g, '');
+const primaryMechanic = current.mechanics?.[0];
+const hubs = await getCollection('mechanics');
+const hub = primaryMechanic
+	? hubs.find((entry) => normalise(entry.data.name) === normalise(primaryMechanic))
+	: undefined;
+const railOneSlugs = new Set(providerRail.map((entry) => entry.data.slug));
+const mechanicRail = primaryMechanic
+	? all
+			.filter(
+				(entry) =>
+					entry.data.slug !== current.slug &&
+					!railOneSlugs.has(entry.data.slug) &&
+					entry.data.mechanics?.some(
+						(mechanic) => normalise(mechanic) === normalise(primaryMechanic),
+					),
+			)
+			.sort(byRating)
+			.slice(0, 6)
+	: [];
+
+const rails = [
+	{
+		title: `More ${current.provider} Slots`,
+		href: `/online-slots/${providerSlug(current.provider)}/`,
+		slots: providerRail,
+	},
+	{
+		title: `More ${primaryMechanic ?? ''} Slots`,
+		href: hub ? `/${hub.data.slug}/` : undefined,
+		slots: mechanicRail,
+	},
+].filter((rail) => rail.slots.length > 0);
+---
+
+{
+	rails.length > 0 && (
+		<div class:list={['space-y-10', className]}>
+			{rails.map((rail) => (
+				<section>
+					<div class='flex items-baseline justify-between gap-4 mb-5'>
+						<h2 class='font-display text-xl font-bold text-gray-900 dark:text-white'>
+							{rail.title}
+						</h2>
+						{rail.href && (
+							<a
+								href={rail.href}
+								class='text-sm font-medium text-primary-700 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 whitespace-nowrap'
+							>
+								View all &rarr;
+							</a>
+						)}
+					</div>
+					<div class='grid gap-5 sm:grid-cols-2 lg:grid-cols-3'>
+						{rail.slots.map((entry) => (
+							<SlotCard slotEntry={entry} />
+						))}
+					</div>
+				</section>
+			))}
+		</div>
+	)
+}
