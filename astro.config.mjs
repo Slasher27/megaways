@@ -7,8 +7,33 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 
+/**
+ * Spec tables scroll horizontally on narrow viewports (see `.review-prose table`
+ * in global.css). A scroll container must be keyboard-reachable or a keyboard
+ * user can never reach the off-screen columns — axe `scrollable-region-focusable`.
+ * MDX gives us no wrapper element, so annotate the table itself at build time.
+ * No dependency: a 10-line walk beats pulling in unist-util-visit.
+ */
+function rehypeAccessibleTables() {
+	return (tree) => {
+		const walk = (node) => {
+			if (node.type === 'element' && node.tagName === 'table') {
+				node.properties = node.properties || {};
+				node.properties.tabIndex = 0;
+				node.properties.role = 'region';
+				node.properties['aria-label'] = 'Table — scroll horizontally to see all columns';
+			}
+			(node.children || []).forEach(walk);
+		};
+		walk(tree);
+	};
+}
+
 // https://astro.build/config
 export default defineConfig({
+    markdown: {
+        rehypePlugins: [rehypeAccessibleTables],
+    },
     site: 'https://megawaysonline.com',
     trailingSlash: 'always',
     // Static output on Vercel; the adapter turns `redirects` into real HTTP 301s

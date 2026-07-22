@@ -159,25 +159,32 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 	{
 		!isClosed && casino.data.welcomeBonus && (
 			<Card variant='bonus' padding='none' class='mb-8 overflow-hidden'>
-				<div class='flex flex-col lg:flex-row'>
-					<!-- Thumbnail Image (Left side on large screens, top on mobile) -->
+				{/* One padded container (equal padding on all four sides) holding two
+				    equal-width, equal-height columns. Grid items stretch by default, so
+				    both columns are literally the same height; each centres its own
+				    content vertically, keeping any residual whitespace small + symmetric. */}
+				{/* Image column is deliberately wider than the text column: the image
+				    height is width/2.09, so a wider column brings it closer to the text
+				    height and shrinks the leftover whitespace either side of it. */}
+				<div class='p-5 sm:p-6 lg:p-8 grid gap-5 sm:gap-6 lg:gap-8 md:grid-cols-[1.25fr_1fr] lg:grid-cols-[1.3fr_1fr]'>
+					<!-- Screenshot: uncropped at its natural 470x225 ratio, centred in its column -->
 					{
 						(casino.data.thumbnail || casino.data.logo) && (
-							<div class='w-full lg:w-auto lg:max-w-md shrink-0 p-2 lg:p-4'>
+							<div class='flex items-center'>
 								{casino.data.thumbnail ? (
 									<Image
 										src={casino.data.thumbnail}
-										alt={casino.data.name}
-										width={400}
-										height={300}
-										class='w-full h-auto object-contain rounded-lg'
+										alt={`${casino.data.name} welcome offer screen`}
+										width={470}
+										height={225}
+										class='w-full h-auto rounded-lg'
 										loading='eager'
 									/>
 								) : casino.data.logo ? (
-									<div class='bg-gray-100 dark:bg-gray-800/60 rounded-lg h-48 lg:h-full flex items-center justify-center p-8'>
+									<div class='w-full bg-gray-100 dark:bg-gray-800/60 rounded-lg aspect-47/23 flex items-center justify-center p-8'>
 										<Image
 											src={casino.data.logo}
-											alt={casino.data.name}
+											alt={`${casino.data.name} logo`}
 											width={200}
 											height={100}
 											class='max-h-24 w-auto object-contain'
@@ -189,52 +196,56 @@ const videoThumbnailUrl = casino.data.videoThumbnail
 						)
 					}
 
-					<!-- Bonus Content -->
-					<div class='flex-1 p-6 lg:p-8'>
-						<div class='flex flex-col gap-6'>
-							<div class='flex-1'>
-								<div class='flex items-center gap-3 mb-3'>
-									<div class='p-3 bg-primary-50 dark:bg-primary-950/60 rounded-lg'>
-										<Icon name='lucide:gift' size={24} class='text-primary-700 dark:text-primary-400' />
-									</div>
-									<div>
-										<P class='text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1'>
-											{casino.data.welcomeBonus.title}
-										</P>
-										<P class='text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-0'>
-											{casino.data.welcomeBonus.amount}
-										</P>
-									</div>
-								</div>
-								<div class='flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400'>
-									{casino.data.welcomeBonus.wageringRequirement && (
-										<span class='flex items-center gap-1'>
-											<Icon name='lucide:repeat' size={14} />
-											{casino.data.welcomeBonus.wageringRequirement}x wagering
-										</span>
-									)}
-									{casino.data.welcomeBonus.minDeposit && (
-										<span class='flex items-center gap-1'>
-											<Icon name='lucide:coins' size={14} />
-											Min deposit: €{casino.data.welcomeBonus.minDeposit}
-										</span>
-									)}
-								</div>
-							</div>
-							<div class='shrink-0'>
-								<Button
-									href={casino.data.affiliateLink}
-									variant='primary'
-									size='lg'
-									affiliate={true}
-									class='w-full lg:w-auto text-lg px-8 py-4'
-								>
-									Visit {casino.data.name}
-								</Button>
-								<P class='text-xs text-gray-600 dark:text-gray-400 mt-2 text-center'>
-									18+. T&Cs apply. Gamble responsibly.
-								</P>
-							</div>
+					{/* One left edge for every element in this column — the old icon-beside-text
+					    block indented the title/amount past the chips, button and disclosure. */}
+					<div class='flex flex-col justify-center gap-4'>
+						<div>
+							<P class='flex items-center gap-2 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2'>
+								<Icon
+									name='lucide:gift'
+									size={16}
+									class='text-primary-700 dark:text-primary-400 shrink-0'
+								/>
+								{casino.data.welcomeBonus.title}
+							</P>
+							{/* 3xl only from lg: at md the column is ~316px and 3xl wraps badly. */}
+							<P class='text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-0 text-balance'>
+								{casino.data.welcomeBonus.amount}
+							</P>
+						</div>
+
+						<div class='flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-600 dark:text-gray-400'>
+							{casino.data.welcomeBonus.wageringRequirement && (
+								<span class='flex items-center gap-1.5'>
+									<Icon name='lucide:repeat' size={14} class='shrink-0' />
+									{casino.data.welcomeBonus.wageringRequirement}x wagering
+								</span>
+							)}
+							{casino.data.welcomeBonus.minDeposit && (
+								<span class='flex items-center gap-1.5'>
+									<Icon name='lucide:coins' size={14} class='shrink-0' />
+									Min deposit: €{casino.data.welcomeBonus.minDeposit}
+								</span>
+							)}
+						</div>
+
+						<div>
+							<Button
+								href={casino.data.affiliateLink}
+								variant='primary'
+								size='lg'
+								affiliate={true}
+								class='w-full sm:w-auto text-lg px-8 py-3.5'
+								aria-describedby='bonus-disclosure'
+							>
+								Visit {casino.data.name}
+							</Button>
+							<P
+								id='bonus-disclosure'
+								class='text-xs text-gray-600 dark:text-gray-400 mt-2 mb-0'
+							>
+								18+. T&Cs apply. Gamble responsibly.
+							</P>
 						</div>
 					</div>
 				</div>

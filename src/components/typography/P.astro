@@ -3,9 +3,11 @@ interface Props {
 	class?: string;
 	size?: 'sm' | 'md' | 'lg' | 'xl';
 	variant?: 'body' | 'lead' | 'small';
+	/** Extra attributes (id, aria-*, data-*) forwarded to the <p> */
+	[key: string]: any;
 }
 
-const { class: className = '', size = 'md', variant = 'body' } = Astro.props;
+const { class: className = '', size = 'md', variant = 'body', ...rest } = Astro.props;
 
 const sizeClasses = {
 	sm: 'text-sm',
@@ -28,6 +30,7 @@ const variantClasses = {
 		variantClasses[variant],
 		className,
 	]}
+	{...rest}
 >
 	<slot />
 </p>

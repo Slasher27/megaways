@@ -208,6 +208,13 @@
 /* Spec tables: sunken zebra panel, no outer border. */
 .review-prose table {
 	font-size: 0.9375em;
+	/* A 3-column spec table cannot fit a 320px viewport. Scroll the table in
+	   its own box so the PAGE never scrolls sideways (display:block makes the
+	   table itself the scroll container — MDX gives us no wrapper to use). */
+	display: block;
+	width: fit-content;
+	max-width: 100%;
+	overflow-x: auto;
 }
 
 .review-prose thead th {

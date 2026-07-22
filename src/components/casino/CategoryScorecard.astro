@@ -79,21 +79,25 @@ const overall = scores
 						<dd class='font-display text-sm font-semibold text-gray-900 dark:text-white m-0'>
 							{scores[row.key].toFixed(1)}
 						</dd>
-						<div
-							class='col-span-2 h-1.5 rounded-full bg-gray-100 dark:bg-gray-800'
-							role='img'
-							aria-label={`${row.label}: ${scores[row.key]} out of 10`}
-						>
+						{/* Bar + justification live INSIDE a <dd>: a <div> wrapper in a <dl>
+						    may only contain <dt>/<dd>, so bare siblings are invalid HTML. */}
+						<dd class='col-span-2 m-0'>
 							<div
-								class='h-full rounded-full bg-primary-600 dark:bg-primary-500'
-								style={`width: ${(scores[row.key] / 10) * 100}%`}
-							/>
-						</div>
-						{justifications[row.key] && (
-							<p class='col-span-2 text-xs text-gray-600 dark:text-gray-400 mb-0'>
-								{justifications[row.key]}
-							</p>
-						)}
+								class='h-1.5 rounded-full bg-gray-100 dark:bg-gray-800'
+								role='img'
+								aria-label={`${row.label}: ${scores[row.key]} out of 10`}
+							>
+								<div
+									class='h-full rounded-full bg-primary-600 dark:bg-primary-500'
+									style={`width: ${(scores[row.key] / 10) * 100}%`}
+								/>
+							</div>
+							{justifications[row.key] && (
+								<p class='mt-1 text-xs text-gray-600 dark:text-gray-400 mb-0'>
+									{justifications[row.key]}
+								</p>
+							)}
+						</dd>
 					</div>
 				))}
 			</dl>
