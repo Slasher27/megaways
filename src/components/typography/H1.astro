@@ -20,6 +20,9 @@ const sizeClasses = {
 	class:list={[
 		'font-bold',
 		'text-gray-900 dark:text-white mb-8',
+		// A long single word (e.g. "Methodology") at the xl size is wider than a
+		// 320px content box — break it rather than let the page scroll sideways.
+		'wrap-break-word',
 		sizeClasses[size],
 		className,
 	]}
