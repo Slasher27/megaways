@@ -9,7 +9,8 @@
 Casino affiliate site (Megaways slots + casino reviews). WordPress → Astro rebuild — **LIVE on `megawaysonline.com` since 2026-07-14** (Vercel hosting; DNS + email stay on xneelo — never touch the mail/MX records). **Primary goal: zero SEO regression** — GSC monitoring window runs to ~2026-08-11; current work is Phase 6 backfill (`PROGRESS.md`).
 
 ### Stack
-- **Astro 6.x** (static) + `@astrojs/vercel` adapter — the adapter (plus `scripts/patch-vercel-redirects.mjs`, run by `npm run build`) is what makes the 47 redirects real HTTP 301s. Never remove either.
+- **Astro 7.x** (static) + `@astrojs/vercel` adapter (v11 — keep the adapter major matched to Astro's; v8 is Astro-5-only and emits unanchored routes the patch script can't fix) — the adapter (plus `scripts/patch-vercel-redirects.mjs`, run by `npm run build`) is what makes the 47 redirects real HTTP 301s. Never remove either.
+- **`@astrojs/markdown-remark` is a required dep:** Astro 7 defaults to the Sätteri Markdown processor; our `rehypeAccessibleTables` plugin (`astro.config.mjs`) needs the unified pipeline, and config load fails without it.
 - **Tailwind CSS 4.x** via `@tailwindcss/vite` — config is CSS `@theme` tokens in `src/styles/global.css` (no JS config).
 - **Alpine.js** for interactivity (**Alpine only — there is no Svelte in this project**).
 - **astro-icon** (Lucide, MDI, Phosphor). **MDX** content collections.
