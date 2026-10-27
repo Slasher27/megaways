@@ -1,0 +1,61 @@
+---
+/**
+ * Reputation — dated third-party citations (§3.10, law 4): what each source
+ * published, how many reviews, when we retrieved it, a deep link. Reported,
+ * never adjudicated — the disclaimer is part of the component.
+ * MDX: <Reputation rows={frontmatter.reputation} />
+ */
+import Card from '../ui/Card.astro';
+import { fmtDate } from '../../data/format';
+
+interface Row {
+	source: string;
+	score: string;
+	count?: number;
+	url?: string;
+	retrieved: Date | string;
+	note?: string;
+}
+
+interface Props {
+	rows?: Row[];
+	class?: string;
+}
+
+const { rows = [], class: className = '' } = Astro.props;
+---
+
+{
+	rows.length > 0 && (
+		<div class:list={['not-prose', className]}>
+			<ul class='grid sm:grid-cols-2 gap-2 sm:gap-3 m-0 p-0 list-none'>
+				{rows.map((r) => (
+					<Card as='li' padding='none' class='p-4 sm:p-5 min-w-0'>
+						<p class='text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1'>{r.source}</p>
+						<p class='font-display text-2xl font-bold text-gray-900 dark:text-white mb-1'>
+							{r.score}
+							{r.count !== undefined && (
+								<span class='text-sm font-normal text-gray-600 dark:text-gray-400'> from {r.count.toLocaleString('en-GB')} reviews</span>
+							)}
+						</p>
+						{r.note && <p class='text-sm text-gray-700 dark:text-gray-300 mb-2'>{r.note}</p>}
+						<p class='text-xs text-gray-600 dark:text-gray-400 mb-0'>
+							Retrieved {fmtDate(r.retrieved)}
+							{r.url && (
+								<>
+									{' · '}
+									<a href={r.url} class='underline hover:text-primary-700 dark:hover:text-primary-400' rel='nofollow noopener' target='_blank'>
+										Source<span class='sr-only'> (opens in a new tab)</span>
+									</a>
+								</>
+							)}
+						</p>
+					</Card>
+				))}
+			</ul>
+			<p class='text-xs text-gray-600 dark:text-gray-400 mt-3 mb-0'>
+				Third-party scores and complaints are cited as reported by each source, not adjudicated by us.
+			</p>
+		</div>
+	)
+}

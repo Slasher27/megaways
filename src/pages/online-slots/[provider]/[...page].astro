@@ -63,11 +63,32 @@ const baseDescription =
 	`Explore all ${provider.data.name} Megaways slots. Read detailed reviews with RTP, features, and where to play.`;
 const pageDescription = page.currentPage === 1
 	? baseDescription
-	: `${baseDescription} Page ${page.currentPage}.`;
+	: `${baseDescription.replace(/\.?\s*$/, '.')} Page ${page.currentPage}.`;
+
+// CollectionPage + ItemList of the slot reviews on this page (SEO-GUIDELINES:
+// provider listing → CollectionPage/ItemList).
+const collectionSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'CollectionPage',
+	name: pageTitle,
+	description: pageDescription,
+	url: Astro.url.href,
+	about: { '@type': 'Organization', name: provider.data.name },
+	mainEntity: {
+		'@type': 'ItemList',
+		itemListElement: page.data.map((entry, i) => ({
+			'@type': 'ListItem',
+			position: page.start + i + 1,
+			url: new URL(`/online-slots/${entry.data.slug}/`, Astro.site!).href,
+			name: entry.data.name,
+		})),
+	},
+};
 ---
 
 <PageLayout title={pageTitle} description={pageDescription}>
 	<BreadcrumbSchema items={breadcrumbItems} />
+	<script is:inline type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />
 	<Header slot='header' />
 
 	<Container>

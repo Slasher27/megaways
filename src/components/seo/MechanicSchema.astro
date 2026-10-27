@@ -1,0 +1,53 @@
+---
+/**
+ * MechanicSchema — JSON-LD for the mechanic hub pages (SEO-GUIDELINES: Article
+ * + FAQPage). The FAQ comes from the hub's own markdown FAQ section, extracted
+ * at build time (rehypeSectionCards → `faqsFromBody`), so schema = visible text.
+ *
+ * Usage: <MechanicSchema mechanic={mechanic} headline='Megaways Slots' description={…} faqs={remarkPluginFrontmatter.faqsFromBody} />
+ */
+import { getEntry, type CollectionEntry } from 'astro:content';
+import FAQSchema from './FAQSchema.astro';
+
+interface Props {
+	mechanic: CollectionEntry<'mechanics'>;
+	headline: string;
+	description: string;
+	faqs?: { question: string; answer: string }[];
+}
+
+const { mechanic, headline, description, faqs = [] } = Astro.props;
+
+const siteUrl = Astro.site?.href || 'https://megawaysonline.com';
+const author = mechanic.data.author ? (await getEntry(mechanic.data.author))?.data : undefined;
+const date = (d?: Date) => d?.toISOString().split('T')[0];
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'Article',
+	headline,
+	description,
+	url: Astro.url.href,
+	mainEntityOfPage: Astro.url.href,
+	image: new URL('/images/og-default.jpg', siteUrl).href,
+	about: {
+		'@type': 'Thing',
+		name: mechanic.data.name,
+		...(mechanic.data.developer && { description: `Slot mechanic created by ${mechanic.data.developer}` }),
+	},
+	...(author && {
+		author: { '@type': 'Person', name: author.name, url: new URL('/about/team/', siteUrl).href },
+	}),
+	...(date(mechanic.data.publishedDate) && { datePublished: date(mechanic.data.publishedDate) }),
+	...(date(mechanic.data.updatedDate) && { dateModified: date(mechanic.data.updatedDate) }),
+	publisher: {
+		'@type': 'Organization',
+		name: 'Megaways Online',
+		url: siteUrl,
+		logo: { '@type': 'ImageObject', url: new URL('/images/logo.png', siteUrl).href },
+	},
+};
+---
+
+<script type='application/ld+json' set:html={JSON.stringify(schema)} />
+{faqs.length > 0 && <FAQSchema questions={faqs} />}

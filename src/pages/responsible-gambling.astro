@@ -5,6 +5,8 @@
  */
 
 import PageLayout from '../layouts/PageLayout.astro';
+import Breadcrumb from '../components/layout/Breadcrumb.astro';
+import BreadcrumbSchema from '../components/seo/BreadcrumbSchema.astro';
 import Container from '../components/layout/Container.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
@@ -18,14 +20,21 @@ import Callout from '../components/ui/Callout.astro';
 import Divider from '../components/ui/Divider.astro';
 import { Icon } from 'astro-icon/components';
 
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Responsible Gambling', href: '/responsible-gambling/' },
+];
+
 const pageTitle = 'Responsible Gambling | Help & Support Resources';
 const pageDescription =
 	'Gambling should be fun, not harmful. Learn about responsible gambling, warning signs of problem gambling, and where to get help.';
 ---
 
 <PageLayout title={pageTitle} description={pageDescription}>
+	<BreadcrumbSchema items={breadcrumbItems} />
 	<Header slot='header' />
 	<Container>
+		<Breadcrumb items={breadcrumbItems} class='mb-6' />
 		<!-- Hero Section -->
 		<header class='mb-12'>
 			<div class='flex items-center justify-center mb-6'>

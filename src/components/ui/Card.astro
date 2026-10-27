@@ -1,13 +1,15 @@
 ---
 interface Props {
 	/** Element to render — lets semantic wrappers (section, details, links) reuse the surface. */
-	as?: 'div' | 'section' | 'article' | 'details' | 'a';
+	as?: 'div' | 'section' | 'article' | 'details' | 'a' | 'li' | 'nav';
 	/** Link target when as='a'. */
 	href?: string;
-	variant?: 'default' | 'outlined' | 'elevated' | 'slot' | 'casino' | 'bonus';
+	variant?: 'default' | 'outlined' | 'elevated' | 'slot' | 'casino' | 'bonus' | 'plain' | 'sunken' | 'tile';
 	padding?: 'none' | 'sm' | 'md' | 'lg';
 	hover?: boolean;
 	class?: string;
+	/** Any extra attributes (id, tabindex, role, aria-*) forwarded to the element. */
+	[key: string]: any;
 }
 
 const {
@@ -17,20 +19,28 @@ const {
 	padding = 'md',
 	hover = false,
 	class: className = '',
+	...rest
 }: Props = Astro.props;
 
-// Surface language: raised cards separate from the canvas by background +
-// shadow, never borders. `outlined` remains for the rare case a border is
-// genuinely the right tool.
-const raised = 'bg-white dark:bg-gray-900 shadow-sm';
+// Surface language (owner design 2026-10-27): flat rounded cards — 24px
+// radius, background only, no borders; a soft shadow in light mode only.
+// `surface-raised` lets a card nested inside another card (e.g. a module in
+// a review section) drop to the inner-tile tone — see global.css.
+const raised = 'surface-raised rounded-3xl bg-white dark:bg-gray-900 shadow-sm dark:shadow-none';
 
 const variants = {
 	default: raised,
 	slot: raised,
 	casino: raised,
 	bonus: raised,
-	elevated: 'bg-white dark:bg-gray-900 shadow-lg',
-	outlined: 'bg-transparent border border-gray-200 dark:border-gray-800',
+	elevated: 'rounded-3xl bg-white dark:bg-gray-900 shadow-lg',
+	outlined: 'rounded-3xl bg-transparent border border-gray-200 dark:border-gray-800',
+	// Smaller raised tile (16px radius): quick facts, the mobile section bar.
+	tile: 'surface-raised rounded-2xl bg-white dark:bg-gray-900 shadow-sm dark:shadow-none',
+	// No surface: for content that already sits inside another card.
+	plain: '',
+	// Inner tile inside a card (stat tiles, term rows).
+	sunken: 'rounded-2xl bg-gray-100 dark:bg-gray-800',
 } as const;
 
 const paddings = {
@@ -50,12 +60,12 @@ const hoverClasses = hover
 <Tag
 	href={href}
 	class:list={[
-		'rounded-2xl',
 		variants[variant],
 		paddings[padding],
 		hoverClasses,
 		className,
 	]}
+	{...rest}
 >
 	<slot />
 </Tag>

@@ -37,6 +37,9 @@ const absoluteImageUrl = imageUrl
 		: new URL(imageUrl, siteUrl).href
 	: new URL('/images/og-default.jpg', siteUrl).href;
 
+// reviewBody = the verdict summary, else the review's description.
+const reviewBody = slot.verdict?.summary ?? slot.description;
+
 // Format dates
 const publishedDate = slot.publishedDate?.toISOString().split('T')[0];
 const modifiedDate = slot.updatedDate?.toISOString().split('T')[0];
@@ -66,6 +69,19 @@ const schema = {
 			ratingValue: slot.rating,
 			bestRating: 5,
 			worstRating: 0,
+		},
+	}),
+	...(reviewBody && { reviewBody }),
+	...(slot.pros?.length > 0 && {
+		positiveNotes: {
+			'@type': 'ItemList',
+			itemListElement: slot.pros.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item })),
+		},
+	}),
+	...(slot.cons?.length > 0 && {
+		negativeNotes: {
+			'@type': 'ItemList',
+			itemListElement: slot.cons.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item })),
 		},
 	}),
 	...(author && {

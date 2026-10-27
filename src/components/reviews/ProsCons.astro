@@ -1,66 +1,54 @@
 ---
 /**
- * ProsCons Component
- *
- * Displays pros and cons in a visually appealing two-column layout
+ * ProsCons — the numbered "Pros & Cons" section (owner design 2026-10-27):
+ * green Pros card + red Cons card side by side (stacked < 640px), solid
+ * circular tick / cross dots. Shared by slot and casino reviews; renders
+ * nothing without either list. `number` is the section's TOC number.
  */
-
-import { Icon } from 'astro-icon/components';
-import Card from '../ui/Card.astro';
+import Icon from '../ui/Icon.astro';
 
 interface Props {
 	pros?: string[];
 	cons?: string[];
+	number?: string;
+	id?: string;
 	class?: string;
 }
 
-const { pros = [], cons = [], class: className = '' } = Astro.props;
+const { pros = [], cons = [], number, id, class: className = '' } = Astro.props;
+
+const panels = [
+	{ title: 'Pros', items: pros, icon: 'lucide:check', panel: 'bg-green-50 dark:bg-pos-bg', heading: 'text-green-800 dark:text-pos-text', dot: 'bg-green-700 text-white dark:bg-pos-dot dark:text-gray-950' },
+	{ title: 'Cons', items: cons, icon: 'lucide:x', panel: 'bg-red-50 dark:bg-neg-bg', heading: 'text-red-800 dark:text-neg-text', dot: 'bg-red-700 text-white dark:bg-neg-dot dark:text-gray-950' },
+].filter((p) => p.items.length > 0);
 ---
 
-{(pros.length > 0 || cons.length > 0) && (
-	<div class={`grid md:grid-cols-2 gap-6 ${className}`}>
-		<!-- Pros -->
-		{pros.length > 0 && (
-			<Card>
-				<div class="flex items-center gap-3 mb-4">
-					<div class="p-2 bg-green-100 dark:bg-green-900/40 rounded-lg">
-						<Icon name="lucide:thumbs-up" size={22} class="text-green-700 dark:text-green-400" />
-					</div>
-					<h2 class="text-lg md:text-xl font-bold mb-0 text-gray-900 dark:text-white">
-						Pros
-					</h2>
+{
+	panels.length > 0 && (
+		<section id={id} class:list={['grid sm:grid-cols-2 gap-3', className]}>
+			{panels.map((p, i) => (
+				<div class:list={['rounded-3xl p-5 md:p-7', p.panel]}>
+					{number && (
+						<p
+							class:list={['text-[0.8125rem] font-bold mb-0', i === 0 ? 'text-primary-700 dark:text-primary-500' : 'invisible']}
+							aria-hidden={i > 0 ? 'true' : undefined}
+						>
+							{number}
+						</p>
+					)}
+					<h2 class:list={['text-2xl font-extrabold mt-1.5 mb-3.5', p.heading]}>{p.title}</h2>
+					<ul class='flex flex-col gap-3 m-0 p-0 list-none'>
+						{p.items.map((item) => (
+							<li class='flex gap-3 text-[0.9375rem] leading-[1.45] text-gray-800 dark:text-gray-100'>
+								<span class:list={['grid place-items-center size-5.5 shrink-0 rounded-full', p.dot]}>
+									<Icon name={p.icon} size={13} class='stroke-[3.5]' />
+								</span>
+								{item}
+							</li>
+						))}
+					</ul>
 				</div>
-				<ul class="space-y-3">
-					{pros.map((pro) => (
-						<li class="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-							<Icon name="lucide:check-circle-2" size={20} class="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-							<span class="leading-relaxed">{pro}</span>
-						</li>
-					))}
-				</ul>
-			</Card>
-		)}
-
-		<!-- Cons -->
-		{cons.length > 0 && (
-			<Card>
-				<div class="flex items-center gap-3 mb-4">
-					<div class="p-2 bg-red-100 dark:bg-red-900/40 rounded-lg">
-						<Icon name="lucide:thumbs-down" size={22} class="text-red-700 dark:text-red-400" />
-					</div>
-					<h2 class="text-lg md:text-xl font-bold mb-0 text-gray-900 dark:text-white">
-						Cons
-					</h2>
-				</div>
-				<ul class="space-y-3">
-					{cons.map((con) => (
-						<li class="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-							<Icon name="lucide:x-circle" size={20} class="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-							<span class="leading-relaxed">{con}</span>
-						</li>
-					))}
-				</ul>
-			</Card>
-		)}
-	</div>
-)}
+			))}
+		</section>
+	)
+}

@@ -1,0 +1,60 @@
+---
+/**
+ * VerdictCard — the closing "Our verdict" section (owner design 2026-10-27):
+ * accent card, dark text, headline + summary on the left, big score + a dark
+ * pill CTA on the right. Shared by slot and casino reviews; driven by the
+ * `verdict` frontmatter field — renders nothing without it.
+ */
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+
+interface Props {
+	verdict?: { headline: string; summary: string };
+	number?: string;
+	id?: string;
+	score?: number;
+	max?: number;
+	cta?: { label: string; href?: string; affiliate?: boolean };
+	class?: string;
+}
+
+const { verdict, number, id, score, max, cta, class: className = '' } = Astro.props;
+---
+
+{
+	verdict && (
+		<section
+			id={id}
+			class:list={['rounded-3xl bg-primary-500 text-gray-950 p-5 md:p-7 grid gap-7 sm:grid-cols-2 items-end', className]}
+		>
+			<div>
+				<p class='text-[0.8125rem] font-extrabold mb-0'>{number && `${number} · `}Our verdict</p>
+				<h2 class='mt-2.5 mb-3.5 text-[clamp(1.875rem,4vw,2.75rem)] leading-[1.02] font-extrabold tracking-[-0.03em] text-gray-950'>
+					{verdict.headline}
+				</h2>
+				<p class='text-[1.0625rem] leading-[1.55] max-w-[48ch] font-medium mb-0'>{verdict.summary}</p>
+			</div>
+			<div class='flex flex-col gap-4'>
+				{score !== undefined && (
+					<p class='flex items-baseline gap-1.5 mb-0'>
+						<span class='text-[4.75rem] font-extrabold leading-[0.85] tracking-[-0.05em]'>{score}</span>
+						<span class='text-xl font-semibold'>/{max}</span>
+					</p>
+				)}
+				{cta?.href && (
+					<Button
+						variant='dark'
+						href={cta.href}
+						affiliate={cta.affiliate}
+						size='lg'
+						spread={true}
+						class='w-full font-extrabold'
+					>
+						{cta.label}
+						<Icon name='lucide:arrow-right' size={20} />
+					</Button>
+				)}
+			</div>
+		</section>
+	)
+}

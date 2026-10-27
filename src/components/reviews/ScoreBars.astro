@@ -1,0 +1,67 @@
+---
+/**
+ * ScoreBars — per-category score bars for slot (5 × /5) and casino (6 × /10)
+ * reviews; labels and scale come from src/data/scorecards.ts. Renders nothing
+ * without scores.
+ *
+ * Hero: <ScoreBars type='casino' scores={…} card={false} />
+ * MDX:  <ScoreBars type='casino' scores={frontmatter.scorecard} notes={{ trust: '…' }} />
+ *       (`notes` = optional one-line justification per category key)
+ */
+import Card from '../ui/Card.astro';
+import { SCORECARDS, scoreRows, meanScore, type ScorecardType } from '../../data/scorecards';
+
+interface Props {
+	type: ScorecardType;
+	scores?: Record<string, number> | null;
+	notes?: Record<string, string>;
+	/** false = bare list (the hero supplies its own card). */
+	card?: boolean;
+	class?: string;
+}
+
+const { type, scores, notes = {}, card = true, class: className = '' } = Astro.props;
+
+const { max } = SCORECARDS[type];
+const rows = scoreRows(type, scores);
+const overall = type === 'casino' ? meanScore(rows) : undefined;
+---
+
+{
+	rows.length > 0 && (
+		<Card variant={card ? 'default' : 'plain'} padding={card ? 'md' : 'none'} class:list={['not-prose', className]}>
+			<dl class='space-y-3.5 mb-0'>
+				{rows.map((row) => (
+					<div class='grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 gap-y-1.5'>
+						<dt class='text-[0.8125rem] text-gray-700 dark:text-gray-300'>{row.label}</dt>
+						<dd class='text-[0.8125rem] font-bold text-gray-900 dark:text-gray-100 tabular-nums m-0'>
+							{row.value.toFixed(1)}
+						</dd>
+						{/* Bar + note live INSIDE a <dd> (a <dl> may only contain dt/dd). */}
+						<dd class='col-span-2 m-0'>
+							<div
+								class='h-1.5 rounded-full bg-gray-200 dark:bg-ink-line'
+								role='img'
+								aria-label={`${row.label}: ${row.value} out of ${max}`}
+							>
+								<div
+									class='h-full rounded-full bg-primary-500'
+									style={`width: ${(row.value / max) * 100}%`}
+								/>
+							</div>
+							{notes[row.key] && (
+								<p class='mt-1.5 text-xs text-gray-600 dark:text-gray-400 mb-0'>{notes[row.key]}</p>
+							)}
+						</dd>
+					</div>
+				))}
+			</dl>
+			{card && overall !== undefined && (
+				<p class='mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400 mb-0'>
+					Overall {overall.toFixed(1)} / {max} — the arithmetic mean of the {rows.length} categories, never
+					adjusted by hand.
+				</p>
+			)}
+		</Card>
+	)
+}

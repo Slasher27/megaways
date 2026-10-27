@@ -1,38 +1,65 @@
 ---
 /**
- * ActionBar — sticky bottom CTA bar for mobile (hidden lg+, where the in-page
- * CTAs are visible). Pass the buttons as children; safe-area padding included.
+ * ActionBar — floating CTA pill (owner design 2026-10-27): name + score +
+ * one-line summary, then the buttons passed as children. Appears only once
+ * the page's #hero has scrolled out of view (always shown if there is no
+ * #hero). JS justification (rule 5): CSS can't observe another element's
+ * scroll position — a ~10-line IntersectionObserver, no library.
  */
 interface Props {
+	title?: string;
+	score?: number;
+	summary?: string;
 	class?: string;
 }
 
-const { class: className = '' } = Astro.props;
+const { title, score, summary, class: className = '' } = Astro.props;
 ---
 
 <div
 	class:list={[
-		'action-bar fixed inset-x-0 bottom-0 z-40 lg:hidden bg-white/85 dark:bg-gray-900/85 backdrop-blur border-t border-gray-200/70 dark:border-gray-800',
+		'action-bar fixed inset-x-0 bottom-3 z-40 px-4 md:px-6 pb-[env(safe-area-inset-bottom)] pointer-events-none',
+		'invisible translate-y-[160%] transition-[translate,visibility] duration-250 motion-reduce:transition-none [&.is-shown]:visible [&.is-shown]:translate-y-0',
 		className,
 	]}
 >
-	<div
-		class='flex gap-3 max-w-md mx-auto px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]'
-	>
-		<slot />
+	<div class='pointer-events-auto mx-auto max-w-190 flex items-center gap-3 rounded-full bg-white dark:bg-gray-800 shadow-lg dark:shadow-none ring-1 ring-gray-900/5 dark:ring-0 py-2 pr-2 pl-5'>
+		{
+			title && (
+				<p class='flex-1 min-w-0 flex items-baseline gap-3 mb-0 whitespace-nowrap'>
+					<strong class='font-extrabold text-gray-900 dark:text-gray-100 truncate'>{title}</strong>
+					{score !== undefined && <span class='font-extrabold text-primary-700 dark:text-primary-500'>{score}</span>}
+					{summary && <span class='hidden sm:inline text-sm text-gray-700 dark:text-gray-300 truncate'>{summary}</span>}
+				</p>
+			)
+		}
+		<div class='flex gap-2 shrink-0'>
+			<slot />
+		</div>
 	</div>
 </div>
 
 <style is:global>
-	/* While an action bar is present (mobile): lift BackToTop above it and give
-	   the footer clearance so the bar never covers the last content. */
-	@media (max-width: 63.9375rem) {
-		body:has(.action-bar) .back-to-top {
-			bottom: 5.5rem;
-		}
+	/* Custom CSS on purpose: these reach OTHER components (BackToTop, footer)
+	   based on the bar's presence — no Tailwind hook on those elements.
+	   While an action bar is present: lift BackToTop above it and give the
+	   footer clearance so the bar never covers the last content. */
+	body:has(.action-bar) .back-to-top {
+		bottom: 5.5rem;
+	}
 
-		body:has(.action-bar) footer {
-			padding-bottom: 4.5rem;
-		}
+	body:has(.action-bar) footer {
+		padding-bottom: 5.5rem;
 	}
 </style>
+
+<script>
+	const bars = document.querySelectorAll<HTMLElement>('.action-bar');
+	const hero = document.getElementById('hero');
+	if (!hero) bars.forEach((b) => b.classList.add('is-shown'));
+	else
+		new IntersectionObserver(([entry]) => {
+			const past = !entry.isIntersecting && entry.boundingClientRect.bottom < 0;
+			bars.forEach((b) => b.classList.toggle('is-shown', past));
+		}).observe(hero);
+</script>

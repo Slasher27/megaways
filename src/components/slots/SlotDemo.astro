@@ -32,7 +32,7 @@ const { slotData: slot, eager = false, class: className } = Astro.props;
 	<button
 		type='button'
 		class='slot-demo-play group absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 hover:bg-black/50 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-inset'
-		aria-label={`Play the ${slot.name} demo`}
+		aria-label={`Play Free Demo: ${slot.name}`}
 	>
 		<span class='flex items-center justify-center w-16 h-16 rounded-full bg-primary-700 group-hover:bg-primary-800 text-white shadow-lg transition-transform group-hover:scale-105 motion-reduce:transform-none'>
 			<Icon name='lucide:play' class='size-8 translate-x-0.5' />
@@ -100,26 +100,13 @@ const { slotData: slot, eager = false, class: className } = Astro.props;
 	   1. the site header stops being sticky, so it can't overlay the game
 	      controls when the player scrolls (main fix for mobile);
 	   2. the BackToTop button is hidden (it floated over the game canvas);
-	   3. on desktop the hero switches to a column so the demo spans the full
-	      content width instead of the 25rem thumbnail slot. User-initiated,
-	      so the reflow is CLS-exempt. */
+	   (The demo plays in place — no full-width expansion, so no layout shift.) */
 	body:has(.slot-demo iframe) header.sticky {
 		position: static;
 	}
 
 	body:has(.slot-demo iframe) .back-to-top {
 		display: none;
-	}
-
-	@media (min-width: 64rem) {
-		.slot-hero:has(.slot-demo iframe) {
-			flex-direction: column;
-			align-items: stretch;
-		}
-
-		.slot-hero:has(.slot-demo iframe) .demo-col > div:first-of-type {
-			width: 100%;
-		}
 	}
 
 	/* In element fullscreen, let the box fill the screen instead of

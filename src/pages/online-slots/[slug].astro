@@ -12,17 +12,14 @@ import {
 import SlotReviewLayout from '../../layouts/SlotReviewLayout.astro';
 import SlotThumbnail from '../../components/slots/SlotThumbnail.astro';
 import SlotDemo from '../../components/slots/SlotDemo.astro';
-import H1 from '../../components/typography/H1.astro';
-import P from '../../components/typography/P.astro';
 import Button from '../../components/ui/Button.astro';
 import Card from '../../components/ui/Card.astro';
-import TocCard from '../../components/reviews/TocCard.astro';
+import StatGrid from '../../components/ui/StatGrid.astro';
 import Tile from '../../components/ui/Tile.astro';
 import TileGrid from '../../components/ui/TileGrid.astro';
 import Callout from '../../components/ui/Callout.astro';
-import ReviewMeta from '../../components/reviews/ReviewMeta.astro';
-import VerifiedChip from '../../components/reviews/VerifiedChip.astro';
-import Scorecard from '../../components/reviews/Scorecard.astro';
+import ReviewHero from '../../components/reviews/ReviewHero.astro';
+import ScoreBars from '../../components/reviews/ScoreBars.astro';
 import Faq from '../../components/reviews/Faq.astro';
 import Screenshot from '../../components/reviews/Screenshot.astro';
 import SessionLog from '../../components/reviews/SessionLog.astro';
@@ -36,12 +33,15 @@ import VolatilityMeter from '../../components/slots/VolatilityMeter.astro';
 import WinPotentialPanel from '../../components/slots/WinPotentialPanel.astro';
 import CompareTable from '../../components/slots/CompareTable.astro';
 import ActionBar from '../../components/layout/ActionBar.astro';
+import FAQSchema from '../../components/seo/FAQSchema.astro';
 import { providerSlug } from '../../data/providers';
+import { reviewToc } from '../../data/format';
+import Icon from '../../components/ui/Icon.astro';
+import VerdictCard from '../../components/reviews/VerdictCard.astro';
 
 // New review components
 import ProsCons from '../../components/reviews/ProsCons.astro';
 import AuthorCard from '../../components/reviews/AuthorCard.astro';
-import SlotStats from '../../components/slots/SlotStats.astro';
 import WhereToPlay from '../../components/slots/WhereToPlay.astro';
 
 export async function getStaticPaths() {
@@ -60,135 +60,118 @@ interface Props {
 const { slot } = Astro.props;
 
 // Render content for the slot; h2 headings drive the two TOCs
-const { Content, headings } = await render(slot);
-const toc = headings.filter((heading) => heading.depth === 2);
+const { Content, headings, remarkPluginFrontmatter } = await render(slot);
+
+// FAQPage for markdown FAQ sections (protocol reviews emit theirs via <Faq>).
+const bodyFaqs = slot.data.faqs.length === 0 ? (remarkPluginFrontmatter.faqsFromBody ?? []) : [];
+const { toc, num } = reviewToc(
+	headings.filter((heading) => heading.depth === 2),
+	{ prosCons: slot.data.pros.length + slot.data.cons.length > 0, verdictHeadline: slot.data.verdict?.headline },
+);
 
 // Get author details if available (author is already a reference)
 const author = slot.data.author ? await getEntry(slot.data.author) : null;
+
+const readMinutes = Math.max(1, Math.round((slot.body ?? '').split(/\s+/).length / 230));
+
+// 700 on light: the 600s fall under 4.5:1 on the sunken tile wells.
+const volatilityColors = {
+	low: 'text-green-700 dark:text-green-400',
+	medium: 'text-yellow-700 dark:text-yellow-400',
+	'medium-high': 'text-orange-700 dark:text-orange-400',
+	high: 'text-red-700 dark:text-red-400',
+	'very-high': 'text-red-800 dark:text-red-400',
+};
 ---
 
 <SlotReviewLayout slotEntry={slot} headings={toc}>
-	<!-- Hero Section -->
-	<header class='mb-10'>
-		<!-- Provider eyebrow -->
-		{
-			slot.data.provider && (
-				<a
-					href={`/online-slots/${providerSlug(slot.data.provider)}/`}
-					class='inline-block text-xs font-bold uppercase tracking-[0.14em] text-primary-700 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 mb-3'
-				>
-					{slot.data.provider}
-				</a>
-			)
-		}
-
-		<!-- Heading -->
-		<H1 size='md' class='mb-4'>{slot.data.h1Tag || slot.data.name}</H1>
-
-		<!-- Rating + review meta + stat provenance -->
-		<div class='flex flex-wrap items-center gap-x-4 gap-y-2 mb-5'>
-			<ReviewMeta
-				rating={slot.data.rating}
-				updatedDate={slot.data.updatedDate}
-			/>
-			<VerifiedChip verified={slot.data.verified} />
-		</div>
-
-		<!-- Description -->
-		{
-			slot.data.description && (
-				<P
-					variant='lead'
-					size='lg'
-					class='text-gray-600 dark:text-gray-400 mb-8'
-				>
-					{slot.data.description}
-				</P>
-			)
-		}
-
-		<!-- Hero Content: Image + Stats/Features (Row on Desktop, Column on Mobile).
-		     While a demo iframe is active, SlotDemo's global styles expand the demo
-		     column to full width (stats wrap below) — see SlotDemo.astro. -->
-		<div class='slot-hero flex flex-col lg:flex-row lg:items-start gap-6 mb-8'>
-			<!-- Thumbnail / click-to-load demo facade -->
-			<div class='demo-col flex flex-col gap-4 lg:gap-5'>
-				<div class='lg:w-100 shrink-0 rounded-2xl overflow-hidden shadow-sm'>
-					{
-						slot.data.demoUrl ? (
-							<SlotDemo slotData={slot.data} eager={true} />
-						) : (
-							<SlotThumbnail
-								slotData={slot.data}
-								width={400}
-								height={225}
-								eager={true}
-								class='h-auto'
-							/>
-						)
-					}
-				</div>
-				<!-- Desktop CTAs; on mobile the sticky action bar takes over -->
-				<div class='hidden lg:flex flex-row items-center justify-center gap-3'>
-					{
-						slot.data.demoUrl && (
-							<Button variant='secondary' class='js-play-demo'>
-								Play Demo
-							</Button>
-						)
-					}
-					<Button variant='primary' href='#where-to-play'>Where to play</Button>
-				</div>
-			</div>
-			<!-- Stats & Features: raised card, tiles are sunken wells -->
-			<Card padding='none' class='flex-1 p-4 sm:p-5'>
-				<SlotStats
-					rtp={slot.data.rtp}
-					volatility={slot.data.volatility}
-					maxWin={slot.data.maxWin}
-					paylines={slot.data.paylines}
-					reels={slot.data.reels}
-					rows={slot.data.rows}
-					minBet={slot.data.minBet}
-					maxBet={slot.data.maxBet}
-					bonusBuy={slot.data.bonusBuy}
-					class='mb-5'
-				/>
-
-				<!-- Features -->
+	<!-- Hero (shared ReviewHero grid): title | demo, then score | stats.
+	     The demo plays in place — no resize, no layout shift. -->
+	<ReviewHero
+		slot='hero'
+		type='slot'
+		title={slot.data.h1Tag || slot.data.name}
+		kicker='Slot review'
+		subline={{ label: slot.data.provider, href: `/online-slots/${providerSlug(slot.data.provider)}/` }}
+		lead={slot.data.description}
+		chips={slot.data.mechanics.slice(0, 3).map((label) => ({ label, tone: 'tint' as const }))}
+		authorName={author?.data.name}
+		updatedDate={slot.data.updatedDate}
+		readMinutes={readMinutes}
+		verified={slot.data.verified}
+		score={slot.data.rating}
+	>
+		<!-- Right column: demo (or art when there's no demo) + the 4 headline
+		     stats, which stretch so the column matches the title card's height. -->
+		<Fragment slot='aside'>
+			<div class='rounded-3xl overflow-hidden'>
 				{
-					slot.data.features?.length > 0 && (
-						<div class='pt-4 border-t border-gray-100 dark:border-gray-800'>
-							<p class='text-[0.6875rem] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2'>
-								Features
-							</p>
-							<div class='flex flex-wrap gap-1.5'>
-								{slot.data.features.map((feature) => (
-									<span class='px-2.5 py-1 bg-primary-50 text-primary-800 dark:bg-primary-950/60 dark:text-primary-300 rounded-full text-xs font-medium capitalize'>
-										{feature}
-									</span>
-								))}
-							</div>
-						</div>
+					slot.data.demoUrl ? (
+						<SlotDemo slotData={slot.data} eager={true} class='rounded-none' />
+					) : (
+						<SlotThumbnail slotData={slot.data} width={800} height={450} eager={true} class='w-full h-auto' />
 					)
 				}
-			</Card>
-		</div>
-	</header>
+			</div>
+			<StatGrid
+				surface='raised'
+				class='flex-1 auto-rows-fr'
+				items={[
+					{ label: 'RTP', value: slot.data.rtp && `${slot.data.rtp}%`, icon: 'lucide:percent' },
+					{
+						label: 'Volatility',
+						value: slot.data.volatility?.replace('-', ' '),
+						icon: 'lucide:activity',
+						tone: `capitalize ${slot.data.volatility ? volatilityColors[slot.data.volatility] : ''}`,
+					},
+					{ label: 'Max Win', value: slot.data.maxWin, icon: 'lucide:trophy' },
+					{ label: 'Paylines', value: slot.data.paylines?.toLocaleString(), icon: 'lucide:zap' },
+				]}
+			/>
+		</Fragment>
 
-	<!-- On this page (mobile/tablet; xl+ uses the sticky aside in the layout) -->
-	<TocCard headings={toc} class='mb-8' />
+		<!-- Remaining stats & features: raised card, tiles are inner wells -->
+		<Card slot='below' padding='none' class='p-4 sm:p-5'>
+			<StatGrid
+				class='mb-5'
+				items={[
+					{ label: 'Reels', value: slot.data.reels, icon: 'lucide:columns-3' },
+					{ label: 'Rows', value: slot.data.rows, icon: 'lucide:rows-3' },
+					{ label: 'Min Bet', value: slot.data.minBet && `$${slot.data.minBet}`, icon: 'lucide:coins' },
+					{ label: 'Max Bet', value: slot.data.maxBet && `$${slot.data.maxBet}`, icon: 'lucide:banknote' },
+				]}
+			/>
+
+			<!-- Features -->
+			{
+				slot.data.features?.length > 0 && (
+					<div class='pt-4 border-t border-gray-100 dark:border-gray-800'>
+						<p class='text-[0.6875rem] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2'>
+							Features
+						</p>
+						<div class='flex flex-wrap gap-1.5'>
+							{slot.data.features.map((feature) => (
+								<span class='px-2.5 py-1 bg-primary-50 text-primary-800 dark:bg-primary-950/60 dark:text-primary-300 rounded-full text-xs font-medium capitalize'>
+									{feature}
+								</span>
+							))}
+						</div>
+					</div>
+				)
+			}
+		</Card>
+	</ReviewHero>
 
 	<!-- Review Content (fills the article column; container + TOC bound it).
 	     Protocol components (docs/REVIEW-PROTOCOL.md) available in MDX without
 	     imports; frontmatter props via the MDX `frontmatter` binding. -->
-	<section class='review-prose prose prose-lg dark:prose-invert mb-10'>
+	<section class='review-prose prose prose-lg dark:prose-invert'>
 		<Content
 			components={{
 				Tile,
 				TileGrid,
 				Callout,
-				Scorecard,
+				ScoreBars,
 				RTPContextBar,
 				VolatilityMeter,
 				WinPotentialPanel,
@@ -205,14 +188,24 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 	</section>
 
 	<!-- Pros & Cons -->
-	<ProsCons pros={slot.data.pros} cons={slot.data.cons} class='mb-10' />
+	<ProsCons id='pros-and-cons' number={num('pros-and-cons')} pros={slot.data.pros} cons={slot.data.cons} />
+
+	<!-- Our verdict (orange card) — from `verdict` frontmatter -->
+	<VerdictCard
+		id='our-verdict'
+		number={num('our-verdict')}
+		verdict={slot.data.verdict}
+		score={slot.data.rating}
+		max={5}
+		cta={{ label: 'Where to play', href: '#where-to-play' }}
+	/>
 
 	<!-- Where to Play — protocol-format MDX places this itself (blueprint §10,
 	     before the FAQs); only render here when the body hasn't. -->
 	{
 		!slot.body?.includes('<WhereToPlay') && (
 			<div id='where-to-play'>
-				<WhereToPlay slotName={slot.data.name} class='mb-10' />
+				<WhereToPlay slotName={slot.data.name} />
 			</div>
 		)
 	}
@@ -225,33 +218,33 @@ const author = slot.data.author ? await getEntry(slot.data.author) : null;
 				publishedDate={slot.data.publishedDate}
 				updatedDate={slot.data.updatedDate}
 				variant='full'
-				class='mb-10'
 			/>
 		)
 	}
 
 	<!-- Review History (renders only when changelog entries exist) -->
-	<ReviewChangeLog entries={slot.data.changelog} class='mb-10' />
+	<ReviewChangeLog entries={slot.data.changelog} />
 
 	<!-- Related rails (blueprint §13): More {Provider} + More {Mechanic} -->
-	<RelatedSlots current={slot.data} class='mb-10' />
+	<RelatedSlots current={slot.data} />
+
+	{bodyFaqs.length > 0 && <FAQSchema questions={bodyFaqs} />}
 
 	<!-- Sticky mobile action bar (hidden once the demo is playing) -->
-	<ActionBar class='slot-action-bar'>
+	<ActionBar
+		class='slot-action-bar'
+		title={slot.data.name}
+		score={slot.data.rating}
+		summary={[slot.data.rtp && `${slot.data.rtp}% RTP`, slot.data.maxWin && `${slot.data.maxWin} max win`].filter(Boolean).join(' · ')}
+	>
 		{
 			slot.data.demoUrl && (
-				<Button variant='secondary' class='js-play-demo flex-1 justify-center'>
+				<Button variant='secondary' class='js-play-demo font-extrabold min-h-11'>
 					Play Demo
 				</Button>
 			)
 		}
-		<Button
-			variant='primary'
-			href='#where-to-play'
-			class='flex-1 justify-center'
-		>
-			Where to Play
-		</Button>
+		<Button href='#where-to-play' class='font-extrabold min-h-11'>Where to Play<Icon name='lucide:arrow-right' size={18} /></Button>
 	</ActionBar>
 
 	<style is:global>

@@ -29,10 +29,110 @@ function rehypeAccessibleTables() {
 	};
 }
 
+/**
+ * Review bodies render each H2 section as its own card (owner design
+ * 2026-10-27). MDX gives no wrapper per section, so wrap every top-level
+ * <h2> and the nodes up to the next <h2> in <section class="review-section">
+ * at build time — zero content edits. ESM import/export nodes stay at root.
+ */
+// Tailwind utilities for markdown output (no class hooks in MDX). Tailwind
+// scans this file, so these classes are generated like any other.
+const REVIEW_CLASSES = {
+	// Section card: 24px radius, 28px/20px padding, 12px apart, 17px/1.7 body;
+	// cards nested inside (modules, FAQ…) drop to the inner-tile tone.
+	section:
+		'rounded-3xl bg-white dark:bg-gray-900 shadow-sm dark:shadow-none p-5 md:p-7 text-[1.0625rem] leading-[1.7] not-first:mt-3 [&>p]:mt-0 [&>p]:mb-3.5 [&_.surface-raised]:rounded-2xl [&_.surface-raised]:shadow-none [&_.surface-raised]:bg-gray-100 dark:[&_.surface-raised]:bg-gray-800',
+	// Numbered H2 (the number comes from the CSS counter in global.css).
+	h2: 'mt-0 mb-4 text-[1.875rem] leading-[1.15] before:block before:mb-1.5 before:text-[0.8125rem] before:font-bold before:tracking-normal before:text-primary-700 dark:before:text-primary-500',
+	// "**Best for:** …" / "**Avoid if:**" lines → the design's tinted callout.
+	callout:
+		'mt-6 [.callout-fit+&]:mt-2 rounded-2xl px-5 py-4.5 bg-primary-50 text-primary-900 dark:bg-primary-950 dark:text-primary-200 text-lg font-semibold leading-[1.45] [&>strong:first-child]:text-primary-700 dark:[&>strong:first-child]:text-primary-300',
+	// Bold-only paragraph ("**How it works:**") = a mini-heading.
+	leadIn: 'mt-8 mb-3 text-[1.0625em]',
+};
+
+function rehypeSectionCards() {
+	const addClass = (node, cls) => {
+		node.properties = node.properties || {};
+		node.properties.className = [...(node.properties.className || []), ...cls.split(' ')];
+	};
+	return (tree, file) => {
+		const out = [];
+		let current = null;
+		for (const node of tree.children) {
+			if (node.type === 'mdxjsEsm') {
+				out.push(node);
+			} else if (node.type === 'element' && node.tagName === 'hr') {
+				// MDX `---` section rules: the cards separate sections now.
+			} else if (node.type === 'element' && node.tagName === 'h2') {
+				addClass(node, REVIEW_CLASSES.h2);
+				current = { type: 'element', tagName: 'section', properties: {}, children: [node] };
+				addClass(current, `review-section ${REVIEW_CLASSES.section}`);
+				out.push(current);
+			} else if (current) {
+				current.children.push(node);
+			} else {
+				out.push(node);
+			}
+		}
+		tree.children = out;
+
+		const fit = /^(best for|avoid if|skip it if|skip if|play here if)\b/i;
+		const text = (n) => (n.type === 'text' ? n.value : (n.children || []).map(text).join(''));
+		const mark = (node) => {
+			if (node.type === 'element' && node.tagName === 'p') {
+				const content = node.children.filter((c) => !(c.type === 'text' && !c.value.trim()));
+				const first = content[0];
+				if (first?.type === 'element' && first.tagName === 'strong' && fit.test(text(first).trim())) {
+					addClass(node, `callout-fit ${REVIEW_CLASSES.callout}`);
+				} else if (content.length === 1 && first?.type === 'element' && first.tagName === 'strong') {
+					// Decided here, not via CSS :has(> strong:only-child), which can't
+					// see text nodes and caught ordinary one-bold-phrase paragraphs.
+					addClass(node, REVIEW_CLASSES.leadIn);
+				}
+			}
+			(node.children || []).forEach(mark);
+		};
+		mark(tree);
+
+		// FAQ sections written in markdown ("### Question?" or "**Question?**"
+		// followed by answer paragraphs) → exported as frontmatter `faqsFromBody`
+		// so the route can emit FAQPage JSON-LD built from the VISIBLE text
+		// (schema = page, word for word). Protocol pages use <Faq> instead and
+		// yield nothing here.
+		const clean = (s) => s.replace(/\s+/g, ' ').trim();
+		const faqs = [];
+		for (const section of out.filter((n) => n.tagName === 'section')) {
+			if (!/\b(faqs?|frequently asked)\b/i.test(text(section.children[0]))) continue;
+			let q = null;
+			for (const node of section.children.slice(1)) {
+				if (node.type !== 'element') continue;
+				const content = (node.children || []).filter((c) => !(c.type === 'text' && !c.value.trim()));
+				const boldOnly = node.tagName === 'p' && content.length === 1 && content[0].tagName === 'strong';
+				// A question must END in "?" — whether a ### heading or a bold line.
+				const isQ = (node.tagName === 'h3' || boldOnly) && /\?\s*$/.test(text(node));
+				if (isQ) {
+					q = { question: clean(text(node)), answer: '' };
+					faqs.push(q);
+				} else if (q && ['p', 'ul', 'ol'].includes(node.tagName) && !boldOnly) {
+					q.answer = clean(`${q.answer} ${text(node)}`);
+				} else {
+					// Anything else (a non-question heading/lead-in, a table, a
+					// component) ends the answer rather than being silently merged
+					// or dropped — the schema must never misrepresent the page.
+					q = null;
+				}
+			}
+		}
+		const complete = faqs.filter((f) => f.question && f.answer);
+		if (complete.length && file?.data?.astro?.frontmatter) file.data.astro.frontmatter.faqsFromBody = complete;
+	};
+}
+
 // https://astro.build/config
 export default defineConfig({
     markdown: {
-        rehypePlugins: [rehypeAccessibleTables],
+        rehypePlugins: [rehypeAccessibleTables, rehypeSectionCards],
     },
     site: 'https://megawaysonline.com',
     trailingSlash: 'always',

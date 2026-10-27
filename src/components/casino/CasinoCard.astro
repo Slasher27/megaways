@@ -11,6 +11,7 @@ import Badge from '../ui/Badge.astro';
 import Button from '../ui/Button.astro';
 import H3 from '../typography/H3.astro';
 import { Icon } from 'astro-icon/components';
+import { casinoScore } from '../../data/scorecards';
 
 interface Props {
 	casinoEntry: CollectionEntry<'casinos'>;
@@ -26,6 +27,9 @@ const casinoUrl = `/online-casinos/${casino.slug}-casino-review/`;
 
 // Status honesty (CASINO-REVIEW-PROTOCOL law 6): closed/warning ribbons.
 const status = casino.status ?? 'live';
+
+// Same score + scale as the review page (closed casinos show none).
+const { score, max } = casinoScore(casino);
 ---
 
 <Card
@@ -88,12 +92,11 @@ const status = casino.status ?? 'live';
 			)
 		}
 
-		<!-- Rating Badge (Top Right) -->
+		<!-- Score Badge (Top Right) -->
 		{
-			casino.rating && (
-				<div class='absolute top-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1'>
-					<Icon name='lucide:star' class='size-4 text-yellow-400' />
-					{casino.rating.toFixed(1)}
+			score !== undefined && (
+				<div class='absolute top-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-semibold'>
+					{score}<span class='font-normal text-white/80'>/{max}</span>
 				</div>
 			)
 		}

@@ -42,7 +42,13 @@ const thClass =
 {
 	sorted.length > 0 && (
 		<div class:list={['not-prose overflow-x-auto', className]}>
-			<table class='w-full text-sm border-separate border-spacing-0'>
+			{/* .review-prose makes every table its own scroll box — keep it keyboard-reachable (same as rehypeAccessibleTables in astro.config.mjs). */}
+			<table
+				class='w-full text-sm border-separate border-spacing-0'
+				tabindex='0'
+				role='region'
+				aria-label='Paytable — scroll horizontally to see all columns'
+			>
 				<thead>
 					<tr>
 						<th class={thClass}>Symbol</th>

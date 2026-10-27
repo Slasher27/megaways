@@ -1,0 +1,98 @@
+---
+/**
+ * MegawaysLibrary — the moat section (§3.6): our hand-counted Megaways total
+ * with its date, plus flagship titles with the RTP seen in-game at THIS casino
+ * against the best published RTP from our own slot review (joined by slug —
+ * name, provider and link come from the slot collection, never retyped).
+ * Without a count it says so plainly instead of printing a marketing figure.
+ * MDX: <MegawaysLibrary count={frontmatter.megawaysCount} counted={frontmatter.megawaysCountedDate} flagships={frontmatter.flagships} />
+ */
+import { getCollection } from 'astro:content';
+import Card from '../ui/Card.astro';
+import { fmtDate } from '../../data/format';
+
+interface Flagship {
+	slot: string;
+	liveRtp?: number;
+	checkedDate?: Date | string;
+}
+
+interface Props {
+	count?: number;
+	counted?: Date | string;
+	flagships?: Flagship[];
+	class?: string;
+}
+
+const { count, counted, flagships = [], class: className = '' } = Astro.props;
+
+const slots = await getCollection('slots');
+const rows = flagships.map((f) => {
+	const s = slots.find((x) => x.data.slug === f.slot)?.data;
+	const gap = s?.rtp !== undefined && f.liveRtp !== undefined ? Math.round((f.liveRtp - s.rtp) * 100) / 100 : undefined;
+	return { ...f, name: s?.name ?? f.slot, provider: s?.provider, best: s?.rtp, gap, href: s ? `/online-slots/${s.slug}/` : undefined };
+});
+const countedOn = fmtDate(counted);
+---
+
+<div class:list={['not-prose space-y-3', className]}>
+	<Card padding='none' class='p-5 sm:p-6 flex items-baseline gap-3 flex-wrap'>
+		{
+			count ? (
+				<>
+					<span class='font-display text-4xl font-bold text-primary-700 dark:text-primary-400'>{count}</span>
+					<span class='text-gray-800 dark:text-gray-200'>
+						Megaways slots{countedOn && <> — hand-counted by us on {countedOn}</>}
+					</span>
+				</>
+			) : (
+				<span class='text-gray-800 dark:text-gray-200'>
+					<strong class='font-display'>Count pending</strong> — we haven't hand-counted this library yet, so we don't print a number.
+				</span>
+			)
+		}
+	</Card>
+
+	{
+		rows.length > 0 && (
+			<table
+				class='w-full text-sm'
+				tabindex='0'
+				role='region'
+				aria-label='Flagship Megaways RTP check — scroll horizontally to see all columns'
+			>
+				<thead>
+					<tr>
+						<th class='text-left px-3 py-2'>Slot</th>
+						<th class='text-left px-3 py-2'>RTP here</th>
+						<th class='text-left px-3 py-2'>Best published</th>
+						<th class='text-left px-3 py-2'>Gap</th>
+					</tr>
+				</thead>
+				<tbody>
+					{rows.map((r) => (
+						<tr>
+							<td class='px-3 py-2.5'>
+								{r.href ? <a href={r.href} class='text-primary-700 dark:text-primary-400 underline'>{r.name}</a> : r.name}
+								{r.provider && <span class='block text-xs font-normal text-gray-600 dark:text-gray-400'>{r.provider}</span>}
+							</td>
+							<td class='px-3 py-2.5 tabular-nums'>
+								{r.liveRtp !== undefined ? `${r.liveRtp}%` : '—'}
+								{r.checkedDate && <span class='block text-xs text-gray-600 dark:text-gray-400'>{fmtDate(r.checkedDate)}</span>}
+							</td>
+							<td class='px-3 py-2.5 tabular-nums'>{r.best !== undefined ? `${r.best}%` : '—'}</td>
+							<td
+								class:list={[
+									'px-3 py-2.5 tabular-nums font-semibold',
+									r.gap !== undefined && r.gap < 0 ? 'text-red-700 dark:text-red-400' : 'text-green-700 dark:text-green-400',
+								]}
+							>
+								{r.gap === undefined ? '—' : r.gap === 0 ? 'Best version' : `${r.gap > 0 ? '+' : ''}${r.gap} pts`}
+							</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		)
+	}
+</div>

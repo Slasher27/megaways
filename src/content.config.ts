@@ -138,6 +138,10 @@ const slots = defineCollection({
 
 			// FAQ — single source for the visible accordion AND FAQPage JSON-LD
 			// (same rule as the homepage: text must stay identical).
+			// Closing verdict card (owner design): one-line headline + 1–2 sentence
+			// summary. Renders the orange "Our verdict" section; nothing without it.
+			verdict: z.object({ headline: z.string(), summary: z.string() }).optional(),
+
 			faqs: z
 				.array(z.object({ question: z.string(), answer: z.string() }))
 				.default([]),
@@ -179,6 +183,7 @@ const casinos = defineCollection({
 				freeSpins: z.number().optional(),
 				wageringRequirement: z.number().optional(), // e.g., 40 (means 40x)
 				minDeposit: z.number().optional(),
+				code: z.string().optional(), // bonus code as published; omit if unknown ("None" only when verified)
 			})
 			.optional(),
 
@@ -280,9 +285,91 @@ const casinos = defineCollection({
 			)
 			.default([]),
 
+		// At a glance (§3.3) — shown in the hero fact strip when present.
+		founded: z.number().optional(), // year
+		owner: z.string().optional(), // operating company, e.g. "Dama N.V."
+		platform: z.string().optional(), // e.g. "SoftSwiss"
+		gameCount: z.string().optional(), // as stated, e.g. "10,000+ (operator-stated)"
+		minWithdrawal: z.number().optional(), // €
+		kyc: z.string().optional(), // one line, e.g. "Can be requested at any cashout"
+		sisterBrands: z.array(z.string()).default([]), // casino slugs or names
+
+		// Megaways library audit (§3.6) — flagship titles by OUR slot slug; the
+		// component joins our slot review for name, provider and best RTP.
+		flagships: z
+			.array(
+				z.object({
+					slot: z.string(), // our slot slug, e.g. "bonanza-megaways"
+					liveRtp: z.number().min(0).max(100).optional(), // RTP seen in-game at THIS casino
+					checkedDate: z.coerce.date().optional(),
+				}),
+			)
+			.default([]),
+
+		// Bonus terms reality check (§3.7) and T&C audit (§3.9) — one row per
+		// term: what it says, our flag, optional plain-English note.
+		bonusTerms: z
+			.array(
+				z.object({
+					term: z.string(),
+					says: z.string(),
+					flag: z.enum(['fair', 'caution', 'trap']),
+					note: z.string().optional(),
+				}),
+			)
+			.default([]),
+		termsAudit: z
+			.array(
+				z.object({
+					term: z.string(),
+					says: z.string(),
+					flag: z.enum(['fair', 'caution', 'trap']),
+					note: z.string().optional(),
+				}),
+			)
+			.default([]),
+
+		// Payments (§3.8) — operator-reported figures unless `tested` is set.
+		payments: z
+			.array(
+				z.object({
+					method: z.string(), // slug from src/data/payment-methods.ts
+					min: z.number().optional(), // €
+					max: z.number().optional(), // €
+					fee: z.string().optional(),
+					depositTime: z.string().optional(), // e.g. "Instant"
+					withdrawalTime: z.string().optional(), // operator-reported, e.g. "0–24h"
+					tested: z
+						.object({ time: z.string(), date: z.coerce.date() })
+						.optional(), // OUR timed withdrawal
+				}),
+			)
+			.default([]),
+
+		// Reputation (§3.10) — dated third-party citations, reported not adjudicated.
+		reputation: z
+			.array(
+				z.object({
+					source: z.string(), // e.g. "Trustpilot"
+					score: z.string(), // as published, e.g. "2.2/5" or "7.6 (Safety Index)"
+					count: z.number().optional(), // number of reviews
+					url: z.string().url().optional(),
+					retrieved: z.coerce.date(),
+					note: z.string().optional(),
+				}),
+			)
+			.default([]),
+
+		// Responsible-gambling tools offered (§3.9), e.g. ["Deposit limits", "Self-exclusion"].
+		rgTools: z.array(z.string()).default([]),
+
 		// FAQ / sessions / changelog — same conventions as slots (single
 		// source for visible + JSON-LD; sessions/changelog are the ONLY
 		// honest updatedDate triggers).
+		// Closing verdict card (owner design): one-line headline + 1–2 sentence
+		// summary. Renders the orange "Our verdict" section; nothing without it.
+		verdict: z.object({ headline: z.string(), summary: z.string() }).optional(),
+
 		faqs: z
 			.array(z.object({ question: z.string(), answer: z.string() }))
 			.default([]),

@@ -11,24 +11,16 @@ import P from '../../components/typography/P.astro';
 import Breadcrumb from '../../components/layout/Breadcrumb.astro';
 import BreadcrumbSchema from '../../components/seo/BreadcrumbSchema.astro';
 import CasinoCard from '../../components/casino/CasinoCard.astro';
+import Card from '../../components/ui/Card.astro';
 import Pagination from '../../components/layout/Pagination.astro';
+import { casinoScore, rankCasinos } from '../../data/scorecards';
+import { paymentMethodMeta } from '../../data/payment-methods';
+import { fmtDate } from '../../data/format';
 
 export const getStaticPaths = (async ({ paginate }) => {
-	// Get all casinos from content collection
-	const allCasinos = await getCollection('casinos');
-
-	// Sort by rating (highest first), then by name — closed casinos always
-	// last (CASINO-REVIEW-PROTOCOL law 6: a "best casinos" flow never ranks
-	// a corpse above live options; their cards carry the CLOSED ribbon).
-	const statusRank = (entry: (typeof allCasinos)[number]) =>
-		entry.data.status === 'closed' ? 1 : 0;
-	const sortedCasinos = allCasinos.sort((a, b) => {
-		if (statusRank(a) !== statusRank(b)) return statusRank(a) - statusRank(b);
-		if (b.data.rating && a.data.rating) {
-			return b.data.rating - a.data.rating;
-		}
-		return a.data.name.localeCompare(b.data.name);
-	});
+	// One ordering for the whole site (src/data/scorecards.ts): scored first,
+	// then unscored A–Z, then caution, closed last (law 6).
+	const sortedCasinos = rankCasinos(await getCollection('casinos'));
 
 	// Generate paginated routes (12 casinos per page)
 	return paginate(sortedCasinos, { pageSize: 12 });
@@ -48,23 +40,146 @@ const breadcrumbItems = [
 	{ label: 'Home', href: '/' },
 	{ label: 'Online Casinos', href: '/online-casinos/' },
 ];
+
+// Comparison table (page 1): every column fills itself as review data lands.
+const all = page.currentPage === 1 ? rankCasinos(await getCollection('casinos')) : [];
+const rows = all.map(({ data }) => {
+	const { score, max, scored } = casinoScore(data);
+	const tested = data.payments.find((p) => p.tested);
+	return {
+		data,
+		href: `/online-casinos/${data.slug}-casino-review/`,
+		score,
+		max,
+		scored,
+		megaways: data.megawaysCount,
+		counted: fmtDate(data.megawaysCountedDate),
+		licence: data.licenceDetails[0],
+		licenceText: data.licenceDetails[0]?.authority ?? data.licenses.join(', '),
+		tested: tested && `${paymentMethodMeta(tested.method).label}: ${tested.tested!.time}`,
+	};
+});
+
+const statusChip = {
+	warning: { label: 'Caution', cls: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300' },
+	closed: { label: 'Closed', cls: 'bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300' },
+} as const;
+
+const site = Astro.site!.href.replace(/\/$/, '');
+const itemList = {
+	'@context': 'https://schema.org',
+	'@type': 'ItemList',
+	name: 'Online casino reviews for Megaways players',
+	itemListElement: all.map((r, i) => ({
+		'@type': 'ListItem',
+		position: i + 1,
+		url: `${site}/online-casinos/${r.data.slug}-casino-review/`,
+		name: `${r.data.name} review`,
+	})),
+};
 ---
 
 <PageLayout title={metadata.title} description={metadata.description}>
 	<!-- Breadcrumb Schema for SEO -->
 	<BreadcrumbSchema items={breadcrumbItems} />
+	{all.length > 0 && <script is:inline type='application/ld+json' set:html={JSON.stringify(itemList)} />}
 	<Header slot="header" />
 
 	<Container>
 		<!-- Breadcrumb Navigation -->
 		<Breadcrumb items={breadcrumbItems} class="mb-6" />
 
-		<div class="mb-12">
+		<div class="mb-10">
 			<H1 size="lg">Online Casinos</H1>
 			<P variant="lead" size="lg" class="mt-4">
 				Find the best online casinos for Megaways slots. Expert reviews with detailed information on bonuses, payment methods, and game selection.
 			</P>
 		</div>
+
+		<!-- Comparison table (page 1 only) -->
+		{
+			rows.length > 0 && (
+				<section aria-labelledby="compare-heading" class="mb-12">
+					<H2 id="compare-heading" size="md" class="mb-2">Compare Our Megaways Casinos</H2>
+					<P class="text-gray-600 dark:text-gray-400 mb-5">
+						Scored casinos are ranked by our six-category score; casinos still awaiting a full re-review follow alphabetically, with caution-flagged and closed casinos last. Megaways counts and payout times appear only once we've counted or timed them ourselves.
+					</P>
+					<Card
+						padding="none"
+						class="overflow-x-auto"
+						tabindex="0"
+						role="region"
+						aria-label="Casino comparison — scroll horizontally to see all columns"
+					>
+						<table class="w-full min-w-184 text-sm text-left">
+							<thead class="text-[0.6875rem] uppercase tracking-wider text-gray-600 dark:text-gray-400">
+								<tr>
+									<th scope="col" class="px-4 py-3 font-semibold">Casino</th>
+									<th scope="col" class="px-4 py-3 font-semibold">Our score</th>
+									<th scope="col" class="px-4 py-3 font-semibold">Megaways slots</th>
+									<th scope="col" class="px-4 py-3 font-semibold">Licence</th>
+									<th scope="col" class="px-4 py-3 font-semibold">Tested payout</th>
+									<th scope="col" class="px-4 py-3 font-semibold">Welcome bonus</th>
+								</tr>
+							</thead>
+							<tbody class="divide-y divide-gray-100 dark:divide-gray-800 text-gray-800 dark:text-gray-200">
+								{rows.map((r) => (
+									<tr>
+										<th scope="row" class="px-4 py-3 font-semibold">
+											<a href={r.href} class="text-gray-900 dark:text-white underline decoration-gray-300 dark:decoration-gray-700 hover:text-primary-700 dark:hover:text-primary-400">
+												{r.data.name}
+											</a>
+											{r.data.status !== 'live' && (
+												<span class:list={['ml-2 px-2 py-0.5 rounded-full text-[0.6875rem] font-bold uppercase tracking-wider', statusChip[r.data.status].cls]}>
+													{statusChip[r.data.status].label}
+												</span>
+											)}
+										</th>
+										<td class="px-4 py-3 tabular-nums">
+											{r.score === undefined ? (
+												<span class="text-gray-600 dark:text-gray-400">—</span>
+											) : r.scored ? (
+												<span class="font-display font-bold text-primary-700 dark:text-primary-400">{r.score}/{r.max}</span>
+											) : (
+												<span class="text-gray-600 dark:text-gray-400">Score pending</span>
+											)}
+										</td>
+										<td class="px-4 py-3">
+											{r.megaways ? (
+												<>
+													<span class="font-semibold tabular-nums">{r.megaways}</span>
+													{r.counted && <span class="block text-xs text-gray-600 dark:text-gray-400">counted {r.counted}</span>}
+												</>
+											) : (
+												<span class="text-gray-600 dark:text-gray-400">Count pending</span>
+											)}
+										</td>
+										<td class="px-4 py-3">
+											{r.licenceText}
+											{r.licence?.registerUrl && (
+												<a href={r.licence.registerUrl} rel="nofollow noopener" target="_blank" class="block text-xs underline text-green-800 dark:text-green-300">
+													Register entry<span class="sr-only"> (opens in a new tab)</span>
+												</a>
+											)}
+										</td>
+										<td class="px-4 py-3">
+											{r.tested ?? <span class="text-gray-600 dark:text-gray-400">Not yet tested</span>}
+										</td>
+										<td class="px-4 py-3">
+											{r.data.status === 'closed' ? (
+												<span class="text-gray-600 dark:text-gray-400">—</span>
+											) : (
+												r.data.welcomeBonus?.amount
+											)}
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</Card>
+				</section>
+			)
+		}
 
 		<!-- Casinos Section -->
 		<section aria-labelledby="casinos-heading">
@@ -73,7 +188,7 @@ const breadcrumbItems = [
 			<!-- Casino Count -->
 			<div class="mb-8">
 				<P class="text-gray-600 dark:text-gray-400">
-					Showing {page.start + 1}-{page.end + 1} of {page.total} {page.total === 1 ? 'casino' : 'casinos'}
+					{`Showing ${page.start + 1}–${page.end + 1} of ${page.total} ${page.total === 1 ? 'casino' : 'casinos'}`}
 				</P>
 			</div>
 

@@ -1,0 +1,85 @@
+---
+/**
+ * BonusCard — the welcome-offer card straight under the review hero (owner
+ * design handoff 2026-10-27): screenshot panel + offer headline + term tiles
+ * (Wagering / Min deposit / Code) + the Visit CTA. Renders nothing for
+ * closed casinos or without a bonus.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Card from '../ui/Card.astro';
+import Button from '../ui/Button.astro';
+import StatGrid from '../ui/StatGrid.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+	casino: CollectionEntry<'casinos'>['data'];
+	class?: string;
+}
+
+const { casino, class: className = '' } = Astro.props;
+
+const bonus = casino.status !== 'closed' ? casino.welcomeBonus : undefined;
+const disclosureId = `bonus-disclosure-${casino.slug}`;
+
+// "€500 or 5 BTC + 180 Free Spins" → headline + accent second line.
+const [headline, ...extra] = (bonus?.amount ?? '').split(' + ');
+---
+
+{
+	bonus && (
+		<Card padding='none' class:list={['p-5 md:p-7 grid gap-6 md:gap-8 lg:grid-cols-2', className]}>
+			{/* Screenshot panel: fitted on the dark backing, never cropped. */}
+			{casino.thumbnail && (
+				<div class='flex'>
+					<Image
+						src={casino.thumbnail}
+						alt={`${casino.name} welcome offer screen`}
+						width={940}
+						height={450}
+						class='w-full h-auto lg:h-full lg:object-cover lg:object-left rounded-[18px]'
+					/>
+				</div>
+			)}
+
+			<div class='flex flex-col justify-center gap-4 min-w-0'>
+				<p class='flex items-center gap-2 text-[0.8125rem] font-bold text-primary-700 dark:text-primary-500 mb-0'>
+					<Icon name='lucide:gift' size={16} class='shrink-0' />
+					{bonus.title}
+				</p>
+				<p class='text-[1.75rem] font-extrabold leading-[1.1] tracking-[-0.025em] text-gray-900 dark:text-gray-100 mb-0 text-balance'>
+					{headline}
+					{extra.length > 0 && (
+						<span class='block text-primary-700 dark:text-primary-500'>+ {extra.join(' + ')}</span>
+					)}
+				</p>
+
+				<StatGrid
+					cols={3}
+					items={[
+						{ label: 'Wagering', value: bonus.wageringRequirement && `${bonus.wageringRequirement}x` },
+						{ label: 'Min deposit', value: bonus.minDeposit && `€${bonus.minDeposit}` },
+						{ label: 'Code', value: bonus.code },
+					]}
+				/>
+
+				<div>
+					<Button
+						href={casino.affiliateLink}
+						size='lg'
+						affiliate={true}
+						spread={true}
+						class='w-full font-extrabold'
+						aria-describedby={disclosureId}
+					>
+						Visit {casino.name}
+						<Icon name='lucide:arrow-right' size={20} />
+					</Button>
+					<p id={disclosureId} class='text-xs text-gray-600 dark:text-gray-400 mt-3 mb-0'>
+						18+ · T&Cs apply · Gamble responsibly
+					</p>
+				</div>
+			</div>
+		</Card>
+	)
+}

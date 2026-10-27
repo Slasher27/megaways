@@ -100,7 +100,9 @@ import { Icon } from 'astro-icon/components';
 									<span x-show="result.type === 'casino'">Casino</span>
 								</span>
 							</span>
-							<Icon name="lucide:arrow-right" class="size-4 text-gray-400" />
+							{/* Plain SVG: an astro-icon sprite <symbol> defined inside an x-for
+							    <template> is inert (see layout/Search.astro). */}
+							<svg class="size-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
 						</a>
 					</li>
 				</template>

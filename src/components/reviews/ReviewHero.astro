@@ -1,0 +1,194 @@
+---
+/**
+ * ReviewHero — the review page's opening block, shared by slot and casino
+ * reviews (owner design handoff 2026-10-27, docs/design/, + owner changes):
+ * the title card carries a compact score BADGE in its top row (no separate
+ * score card — owner 2026-10-27; category bars live in the review body).
+ * Slots pass the demo as `aside` (beside the title) and the stats as `below`.
+ */
+import { Image } from 'astro:assets';
+import Card from '../ui/Card.astro';
+import VerifiedChip from './VerifiedChip.astro';
+import { SCORECARDS, scoreLabel, type ScorecardType } from '../../data/scorecards';
+
+interface Chip {
+	label: string;
+	tone?: 'solid' | 'tint' | 'plain';
+}
+
+interface Props {
+	type: ScorecardType;
+	title: string;
+	/** Small muted line above the subline, e.g. "Casino review". */
+	kicker?: string;
+	/** Second line beside the tile, e.g. "Est. 2014 · Curaçao licensed" (optionally a link). */
+	subline?: { label: string; href?: string };
+	/** Logo beside the H1 (casino `logo` frontmatter); falls back to `mark`. */
+	logo?: ImageMetadata;
+	/** Letter tile shown until a logo exists. */
+	mark?: string;
+	lead?: string;
+	chips?: Chip[];
+	authorName?: string;
+	updatedDate?: Date;
+	readMinutes?: number;
+	verified?: { source: string; date: Date; url?: string };
+	/** Overall score (slots: editorial rating /5; casinos: category mean /10). */
+	score?: number;
+	/** Short qualifier under the label, e.g. "pending re-score". */
+	scoreNote?: string;
+	/** Scale override (an unscored casino keeps its launch-era /5 rating). */
+	max?: number;
+}
+
+const {
+	type,
+	title,
+	kicker,
+	subline,
+	logo,
+	mark,
+	lead,
+	chips = [],
+	authorName,
+	updatedDate,
+	readMinutes,
+	verified,
+	score,
+	scoreNote,
+} = Astro.props;
+
+const max = Astro.props.max ?? SCORECARDS[type].max;
+const hasScore = score !== undefined;
+const hasAside = Astro.slots.has('aside');
+
+// lg+: title | demo as two halves (the 0.75rem gap split between them).
+const half = 'lg:basis-[calc(50%-0.375rem)] lg:grow-0 lg:shrink-0';
+
+// Five mini segments, each worth max/5, filled proportionally.
+const segments = hasScore
+	? Array.from({ length: 5 }, (_, i) => Math.min(Math.max((score! / max) * 5 - i, 0), 1) * 100)
+	: [];
+
+// Without a kicker line (casinos, owner 2026-10-27) the H1 sits in the top
+// row: [logo] H1 … [score badge].
+const hasMeta = !!(kicker || subline);
+const h1Class =
+	'm-0 min-w-0 text-[clamp(2rem,4vw,2.75rem)] leading-none font-extrabold tracking-[-0.03em] text-balance wrap-break-word text-gray-900 dark:text-gray-100';
+
+const updated = updatedDate?.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+const chipTones = {
+	solid: 'bg-primary-500 text-gray-950',
+	tint: 'bg-primary-50 text-primary-800 dark:bg-primary-950 dark:text-primary-300',
+	plain: 'bg-gray-100 text-gray-700 dark:bg-ink-hover dark:text-gray-300',
+} as const;
+---
+
+{/* DOM order = mobile order: title → aside (slot demo) → below (slot stats).
+    From lg: title | demo as two halves, stats full width underneath. */}
+<div class='flex flex-col lg:flex-row lg:flex-wrap gap-3'>
+	<!-- Title card -->
+	<Card padding='none' class:list={['p-5 md:p-7 flex flex-col gap-4.5 min-w-0', hasAside ? half : 'lg:flex-1']}>
+		<div class='flex flex-wrap items-start gap-3.5'>
+			{
+				logo ? (
+					<Image src={logo} alt='' width={112} height={112} class='size-14 shrink-0 self-center rounded-2xl object-contain bg-white' />
+				) : (
+					mark && (
+						<span
+							class='grid place-items-center size-14 shrink-0 self-center rounded-2xl bg-primary-500 text-gray-950 text-2xl font-black'
+							aria-hidden='true'
+						>
+							{mark}
+						</span>
+					)
+				)
+			}
+			{!hasMeta && <h1 class:list={[h1Class, 'flex-1 self-center']}>{title}</h1>}
+			{
+				(kicker || subline) && (
+					<p class='self-center text-[0.8125rem] leading-snug text-gray-600 dark:text-gray-400 mb-0 min-w-0'>
+						{kicker}
+						{subline && (
+							<span class='block text-gray-700 dark:text-gray-300'>
+								{subline.href ? (
+									<a href={subline.href} class='hover:text-primary-700 dark:hover:text-primary-400'>{subline.label}</a>
+								) : (
+									subline.label
+								)}
+							</span>
+						)}
+					</p>
+				)
+			}
+
+			<!-- Score badge (phones: forced onto its own line by the zero-height break) -->
+			{hasScore && <span class='basis-full h-0 sm:hidden' aria-hidden='true' />}
+			{
+				hasScore && (
+					<div class='sm:ml-auto shrink-0 rounded-2xl bg-gray-100 dark:bg-gray-800 px-4 py-3 min-w-34'>
+						<p class='flex items-baseline gap-1 mb-0 leading-none'>
+							<span class='sr-only'>Our score:</span>
+							<span class='text-[1.75rem] font-extrabold tracking-[-0.03em] text-primary-600 dark:text-primary-500'>{score}</span>
+							<span class='text-sm text-gray-600 dark:text-gray-400'>/{max}</span>
+						</p>
+						<div class='flex gap-0.5 my-2' aria-hidden='true'>
+							{segments.map((fill) => (
+								<span class='h-1.5 flex-1 rounded-full bg-gray-300 dark:bg-ink-line overflow-hidden'>
+									<span class='block h-full bg-primary-500' style={`width: ${fill}%`} />
+								</span>
+							))}
+						</div>
+						<p class='text-xs font-semibold text-gray-800 dark:text-gray-200 mb-0'>
+							{scoreLabel(score!, max)}
+							{scoreNote && <span class='block font-normal text-gray-600 dark:text-gray-400'>{scoreNote}</span>}
+						</p>
+					</div>
+				)
+			}
+		</div>
+
+		{hasMeta && <h1 class={h1Class}>{title}</h1>}
+
+		{lead && <p class='text-[1.0625rem] leading-[1.55] max-w-[52ch] text-pretty text-gray-700 dark:text-gray-300 mb-0'>{lead}</p>}
+
+		{
+			chips.length > 0 && (
+				<ul class='flex flex-wrap gap-2 m-0 p-0 list-none' aria-label='Highlights'>
+					{chips.map((chip) => (
+						<li class:list={['px-3 py-1.5 rounded-full text-[0.8125rem] font-bold', chipTones[chip.tone ?? 'plain']]}>
+							{chip.label}
+						</li>
+					))}
+				</ul>
+			)
+		}
+
+		<div class='mt-auto pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.8125rem] text-gray-600 dark:text-gray-400'>
+			{
+				authorName && (
+					<span>
+						By{' '}
+						<a href='/about/team/' class='text-gray-900 dark:text-gray-100 hover:text-primary-700 dark:hover:text-primary-400'>
+							{authorName}
+						</a>
+					</span>
+				)
+			}
+			{updated && <span>Updated {updated}</span>}
+			{readMinutes && <span>{readMinutes} min read</span>}
+			<VerifiedChip verified={verified} />
+		</div>
+	</Card>
+
+	{
+		hasAside && (
+			<div class:list={[half, 'min-w-0 flex flex-col gap-3']}>
+				<slot name='aside' />
+			</div>
+		)
+	}
+
+	{Astro.slots.has('below') && <div class='min-w-0 lg:basis-full'><slot name='below' /></div>}
+</div>

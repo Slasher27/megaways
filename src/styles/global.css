@@ -1,26 +1,28 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
-/* Display face for headings — self-hosted variable font (latin subsets, woff2). */
-@import "@fontsource-variable/bricolage-grotesque";
+/* Archivo — the site face for headings AND body (owner design handoff
+   2026-10-27). Self-hosted variable font (latin subsets, woff2). */
+@import "@fontsource-variable/archivo";
 
 @theme {
-	/* Ember brand scale — derived from the logo's red-orange, deliberately not a
-	   stock Tailwind palette. Text-on-white pairings verified ≥4.5:1 at 700+;
-	   white-on-ember passes at 700 (600 is 4.31:1 — decorative/large only). */
+	/* Ember brand scale. 500 = the design accent (#f26b1d), 400 = its hover
+	   (#ff8a45), 950 = the accent tint background (#3a2418). Accent buttons
+	   carry DARK text (#171412 on #f26b1d = 6.0:1). Text-on-white pairings
+	   verified ≥4.5:1 at 700+. */
 	--color-primary-50: #fdf6ef;
 	--color-primary-100: #fbead9;
 	--color-primary-200: #f6d0b0;
-	--color-primary-300: #efab78;
-	--color-primary-400: #e8813e;
-	--color-primary-500: #e2621b;
+	--color-primary-300: #ff9a5c;
+	--color-primary-400: #ff8a45;
+	--color-primary-500: #f26b1d;
 	--color-primary-600: #d34e11;
 	--color-primary-700: #af3a0f;
 	--color-primary-800: #8c3013;
 	--color-primary-900: #712a13;
-	--color-primary-950: #3d1307;
+	--color-primary-950: #3a2418;
 
-	/* Warm neutrals: every existing gray-* utility resolves to these stone
-	   values, warming the whole site (no cold blue-gray anywhere). */
+	/* Warm neutrals. The dark end is the design's ink scale: 950 page
+	   #171412 · 900 card #221e1b · 800 inner tile #2b2622. */
 	--color-gray-50: #fafaf9;
 	--color-gray-100: #f5f5f4;
 	--color-gray-200: #e7e5e4;
@@ -29,11 +31,23 @@
 	--color-gray-500: #78716c;
 	--color-gray-600: #57534e;
 	--color-gray-700: #44403c;
-	--color-gray-800: #292524;
-	--color-gray-900: #1c1917;
-	--color-gray-950: #0c0a09;
+	--color-gray-800: #2b2622;
+	--color-gray-900: #221e1b;
+	--color-gray-950: #171412;
+	/* Design ink tones between the gray steps (dark mode): hover/active row
+	   + chip track, and the score-bar track. */
+	--color-ink-hover: #2e2925;
+	--color-ink-line: #342e29;
+	/* Design positive / negative tones (dark mode): panel bg, text, icon dot. */
+	--color-pos-bg: #1b2a20;
+	--color-pos-text: #7fe0a2;
+	--color-pos-dot: #4fc27a;
+	--color-neg-bg: #2e1c1a;
+	--color-neg-text: #ff8f82;
+	--color-neg-dot: #f05a4a;
 
-	--font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-sans: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-display: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -43,11 +57,19 @@
 	h3,
 	h4 {
 		font-family: var(--font-display);
+		font-weight: 800;
+		letter-spacing: -0.02em;
 	}
 
-	/* Anchor jumps clear the sticky header. */
+	/* Anchor jumps clear the sticky header (+ the review section bar below xl). */
 	[id] {
 		scroll-margin-top: 5.5rem;
+	}
+
+	@media (max-width: 79.99rem) {
+		body:has(.toc-bar) [id] {
+			scroll-margin-top: 9.5rem;
+		}
 	}
 }
 
@@ -102,36 +124,15 @@
 	--tw-prose-td-borders: var(--color-gray-800);
 }
 
-/* Numbered section headers: eyebrow counter + generous separation. The MDX
-   `---` rules between sections are hidden — the h2 treatment replaces them. */
-.review-prose > hr {
-	display: none;
-}
-
-.review-prose > h2 {
+/* Section numbers "01, 02…" on review H2s. Custom CSS on purpose: CSS
+   counters have no Tailwind utility. Everything else about the section cards,
+   H2s and callouts is Tailwind, added by rehypeSectionCards (astro.config.mjs). */
+.review-prose h2 {
 	counter-increment: review-section;
-	margin-top: 3.5rem;
-	padding-top: 2.5rem;
-	border-top: 1px solid var(--color-gray-200);
 }
 
-.dark .review-prose > h2 {
-	border-top-color: var(--color-gray-800);
-}
-
-.review-prose > h2::before {
+.review-prose h2::before {
 	content: counter(review-section, decimal-leading-zero);
-	display: block;
-	font-family: var(--font-display);
-	font-size: 0.8125rem;
-	font-weight: 700;
-	letter-spacing: 0.12em;
-	color: var(--color-primary-700);
-	margin-bottom: 0.5rem;
-}
-
-.dark .review-prose > h2::before {
-	color: var(--color-primary-400);
 }
 
 /* Protocol modules (Scorecard, RTPContextBar, Callout… — all not-prose
@@ -139,15 +140,6 @@
    :where keeps specificity at 0 — component utilities (my-0, my-6) win. */
 .review-prose :where(.not-prose) {
 	margin-block: 1.5rem;
-}
-
-/* Bold-only lead-in paragraphs ("**How it works:**", FAQ questions) act as
-   pseudo-headings throughout the reviews — give them heading rhythm. */
-.review-prose p:has(> strong:only-child) {
-	margin-top: 2em;
-	margin-bottom: 0.75em;
-	font-family: var(--font-display);
-	font-size: 1.0625em;
 }
 
 /* Definition-style lists — the MDX "- **Term** - description" convention —

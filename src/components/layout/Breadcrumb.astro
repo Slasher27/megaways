@@ -12,7 +12,6 @@
  * ]} />
  */
 
-import Icon from '../ui/Icon.astro';
 
 export interface BreadcrumbItem {
 	label: string;
@@ -32,7 +31,7 @@ const breadcrumbItems = items.length === 0 || items[0].href !== '/'
 	: items;
 ---
 
-<nav aria-label="Breadcrumb" class={`flex items-center text-sm ${className}`}>
+<nav aria-label="Breadcrumb" class={`flex items-center text-[0.8125rem] px-1 ${className}`}>
 	<ol class="flex items-center" itemscope itemtype="https://schema.org/BreadcrumbList">
 		{breadcrumbItems.map((item, index) => {
 			const isLast = index === breadcrumbItems.length - 1;
@@ -55,18 +54,13 @@ const breadcrumbItems = items.length === 0 || items[0].href !== '/'
 								<span itemprop="name">{item.label}</span>
 							</a>
 							<meta itemprop="position" content={position.toString()} />
-							<Icon
-								name="lucide:chevron-right"
-								size={16}
-								class="mx-2 text-gray-400 dark:text-gray-600"
-								aria-hidden="true"
-							/>
+							<span class="mx-2.5 text-gray-600 dark:text-gray-400" aria-hidden="true">›</span>
 						</>
 					) : (
 						<>
 							<span
 								itemprop="name"
-								class="text-gray-900 dark:text-white font-medium"
+								class="text-gray-900 dark:text-gray-100"
 								aria-current="page"
 							>
 								{item.label}

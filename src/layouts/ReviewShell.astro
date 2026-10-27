@@ -14,6 +14,8 @@ import Footer from '../components/layout/Footer.astro';
 import Container from '../components/layout/Container.astro';
 import Breadcrumb from '../components/layout/Breadcrumb.astro';
 import TocList from '../components/reviews/TocList.astro';
+import Icon from '../components/ui/Icon.astro';
+import Card from '../components/ui/Card.astro';
 
 interface BreadcrumbItem {
 	label: string;
@@ -56,26 +58,61 @@ const {
 
 		<main class='flex-1'>
 			<Container>
-				<Breadcrumb items={breadcrumbItems} class='mb-6' />
+				{
+					/* Below xl: sticky "current section" bar under the header. Its label
+					   follows the reader (TocList's scrollspy); opens into the full list.
+					   While a demo plays it unsticks, like the header (SlotDemo), so it
+					   never leaves a gap or covers the game's controls. */
+					headings.length > 0 && (
+						<div class='toc-bar-strip xl:hidden sticky top-17 lg:top-19 [body:has(.slot-demo_iframe)_&]:static z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-2 bg-gray-50 dark:bg-gray-950'>
+							<Card as='details' variant='tile' padding='none' class='toc-bar group overflow-hidden'>
+								<summary class='flex items-center gap-3 px-4 min-h-12 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden'>
+									<span class='sr-only'>On this page:</span>
+									<span class='toc-bar-num text-xs font-bold text-primary-700 dark:text-primary-500 tabular-nums'>01</span>
+									<span class='toc-bar-label flex-1 min-w-0 truncate text-sm text-gray-900 dark:text-gray-100'>
+										{headings[0].text}
+									</span>
+									<Icon name='lucide:chevron-down' size={18} class='text-gray-700 dark:text-gray-100 transition-transform group-open:rotate-180' />
+								</summary>
+								<nav aria-label='On this page' class='px-2 pb-2 max-h-[60vh] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--color-gray-300)_transparent] dark:[scrollbar-color:var(--color-ink-line)_transparent]'>
+									<TocList headings={headings} class='text-[0.9375rem]' />
+								</nav>
+							</Card>
+						</div>
+					)
+				}
 
-				<!-- Article + sticky "On this page" aside (xl+) -->
-				<div class='flex flex-col xl:flex-row gap-8 xl:gap-12'>
-					<article class='flex-1 min-w-0'>
+				<Breadcrumb items={breadcrumbItems} class='mb-4' />
+
+				{
+					/* id='hero' — the floating CTA appears once this scrolls out of view. */
+					Astro.slots.has('hero') && (
+						<div id='hero' class='mb-3 space-y-3'>
+							<slot name='hero' />
+						</div>
+					)
+				}
+
+				<!-- Article + sticky "On this page" card (xl+) -->
+				<div class='flex flex-col xl:flex-row gap-10 pb-28'>
+					<article class='flex-1 min-w-0 space-y-3'>
 						<slot />
 					</article>
 
 					{
 						headings.length > 0 && (
-							<aside class='hidden xl:block w-60 shrink-0'>
-								<nav
+							<aside class='hidden xl:block w-70 shrink-0 self-start sticky top-22'>
+								<Card
+									as='nav'
+									padding='none'
 									aria-label='On this page'
-									class='sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto'
+									class='p-4 max-h-[calc(100vh-7rem)] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--color-gray-300)_transparent] dark:[scrollbar-color:var(--color-ink-line)_transparent]'
 								>
-									<p class='text-[0.6875rem] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3'>
+									<p class='text-[0.8125rem] font-semibold text-gray-600 dark:text-gray-400 px-2.5 pt-1 pb-2.5 mb-0'>
 										On this page
 									</p>
 									<TocList headings={headings} class='text-sm' />
-								</nav>
+								</Card>
 							</aside>
 						)
 					}

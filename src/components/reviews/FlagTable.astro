@@ -1,0 +1,62 @@
+---
+/**
+ * FlagTable — term-by-term reality check with fair / caution / trap flags.
+ * Used for the bonus terms (§3.7) and the T&C audit (§3.9). Renders nothing
+ * without rows.
+ * MDX: <FlagTable rows={frontmatter.bonusTerms} />  ·  <FlagTable rows={frontmatter.termsAudit} />
+ */
+import Card from '../ui/Card.astro';
+
+interface Row {
+	term: string;
+	says: string;
+	flag: 'fair' | 'caution' | 'trap';
+	note?: string;
+}
+
+interface Props {
+	rows?: Row[];
+	class?: string;
+}
+
+const { rows = [], class: className = '' } = Astro.props;
+
+const flags = {
+	fair: { label: 'Fair', chip: 'bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300' },
+	caution: { label: 'Caution', chip: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300' },
+	trap: { label: 'Trap', chip: 'bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300' },
+} as const;
+
+const counts = (['fair', 'caution', 'trap'] as const)
+	.map((f) => [f, rows.filter((r) => r.flag === f).length] as const)
+	.filter(([, n]) => n > 0);
+---
+
+{
+	rows.length > 0 && (
+		<div class:list={['not-prose', className]}>
+			<p class='text-sm text-gray-600 dark:text-gray-400 mb-3'>
+				{counts.map(([f, n], i) => (
+					<>
+						{i > 0 && ' · '}
+						<strong class='text-gray-900 dark:text-white'>{n}</strong> {flags[f].label.toLowerCase()}
+					</>
+				))}
+			</p>
+			<ul class='grid gap-2 m-0 p-0 list-none'>
+				{rows.map((row) => (
+					<Card as='li' padding='none' class='p-4 sm:p-5'>
+						<div class='flex flex-wrap items-center justify-between gap-2 mb-1.5'>
+							<span class='font-display font-semibold text-gray-900 dark:text-white'>{row.term}</span>
+							<span class:list={['px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider', flags[row.flag].chip]}>
+								{flags[row.flag].label}
+							</span>
+						</div>
+						<p class='text-gray-800 dark:text-gray-200 mb-0'>{row.says}</p>
+						{row.note && <p class='text-sm text-gray-600 dark:text-gray-400 mt-1.5 mb-0'>{row.note}</p>}
+					</Card>
+				))}
+			</ul>
+		</div>
+	)
+}

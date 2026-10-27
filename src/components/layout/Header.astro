@@ -22,10 +22,11 @@ function isActive(href: string): boolean {
 }
 ---
 
-<header class='sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-sm'>
+<!-- Sits on the canvas (no bar): the pill nav and search are the raised surfaces. -->
+<header class='sticky top-0 z-50 bg-gray-50/85 dark:bg-gray-950/85 backdrop-blur'>
 	<Container padding='none'>
 		<div class='flex items-center justify-between py-3 gap-4'>
-			<div class='flex items-center gap-8'>
+			<div class='flex items-center gap-6'>
 				<!-- Logo -->
 				<Link href='/' underline={false} class='flex items-center'>
 					<Image
@@ -37,24 +38,24 @@ function isActive(href: string): boolean {
 					/>
 				</Link>
 
-				<!-- Desktop Navigation -->
-				<nav class='hidden lg:flex gap-6 items-center'>
+				<!-- Desktop Navigation: one raised pill, active item filled ember -->
+				<nav aria-label='Main' class='hidden lg:flex items-center gap-1 p-1 rounded-full bg-white dark:bg-gray-900 shadow-sm dark:shadow-none text-[0.9375rem]'>
 					{
 						mainNavigation.map((item) =>
 							isDropdown(item) ? (
 								<NavDropdown label={item.label} items={item.items} />
 							) : (
-								<Link
+								<a
 									href={(item as NavLink).href}
-									variant='muted'
-									underline={false}
-									class={isActive((item as NavLink).href)
-										? 'font-semibold text-primary-700 dark:text-primary-400'
-										: ''
-									}
+									aria-current={isActive((item as NavLink).href) ? 'page' : undefined}
+									class={`flex items-center gap-1 px-4 py-2 rounded-full transition-colors ${
+										isActive((item as NavLink).href)
+											? 'font-bold bg-primary-500 text-gray-950'
+											: 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-ink-hover'
+									}`}
 								>
 									{item.label}
-								</Link>
+								</a>
 							)
 						)
 					}
@@ -66,16 +67,27 @@ function isActive(href: string): boolean {
 				<Search />
 			</div>
 
-			<!-- Mobile Menu Button -->
-			<button
-				id='mobile-menu-open'
-				type='button'
-				class='lg:hidden p-2.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-				aria-label='Open menu'
-				aria-haspopup='dialog'
-			>
-				<Icon name='lucide:menu' class='size-6' />
-			</button>
+			<!-- Mobile: round search + menu buttons (search opens the drawer, focused) -->
+			<div class='flex gap-2 lg:hidden'>
+				<button
+					id='mobile-search-open'
+					type='button'
+					class='grid place-items-center size-11 rounded-full bg-white text-gray-700 shadow-sm dark:bg-gray-900 dark:text-gray-200 dark:shadow-none'
+					aria-label='Search slots and casinos'
+					aria-haspopup='dialog'
+				>
+					<Icon name='lucide:search' class='size-5' />
+				</button>
+				<button
+					id='mobile-menu-open'
+					type='button'
+					class='grid place-items-center size-11 rounded-full bg-white text-gray-700 shadow-sm dark:bg-gray-900 dark:text-gray-200 dark:shadow-none'
+					aria-label='Open menu'
+					aria-haspopup='dialog'
+				>
+					<Icon name='lucide:menu' class='size-5' />
+				</button>
+			</div>
 
 			<!-- Mobile Menu (native dialog: focus trap, Esc close and backdrop for free) -->
 			<dialog
@@ -215,6 +227,11 @@ function isActive(href: string): boolean {
 	document
 		.getElementById('mobile-menu-open')
 		?.addEventListener('click', () => menu?.showModal());
+	// Search button: same drawer, straight into its search field.
+	document.getElementById('mobile-search-open')?.addEventListener('click', () => {
+		menu?.showModal();
+		menu?.querySelector('input')?.focus();
+	});
 	document
 		.getElementById('mobile-menu-close')
 		?.addEventListener('click', () => menu?.close());

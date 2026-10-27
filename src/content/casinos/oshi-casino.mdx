@@ -43,6 +43,58 @@ cons:
 featured: true
 isNew: false
 status: live
+owner: "Dama N.V. family"
+platform: "SoftSwiss"
+gameCount: "10,000+ (operator-stated)"
+minWithdrawal: 20
+kyc: "Can be requested on small cashouts (player reports)"
+sisterBrands: ["BitStarz", "RocketPlay"]
+licenceDetails:
+  - authority: "Curaçao"
+    number: "8048/JAZ2020-013 (old master-licence regime)"
+bonusTerms:
+  - term: "Wagering"
+    says: "45x the bonus amount"
+    flag: caution
+    note: "Trap-adjacent: well above the ~35x norm."
+  - term: "Structure"
+    says: "Four consecutive deposits (100% / 50% / 75% / 100%)"
+    flag: caution
+    note: "Miss one and the chain breaks."
+  - term: "Validity"
+    says: "5 days per stage"
+    flag: caution
+    note: "Trap-adjacent: forces high-velocity play."
+  - term: "Max bet"
+    says: "€5 while wagering"
+    flag: fair
+    note: "Standard, but easy to breach accidentally."
+  - term: "Free spins"
+    says: "Credited on operator-chosen slots; winnings also wager 45x"
+    flag: caution
+payments:
+  - { method: bitcoin, min: 20, depositTime: "Instant", withdrawalTime: "0–24 hours" }
+  - { method: ethereum, min: 20, depositTime: "Instant", withdrawalTime: "0–24 hours" }
+  - { method: litecoin, min: 20, depositTime: "Instant", withdrawalTime: "0–24 hours" }
+  - { method: tether, min: 20, depositTime: "Instant", withdrawalTime: "0–24 hours" }
+  - { method: mifinity, min: 20, withdrawalTime: "24–48 hours" }
+  - { method: sticpay, min: 20, withdrawalTime: "24–48 hours" }
+  - { method: visa, min: 20, withdrawalTime: "3–5 business days" }
+  - { method: mastercard, min: 20, withdrawalTime: "3–5 business days" }
+reputation:
+  - source: "Trustpilot"
+    score: "2.2/5 (Poor)"
+    count: 108
+    retrieved: 2026-07-21
+    note: "Bimodal — 59% five-star, 30% one-star. The operator has replied to zero negative reviews; its Dama-family sibling BitStarz answers 96% within about three days."
+  - source: "Casino Guru"
+    score: "7.6 Safety Index"
+    retrieved: 2026-07-21
+    note: "Above average — based on complaint volume relative to size."
+verdict:
+  headline: "A library with a casino problem."
+  summary: "Genuinely excellent Megaways depth and filtering, held back by a near-uncashable bonus, a poor and unanswered public reputation, and payout claims we haven't verified yet. Skip the bonus, deposit small, withdraw often."
+rgTools: ["Deposit limits", "Loss limits", "Session limits", "Reality checks", "Cool-off periods", "Self-exclusion"]
 faqs:
   - question: "Is Oshi Casino legit?"
     answer: "Oshi is a real, operating casino on the SoftSwiss platform with a Curacao-lineage licence, and Casino Guru rates its safety as above average (7.6/10, retrieved 21 July 2026). But its player reputation is genuinely poor: Trustpilot rates it 2.2/5 and the operator has not replied to a single negative review there. We score its trust 4.5/10 — playable, with eyes open and small balances."
@@ -64,32 +116,18 @@ updatedDate: 2026-07-21
 
 ## Our Verdict in 30 Seconds
 
-<QuickVerdict
-  atom="Oshi Casino scores 5.5/10 — Mixed for Megaways players: a genuinely deep SoftSwiss game library with excellent Megaways filtering, undermined by a 45x four-deposit bonus, a Poor 2.2/5 Trustpilot rating the operator has never once answered, and payout claims we have not yet verified ourselves (assessed 21 July 2026)."
-  bestFor="experienced crypto players who want a very deep Megaways shelf, will skip the welcome bonus entirely, and keep balances small."
-  avoidIf="you want a bonus you can realistically clear, a casino with a clean public reputation, or payout times that have been independently tested."
-  scores={frontmatter.scorecard}
-/>
+Oshi Casino scores 5.5/10 — Mixed for Megaways players: a genuinely deep SoftSwiss game library with excellent Megaways filtering, undermined by a 45x four-deposit bonus, a Poor 2.2/5 Trustpilot rating the operator has never once answered, and payout claims we have not yet verified ourselves (assessed 21 July 2026).
 
-## Oshi at a Glance
+**Best for:** experienced crypto players who want a very deep Megaways shelf, will skip the welcome bonus entirely, and keep balances small.
 
-| | |
-|---|---|
-| **Platform** | SoftSwiss |
-| **Operator family** | Dama N.V. lineage (shared with BitStarz and RocketPlay — see our reviews of both) |
-| **Licence** | Curacao (historically 8048/JAZ2020-013 under the old master-licence regime — being re-verified against the new GCB register) |
-| **Games** | 10,000+ titles advertised by the operator (not independently counted) |
-| **Megaways titles** | Substantial — exact count pending our lobby audit |
-| **Welcome bonus** | €6,000 + 500 free spins over four forced deposits, 45x wagering |
-| **Min deposit / withdrawal** | €20 / €20 |
-| **Payout speed** | Operator-reported: crypto 0–24h, e-wallets 24–48h, cards 3–5 days — **not yet tested by us** |
-| **KYC** | Can be demanded on small cashouts (public complaints) |
+**Avoid if:** you want a bonus you can realistically clear, a casino with a clean public reputation, or payout times that have been independently tested.
 
 ## How We Scored Oshi
 
-<CategoryScorecard
+<ScoreBars
+  type="casino"
   scores={frontmatter.scorecard}
-  justifications={{
+  notes={{
     trust: "Real casino on a reputable platform, but a Poor 2.2/5 Trustpilot score, zero operator replies to negative reviews, and public confiscation complaints keep this below passing.",
     megawaysLibrary: "One of the deeper Megaways shelves in the crypto space, with volatility/ways filtering nobody else offers — held back from a higher score until we count it ourselves.",
     bonusFairness: "45x wagering, four forced consecutive deposits, 5-day windows and a €5 max bet make the headline €6,000 package close to uncashable for typical bankrolls.",
@@ -101,6 +139,8 @@ updatedDate: 2026-07-21
 
 ## How Many Megaways Slots Does Oshi Have?
 
+<MegawaysLibrary count={frontmatter.megawaysCount} counted={frontmatter.megawaysCountedDate} flagships={frontmatter.flagships} />
+
 We don't know the exact number yet — and unlike other review sites, we won't print a marketing figure and call it a count. Oshi's SoftSwiss platform aggregates one of the larger game libraries in the crypto space, its Megaways shelf includes the Big Time Gaming originals (Bonanza, Extra Chilli, White Rabbit, Monopoly), Blueprint's franchise titles (Fishin' Frenzy, Genie Jackpots) and Pragmatic Play's adaptations, and its filtering by volatility and ways count is genuinely the best Megaways-hunting tool we've seen at any casino in this class.
 
 Our hand-counted library audit — exact title count, provider split, and which RTP version each flagship runs — is scheduled and will replace this paragraph with a dated table. Until then, treat "hundreds of Megaways titles" as directionally true but unverified.
@@ -109,13 +149,7 @@ Our hand-counted library audit — exact title count, provider split, and which 
 
 The headline is **€6,000 + 500 free spins**. Here is what the terms actually do to it:
 
-| Term | What it says | Our flag |
-|---|---|---|
-| Wagering | 45x the bonus amount | ⚠ Trap-adjacent: well above the ~35x norm |
-| Structure | Four **consecutive** deposits (100% / 50% / 75% / 100%) | ⚠ Caution: miss one and the chain breaks |
-| Validity | 5 days per stage | ⚠ Trap-adjacent: forces high-velocity play |
-| Max bet | €5 while wagering | Standard, but easy to breach accidentally |
-| Free spins | Credited on operator-chosen slots, winnings also wager 45x | Caution |
+<FlagTable rows={frontmatter.bonusTerms} />
 
 The worked maths: clearing 45x on a full €500 first-stage bonus means turning over **€22,500 within five days** without exceeding €5 a spin — that's 4,500+ spins at maximum allowed stake. For most bankrolls this bonus is not realistically clearable, and the public record includes confiscation complaints from promo play (the OSHI75 code). **Our blunt verdict: skip the bonus and play with clean deposits** — the library is the reason to be here, not the package.
 
@@ -123,13 +157,9 @@ The worked maths: clearing 45x on a full €500 first-stage bonus means turning 
 
 **We have not yet run our timed withdrawal test at Oshi** — the figures below are the operator's own, reproduced with that caveat rather than dressed up as testing:
 
-| Method | Operator-reported time | Min |
-|---|---|---|
-| Crypto (BTC, ETH, LTC, USDT) | 0–24 hours | €20 equivalent |
-| E-wallets (MiFinity, SticPay) | 24–48 hours | €20 |
-| Cards (Visa, Mastercard) | 3–5 business days | €20 |
+<PaymentCards rows={frontmatter.payments} />
 
-Two things from the public record belong next to that table: players have reported **KYC document demands on cashouts as small as ~€200 in crypto**, despite the crypto-first marketing; and promo-related winnings have been confiscated in at least one widely-documented complaint. Deposit only what you're prepared to have temporarily stuck in a verification queue.
+Two things from the public record belong next to those figures: players have reported **KYC document demands on cashouts as small as ~€200 in crypto**, despite the crypto-first marketing; and promo-related winnings have been confiscated in at least one widely-documented complaint. Deposit only what you're prepared to have temporarily stuck in a verification queue.
 
 ## Is Oshi Legit and Safe?
 
@@ -137,13 +167,15 @@ Oshi is a real, operating casino — not a scam site — running on SoftSwiss, o
 
 Be clear about what a Curacao licence does and doesn't protect: it provides basic operational oversight, but no UKGC-style ombudsman, no deposit protection, and historically weak complaint enforcement. Your practical protections at Oshi are the platform's RNG-certified games, its responsible-gambling tools (deposit, loss and session limits, reality checks, cool-offs, self-exclusion — the standard SoftSwiss suite, which is genuinely complete), and your own discipline about balance sizes.
 
+<TrustCheck licences={frontmatter.licenceDetails} rgTools={frontmatter.rgTools} />
+
 ## What Do Players Say About Oshi?
 
-This is where Oshi's picture darkens, and we cite the sources so you can check them:
+This is where Oshi's picture darkens, and we cite the sources so you can check them. Trustpilot's bimodal split usually signals genuine but polarised experiences rather than review-bombing — and the operator's silence is the most damning number here. Casino Guru's index is a meaningful counterweight from the most-cited trust index in the sector.
 
-- **Trustpilot: Poor, 2.2/5** from 108 reviews (retrieved 21 July 2026). The distribution is bimodal — 59% five-star, 30% one-star — which usually signals genuine but polarised experiences rather than review-bombing. Most damning: **the operator has replied to zero negative reviews, ever**. For comparison, its Dama-family sibling BitStarz answers 96% of negative reviews within about three days.
-- **Casino Guru: Safety Index 7.6 ("above average")** (retrieved 21 July 2026) — a meaningful counterweight from the most-cited trust index in the sector, based on complaint volume relative to size.
-- **Specific complaint patterns on the public record:** winnings confiscated from play under the OSHI75 promo code, and KYC verification demanded on a ~€200 crypto cashout. We cite these as reported player accounts, not adjudicated findings.
+<Reputation rows={frontmatter.reputation} />
+
+**Specific complaint patterns on the public record:** winnings confiscated from play under the OSHI75 promo code, and KYC verification demanded on a ~€200 crypto cashout. We cite these as reported player accounts, not adjudicated findings.
 
 Our reading: Oshi appears to pay ordinary withdrawals but handles disputes and promo edge-cases poorly, and its total silence toward public complaints is a choice that tells you how a dispute of yours would likely go.
 

@@ -15,6 +15,7 @@
  */
 
 import type { CollectionEntry } from 'astro:content';
+import { casinoScore } from '../../data/scorecards';
 
 interface Props {
 	casino: CollectionEntry<'casinos'>['data'];
@@ -26,7 +27,6 @@ const { casino, author, url } = Astro.props;
 
 const siteUrl = Astro.site?.href || 'https://megawaysonline.com';
 const reviewUrl = url || Astro.url.href;
-const isClosed = casino.status === 'closed';
 
 const imageUrl = casino.thumbnail?.src || casino.logo?.src;
 const absoluteImageUrl = imageUrl
@@ -34,6 +34,10 @@ const absoluteImageUrl = imageUrl
 		? imageUrl
 		: new URL(imageUrl, siteUrl).href
 	: new URL('/images/og-default.jpg', siteUrl).href;
+
+const { score, max } = casinoScore(casino);
+// reviewBody = the verdict summary (protocol §4), else the review's description.
+const reviewBody = casino.verdict?.summary ?? casino.description;
 
 const publishedDate = casino.publishedDate?.toISOString().split('T')[0];
 const modifiedDate = casino.updatedDate?.toISOString().split('T')[0];
@@ -50,15 +54,17 @@ const schema = {
 			acceptedPaymentMethod: casino.paymentMethods,
 		}),
 	},
-	...(casino.rating &&
-		!isClosed && {
-			reviewRating: {
-				'@type': 'Rating',
-				ratingValue: casino.rating,
-				bestRating: 5,
-				worstRating: 0,
-			},
-		}),
+	// Same number + scale the page shows (scored: category mean /10;
+	// unscored: launch-era /5). Closed casinos: no score (casinoScore omits it).
+	...(score !== undefined && {
+		reviewRating: {
+			'@type': 'Rating',
+			ratingValue: score,
+			bestRating: max,
+			worstRating: 0,
+		},
+	}),
+	...(reviewBody && { reviewBody }),
 	...(casino.pros?.length > 0 && {
 		positiveNotes: {
 			'@type': 'ItemList',

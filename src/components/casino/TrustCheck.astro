@@ -1,0 +1,74 @@
+---
+/**
+ * TrustCheck — licence verification (law 3: register-linked or it doesn't
+ * count) + the responsible-gambling tools offered (§3.9). An unlinked licence
+ * is shown as "register link pending", never as verified.
+ * MDX: <TrustCheck licences={frontmatter.licenceDetails} rgTools={frontmatter.rgTools} />
+ */
+import Card from '../ui/Card.astro';
+import Icon from '../ui/Icon.astro';
+import { fmtDate } from '../../data/format';
+
+interface Licence {
+	authority: string;
+	number?: string;
+	registerUrl?: string;
+	verifiedDate?: Date | string;
+}
+
+interface Props {
+	licences?: Licence[];
+	rgTools?: string[];
+	class?: string;
+}
+
+const { licences = [], rgTools = [], class: className = '' } = Astro.props;
+---
+
+{
+	(licences.length > 0 || rgTools.length > 0) && (
+		<div class:list={['not-prose grid gap-2 sm:gap-3', licences.length > 0 && rgTools.length > 0 && 'md:grid-cols-2', className]}>
+			{licences.length > 0 && (
+				<Card padding='none' class='p-5 sm:p-6'>
+					<p class='text-xs font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-3'>Licence check</p>
+					<ul class='space-y-3 m-0 p-0 list-none'>
+						{licences.map((l) => (
+							<li>
+								<p class='font-display font-semibold text-gray-900 dark:text-white mb-0.5'>
+									{l.authority}
+									{l.number && <span class='font-sans font-normal text-gray-600 dark:text-gray-400'> · {l.number}</span>}
+								</p>
+								{l.registerUrl ? (
+									<p class='flex items-center gap-1.5 text-sm text-green-800 dark:text-green-300 mb-0'>
+										<Icon name='lucide:badge-check' size={15} />
+										<a href={l.registerUrl} class='underline' rel='nofollow noopener' target='_blank'>
+											Checked on the official register<span class='sr-only'> (opens in a new tab)</span>
+										</a>
+										{l.verifiedDate && <span class='text-gray-600 dark:text-gray-400'>· {fmtDate(l.verifiedDate)}</span>}
+									</p>
+								) : (
+									<p class='text-sm text-amber-800 dark:text-amber-300 mb-0'>Register link pending — not yet verified by us</p>
+								)}
+							</li>
+						))}
+					</ul>
+				</Card>
+			)}
+			{rgTools.length > 0 && (
+				<Card padding='none' class='p-5 sm:p-6'>
+					<p class='text-xs font-bold uppercase tracking-wider text-primary-700 dark:text-primary-400 mb-3'>
+						Responsible-gambling tools
+					</p>
+					<ul class='grid grid-cols-1 sm:grid-cols-2 gap-2 m-0 p-0 list-none'>
+						{rgTools.map((tool) => (
+							<li class='flex items-center gap-2 text-sm text-gray-800 dark:text-gray-200'>
+								<Icon name='lucide:circle-check' size={16} class='text-green-700 dark:text-green-400 shrink-0' />
+								{tool}
+							</li>
+						))}
+					</ul>
+				</Card>
+			)}
+		</div>
+	)
+}

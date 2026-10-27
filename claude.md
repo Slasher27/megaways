@@ -1,12 +1,12 @@
 # CLAUDE.md — Megawaysonline.com
 
-> Quick reference for Claude Code. Read `REDEVELOPMENT-PLAN.md` first for scope/phases, then the relevant `docs/` file. This file is the rules-at-a-glance; the docs are authoritative.
+> Quick reference for Claude Code. Read `docs/REDEVELOPMENT-PLAN.md` first for scope/phases, then the relevant `docs/` file. This file is the rules-at-a-glance; the docs are authoritative. **All doc paths below live in `docs/`.**
 
 ---
 
 ## Project
 
-Casino affiliate site (Megaways slots + casino reviews). WordPress → Astro rebuild — **LIVE on `megawaysonline.com` since 2026-07-14** (Vercel hosting; DNS + email stay on xneelo — never touch the mail/MX records). **Primary goal: zero SEO regression** — GSC monitoring window runs to ~2026-08-11; current work is Phase 6 backfill (`PROGRESS.md`).
+Casino affiliate site (Megaways slots + casino reviews). WordPress → Astro rebuild — **LIVE on `megawaysonline.com` since 2026-07-14** (Vercel hosting; DNS + email stay on xneelo — never touch the mail/MX records). **Primary goal: zero SEO regression** — the GSC monitoring window ended ~2026-08-11 (owner sign-off of the launch gate still pending); current work is Phase 6 review rewrites + backfill (`docs/PROGRESS.md`).
 
 ### Stack
 - **Astro 7.x** (static) + `@astrojs/vercel` adapter (v11 — keep the adapter major matched to Astro's; v8 is Astro-5-only and emits unanchored routes the patch script can't fix) — the adapter (plus `scripts/patch-vercel-redirects.mjs`, run by `npm run build`) is what makes the 47 redirects real HTTP 301s. Never remove either.
@@ -37,7 +37,7 @@ npx astro check
 10. **No TS annotations inside Astro template expressions** (frontmatter fence only).
 11. **Never name a component prop `slot`.** On a direct child of another component, Astro treats `slot={…}` as a named-slot assignment and silently drops the element (this cost slot pages their JSON-LD once). Use `slotData` etc.
 12. **JSON-LD schema components render INSIDE layouts** (body is fine) — never before the layout tag, or they emit outside `<html>` and push the charset past 1024 bytes.
-13. **Review rewrites follow `docs/REVIEW-PROTOCOL.md`** (slots) and **`docs/CASINO-REVIEW-PROTOCOL.md`** (casinos): never `AggregateRating` on a single editorial review; `sessions[]`/`changelog` entries are the ONLY honest `updatedDate` bumps; always click-verify a `demoUrl` loads the reviewed game; screenshots live in `screenshots/<slug>/`, press-kit images labelled `source='provider'`. Casino extras: verdict atom first, overall score = mean of categories, licence facts register-linked, casino `status` gates CTAs (dead brand = zero CTAs). ⚠ BlueLeo + Casitsu are reported CLOSED by competitors — status-gate before touching their reviews. `affiliateLink` (tracked CTA link) and `website` (real domain, used for the schema entity) are different fields — never swap them.
+13. **Review rewrites follow `docs/REVIEW-PROTOCOL.md`** (slots) and **`docs/CASINO-REVIEW-PROTOCOL.md`** (casinos): never `AggregateRating` on a single editorial review; `sessions[]`/`changelog` entries are the ONLY honest `updatedDate` bumps; always click-verify a `demoUrl` loads the reviewed game; screenshots live in `screenshots/<slug>/`, press-kit images labelled `source='provider'`. Casino extras: verdict atom first, overall score = mean of categories, licence facts register-linked, casino `status` gates CTAs (dead brand = zero CTAs). Status-gate first: re-verify a casino's status first-hand before touching its review (BlueLeo + Casitsu `closed`, BitDreams `warning` — all as of 2026-07-21). BitDreams is owner-deprioritised: keep accurate, don't invest in promoting it. `affiliateLink` (tracked CTA link) and `website` (real domain, used for the schema entity) are different fields — never swap them.
 14. **Verify UI across devices — measure, don't eyeball.** `node scripts/audit-responsive.mjs <path>` must report `PASS` (no horizontal overflow 320→1920, axe 0 critical/serious in both themes) before a layout change is done. **320px is the floor**; wide content (tables) scrolls in its own box, never the page; two-column blocks switch at `md` (768px), not `lg`. → `docs/STYLING.md §Responsive`, `docs/WORKFLOWS.md`.
 15. **Icons are decorative by default** (`ui/Icon` emits `aria-hidden`); a `<dl>` or its wrapper `<div>` may contain ONLY `<dt>`/`<dd>`; new-tab links carry an sr-only notice. → `docs/STYLING.md §A11y`.
 
